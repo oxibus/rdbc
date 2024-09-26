@@ -1,5 +1,5 @@
 use anyhow::Result;
-use rdbc::dbc_parser::*;
+use rdbc::network_ast::*;
 
 fn main() -> Result<()> {
     env_logger::init();

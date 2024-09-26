@@ -5,11 +5,11 @@ use super::dbc_can_nodes::DbcCanNodes;
 use super::dbc_common_parsers::*;
 use super::dbc_error::DbcParseError;
 use super::dbc_message::*;
-use super::dbc_names::dbc_names;
-use super::dbc_names::DbcNames;
 use super::dbc_signal_value_table::*;
 use super::dbc_version::dbc_version;
 use super::dbc_version::DbcVersion;
+use super::new_symbols::parser_new_symbols;
+use super::new_symbols::NewSymbols;
 use nom::combinator::all_consuming;
 use nom::combinator::map;
 use nom::multi::many0;
@@ -18,12 +18,12 @@ use nom::IResult;
 use std::fmt;
 
 #[derive(PartialEq, Debug, Clone)]
-pub struct OneDbc {
+pub struct NetworkAst {
     // VERSION "xxx"
     pub version: DbcVersion,
 
     // NS_:
-    pub names: DbcNames,
+    pub new_symbols: NewSymbols,
 
     // BS_:
     pub bus_configuration: Option<DbcBusConfiguration>,
@@ -38,10 +38,10 @@ pub struct OneDbc {
     pub messages: Vec<DbcMessage>,
 }
 
-impl fmt::Display for OneDbc {
+impl fmt::Display for NetworkAst {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         writeln!(f, "{}\n", self.version)?;
-        writeln!(f, "{}", self.names)?;
+        writeln!(f, "{}", self.new_symbols)?;
         if let Some(bc) = &self.bus_configuration {
             writeln!(f, "{}\n", bc)?;
         }
@@ -53,28 +53,30 @@ impl fmt::Display for OneDbc {
     }
 }
 
-pub fn dbc_value(input: &str) -> IResult<&str, OneDbc, DbcParseError> {
+pub fn dbc_value(input: &str) -> IResult<&str, NetworkAst, DbcParseError> {
     map(
         multispacey(tuple((
             multispacey(dbc_version),
-            multispacey(dbc_names),
+            multispacey(parser_new_symbols),
             multispacey(dbc_bus_configuration),
             multispacey(dbc_can_nodes),
             multispacey(dbc_signal_value_tables),
             multispacey(many0(dbc_message)),
         ))),
-        |(version, names, bus_configuration, can_nodes, signal_value_tables, messages)| OneDbc {
-            version,
-            names,
-            bus_configuration,
-            can_nodes,
-            signal_value_tables,
-            messages,
+        |(version, new_symbols, bus_configuration, can_nodes, signal_value_tables, messages)| {
+            NetworkAst {
+                version,
+                new_symbols,
+                bus_configuration,
+                can_nodes,
+                signal_value_tables,
+                messages,
+            }
         },
     )(input)
 }
 
-pub fn parse_dbc(input: &str) -> Result<OneDbc, DbcParseError> {
+pub fn parse_dbc(input: &str) -> Result<NetworkAst, DbcParseError> {
     let (_remain, result) = all_consuming(dbc_value)(input).map_err(|nom_err| {
         log::error!("nom_err: {}", nom_err);
         match nom_err {
@@ -113,9 +115,9 @@ BO_ 112 MM5_10_TX1: 8 DRS_MM5_10
 
 "#
             ),
-            Ok(OneDbc {
+            Ok(NetworkAst {
                 version: DbcVersion("1.0".into()),
-                names: DbcNames(vec!["BS_".into(), "CM_".into()]),
+                new_symbols: NewSymbols(vec!["BS_".into(), "CM_".into()]),
                 bus_configuration: Some(DbcBusConfiguration(None)),
                 can_nodes: DbcCanNodes(vec!["ABS".into(), "DRS_MM5_10".into()]),
                 signal_value_tables: None,
@@ -198,9 +200,9 @@ BO_ 112 MM5_10_TX1: 8 DRS_MM5_10
 
 "#
             ),
-            Ok(OneDbc {
+            Ok(NetworkAst {
                 version: DbcVersion("1.0".into()),
-                names: DbcNames(vec!["BS_".into(), "CM_".into()]),
+                new_symbols: NewSymbols(vec!["BS_".into(), "CM_".into()]),
                 bus_configuration: Some(DbcBusConfiguration(None)),
                 can_nodes: DbcCanNodes(vec!["ABS".into(), "DRS_MM5_10".into()]),
                 signal_value_tables: Some(vec![

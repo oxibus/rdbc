@@ -7,6 +7,7 @@ use nom::IResult;
 use std::fmt;
 
 /// Version identifier of the DBC file.
+///
 /// Format: `VERSION "<VersionIdentifier>"`
 #[derive(PartialEq, Debug, Clone)]
 pub struct DbcVersion(pub String);

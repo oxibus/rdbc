@@ -9,7 +9,7 @@ use nom::sequence::tuple;
 use nom::IResult;
 use std::fmt;
 
-/// Names used throughout the DBC file.
+/// New Symbols, Names used throughout the DBC file.
 ///
 /// Format:
 ///
@@ -21,9 +21,9 @@ use std::fmt;
 /// ```
 /// */
 #[derive(PartialEq, Debug, Clone)]
-pub struct DbcNames(pub Vec<String>);
+pub struct NewSymbols(pub Vec<String>);
 
-impl fmt::Display for DbcNames {
+impl fmt::Display for NewSymbols {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         writeln!(f, "NS_:")?;
         for name in &self.0 {
@@ -33,21 +33,21 @@ impl fmt::Display for DbcNames {
     }
 }
 
-fn dbc_one_line_name(input: &str) -> IResult<&str, String, DbcParseError> {
+fn parser_one_line_new_symbols(input: &str) -> IResult<&str, String, DbcParseError> {
     map(
         tuple((space0, dbc_object_name, space0, line_ending)),
         |(_, name, _, _)| name.to_owned(),
     )(input)
 }
 
-pub fn dbc_names(input: &str) -> IResult<&str, DbcNames, DbcParseError> {
+pub fn parser_new_symbols(input: &str) -> IResult<&str, NewSymbols, DbcParseError> {
     let res = map(
         tuple((
             multispacey(tag("NS_")),
             multispacey(tag(":")),
-            multispacey(many0(dbc_one_line_name)),
+            multispacey(many0(parser_one_line_new_symbols)),
         )),
-        |(_, _, names)| DbcNames(names),
+        |(_, _, names)| NewSymbols(names),
     )(input);
     match res {
         Ok((remain, names)) => {
@@ -67,7 +67,7 @@ mod tests {
 
     #[test]
     fn test_dbc_one_line_name_01() {
-        let ret = dbc_one_line_name(
+        let ret = parser_one_line_new_symbols(
             r#"  BS_
   "#,
         );
@@ -81,7 +81,7 @@ mod tests {
 
     #[test]
     fn test_dbc_one_line_name_02() {
-        let ret = dbc_one_line_name(
+        let ret = parser_one_line_new_symbols(
             r#"  CM_
     "#,
         );
@@ -95,7 +95,7 @@ mod tests {
 
     #[test]
     fn test_dbc_names_01() {
-        let ret = dbc_names(
+        let ret = parser_new_symbols(
             r#"NS_:
     BS_
     CM_
@@ -105,7 +105,7 @@ mod tests {
         );
         match ret {
             Ok((_remain, names)) => {
-                assert_eq!(names, DbcNames(vec!["BS_".into(), "CM_".into()]));
+                assert_eq!(names, NewSymbols(vec!["BS_".into(), "CM_".into()]));
             }
             Err(err) => panic!("err = {:?}", err),
         }
@@ -113,7 +113,7 @@ mod tests {
 
     #[test]
     fn test_dbc_names_02() {
-        let ret = dbc_names(
+        let ret = parser_new_symbols(
             r#"
 
 NS_ :
@@ -130,7 +130,7 @@ NS_ :
             Ok((_remain, names)) => {
                 assert_eq!(
                     names,
-                    DbcNames(vec![
+                    NewSymbols(vec![
                         "NS_DESC_".into(),
                         "CM_".into(),
                         "BA_DEF_".into(),
