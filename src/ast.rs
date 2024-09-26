@@ -1,5 +1,4 @@
 pub mod bit_timing;
-pub mod dbc_can_nodes;
 pub mod dbc_common_parsers;
 pub mod dbc_error;
 pub mod dbc_message;
@@ -7,4 +6,5 @@ pub mod dbc_signal;
 pub mod dbc_signal_value_table;
 pub mod network_ast;
 pub mod new_symbols;
+pub mod nodes;
 pub mod version;

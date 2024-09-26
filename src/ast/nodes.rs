@@ -9,11 +9,24 @@ use nom::IResult;
 use std::fmt;
 
 /// List of all CAN-Nodes, seperated by whitespaces.
+///
+/// The node section defines the names of all participating nodes. The names defined
+/// in this section have to be unique within this section.
+///
+/// ```text
+/// nodes = 'BU_:' {node_name} ;
+/// node_name = DBC_identifier ;
+/// ```
+///
+/// example:
+///
+/// ```text
 /// BU_: ABS DRS_MM5_10
+/// ```
 #[derive(PartialEq, Debug, Clone)]
-pub struct DbcCanNodes(pub Vec<String>);
+pub struct Nodes(pub Vec<String>);
 
-impl fmt::Display for DbcCanNodes {
+impl fmt::Display for Nodes {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "BU_:",)?;
         for node in &self.0 {
@@ -23,7 +36,7 @@ impl fmt::Display for DbcCanNodes {
     }
 }
 
-pub fn dbc_can_nodes(input: &str) -> IResult<&str, DbcCanNodes, DbcParseError> {
+pub fn parser_nodes(input: &str) -> IResult<&str, Nodes, DbcParseError> {
     let res = map(
         tuple((
             multispacey(tag("BU_")),
@@ -31,15 +44,15 @@ pub fn dbc_can_nodes(input: &str) -> IResult<&str, DbcCanNodes, DbcParseError> {
             many0(spacey(dbc_node_name)),
             many0(line_ending),
         )),
-        |(_, _, names, _)| DbcCanNodes(names.into_iter().map(String::from).collect()),
+        |(_, _, names, _)| Nodes(names.into_iter().map(String::from).collect()),
     )(input);
     match res {
         Ok((remain, can_nodes)) => {
-            log::info!("parse can nodes: {:?}", can_nodes.0);
+            log::info!("parse nodes: {:?}", can_nodes.0);
             Ok((remain, can_nodes))
         }
         Err(e) => {
-            log::trace!("parse can nodes failed, e = {:?}", e);
+            log::trace!("parse nodes failed, e = {:?}", e);
             Err(nom::Err::Error(DbcParseError::BadCanNodes))
         }
     }
@@ -52,24 +65,24 @@ mod tests {
     #[test]
     fn test_dbc_can_nodes() {
         assert_eq!(
-            dbc_can_nodes(
+            parser_nodes(
                 r#"BU_: ABS DRS_MM5_10
 
 "#
             ),
-            Ok(("", DbcCanNodes(vec!["ABS".into(), "DRS_MM5_10".into()]))),
+            Ok(("", Nodes(vec!["ABS".into(), "DRS_MM5_10".into()]))),
         );
 
         assert_eq!(
-            dbc_can_nodes(r#"BU_:Matrix"#),
-            Ok(("", DbcCanNodes(vec!["Matrix".into()]))),
+            parser_nodes(r#"BU_:Matrix"#),
+            Ok(("", Nodes(vec!["Matrix".into()]))),
         );
 
         assert_eq!(
-            dbc_can_nodes(r#"BU_: Node2 Node1 Node0"#),
+            parser_nodes(r#"BU_: Node2 Node1 Node0"#),
             Ok((
                 "",
-                DbcCanNodes(vec!["Node2".into(), "Node1".into(), "Node0".into()])
+                Nodes(vec!["Node2".into(), "Node1".into(), "Node0".into()])
             )),
         );
     }

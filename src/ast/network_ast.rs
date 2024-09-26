@@ -1,13 +1,13 @@
 use super::bit_timing::parser_bit_timing;
 use super::bit_timing::BitTiming;
-use super::dbc_can_nodes::dbc_can_nodes;
-use super::dbc_can_nodes::DbcCanNodes;
 use super::dbc_common_parsers::*;
 use super::dbc_error::DbcParseError;
 use super::dbc_message::*;
 use super::dbc_signal_value_table::*;
 use super::new_symbols::parser_new_symbols;
 use super::new_symbols::NewSymbols;
+use super::nodes::parser_nodes;
+use super::nodes::Nodes;
 use super::version::parser_version;
 use super::version::Version;
 use nom::combinator::all_consuming;
@@ -29,7 +29,7 @@ pub struct NetworkAst {
     pub bus_configuration: Option<BitTiming>,
 
     // BU_:
-    pub can_nodes: DbcCanNodes,
+    pub can_nodes: Nodes,
 
     // VAL_TABLE_
     pub signal_value_tables: Option<Vec<DbcSignalValueTable>>,
@@ -59,7 +59,7 @@ pub fn dbc_value(input: &str) -> IResult<&str, NetworkAst, DbcParseError> {
             multispacey(parser_version),
             multispacey(parser_new_symbols),
             multispacey(parser_bit_timing),
-            multispacey(dbc_can_nodes),
+            multispacey(parser_nodes),
             multispacey(dbc_signal_value_tables),
             multispacey(many0(dbc_message)),
         ))),
@@ -119,7 +119,7 @@ BO_ 112 MM5_10_TX1: 8 DRS_MM5_10
                 version: Version("1.0".into()),
                 new_symbols: NewSymbols(vec!["BS_".into(), "CM_".into()]),
                 bus_configuration: Some(BitTiming { value: None }),
-                can_nodes: DbcCanNodes(vec!["ABS".into(), "DRS_MM5_10".into()]),
+                can_nodes: Nodes(vec!["ABS".into(), "DRS_MM5_10".into()]),
                 signal_value_tables: None,
                 messages: vec![
                     DbcMessage {
@@ -204,7 +204,7 @@ BO_ 112 MM5_10_TX1: 8 DRS_MM5_10
                 version: Version("1.0".into()),
                 new_symbols: NewSymbols(vec!["BS_".into(), "CM_".into()]),
                 bus_configuration: Some(BitTiming { value: None }),
-                can_nodes: DbcCanNodes(vec!["ABS".into(), "DRS_MM5_10".into()]),
+                can_nodes: Nodes(vec!["ABS".into(), "DRS_MM5_10".into()]),
                 signal_value_tables: Some(vec![
                     DbcSignalValueTable {
                         name: "ABS_fault_info".to_string(),
