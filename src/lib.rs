@@ -5,7 +5,7 @@ pub mod dbc_error;
 pub mod dbc_message;
 pub mod dbc_signal;
 pub mod dbc_signal_value_table;
-pub mod dbc_version;
 pub mod network;
 pub mod network_ast;
 pub mod new_symbols;
+pub mod version;

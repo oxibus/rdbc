@@ -10,17 +10,17 @@ use std::fmt;
 ///
 /// Format: `VERSION "<VersionIdentifier>"`
 #[derive(PartialEq, Debug, Clone)]
-pub struct DbcVersion(pub String);
+pub struct Version(pub String);
 
-impl fmt::Display for DbcVersion {
+impl fmt::Display for Version {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "VERSION \"{}\"", self.0)
     }
 }
 
-pub fn dbc_version(input: &str) -> IResult<&str, DbcVersion, DbcParseError> {
+pub fn parser_version(input: &str) -> IResult<&str, Version, DbcParseError> {
     let res = map(preceded(spacey(tag("VERSION")), string_literal), |s| {
-        DbcVersion(s)
+        Version(s)
     })(input);
     match res {
         Ok((remain, version)) => {
@@ -39,15 +39,26 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_dbc_version() {
+    fn test_dbc_version_01() {
         assert_eq!(
-            dbc_version("VERSION \"1.0.0\""),
-            Ok(("", DbcVersion("1.0.0".into())))
+            parser_version("VERSION \"1.0.0\""),
+            Ok(("", Version("1.0.0".into())))
         );
+    }
 
+    #[test]
+    fn test_dbc_version_02() {
         assert_eq!(
-            dbc_version("VERSION  \"3.0.1\""),
-            Ok(("", DbcVersion("3.0.1".into())))
+            parser_version("VERSION  \"3.0.1\""),
+            Ok(("", Version("3.0.1".into())))
+        );
+    }
+
+    #[test]
+    fn test_dbc_version_03() {
+        assert_eq!(
+            parser_version("VERSION        \"9\""),
+            Ok(("", Version("9".into())))
         );
     }
 }

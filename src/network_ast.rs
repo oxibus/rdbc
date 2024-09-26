@@ -6,10 +6,10 @@ use super::dbc_common_parsers::*;
 use super::dbc_error::DbcParseError;
 use super::dbc_message::*;
 use super::dbc_signal_value_table::*;
-use super::dbc_version::dbc_version;
-use super::dbc_version::DbcVersion;
 use super::new_symbols::parser_new_symbols;
 use super::new_symbols::NewSymbols;
+use super::version::parser_version;
+use super::version::Version;
 use nom::combinator::all_consuming;
 use nom::combinator::map;
 use nom::multi::many0;
@@ -20,7 +20,7 @@ use std::fmt;
 #[derive(PartialEq, Debug, Clone)]
 pub struct NetworkAst {
     // VERSION "xxx"
-    pub version: DbcVersion,
+    pub version: Version,
 
     // NS_:
     pub new_symbols: NewSymbols,
@@ -56,7 +56,7 @@ impl fmt::Display for NetworkAst {
 pub fn dbc_value(input: &str) -> IResult<&str, NetworkAst, DbcParseError> {
     map(
         multispacey(tuple((
-            multispacey(dbc_version),
+            multispacey(parser_version),
             multispacey(parser_new_symbols),
             multispacey(dbc_bus_configuration),
             multispacey(dbc_can_nodes),
@@ -116,7 +116,7 @@ BO_ 112 MM5_10_TX1: 8 DRS_MM5_10
 "#
             ),
             Ok(NetworkAst {
-                version: DbcVersion("1.0".into()),
+                version: Version("1.0".into()),
                 new_symbols: NewSymbols(vec!["BS_".into(), "CM_".into()]),
                 bus_configuration: Some(DbcBusConfiguration(None)),
                 can_nodes: DbcCanNodes(vec!["ABS".into(), "DRS_MM5_10".into()]),
@@ -201,7 +201,7 @@ BO_ 112 MM5_10_TX1: 8 DRS_MM5_10
 "#
             ),
             Ok(NetworkAst {
-                version: DbcVersion("1.0".into()),
+                version: Version("1.0".into()),
                 new_symbols: NewSymbols(vec!["BS_".into(), "CM_".into()]),
                 bus_configuration: Some(DbcBusConfiguration(None)),
                 can_nodes: DbcCanNodes(vec!["ABS".into(), "DRS_MM5_10".into()]),
