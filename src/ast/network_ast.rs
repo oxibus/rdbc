@@ -3,11 +3,11 @@ use super::bit_timing::BitTiming;
 use super::dbc_common_parsers::*;
 use super::dbc_error::DbcParseError;
 use super::dbc_message::*;
-use super::dbc_signal_value_table::*;
 use super::new_symbols::parser_new_symbols;
 use super::new_symbols::NewSymbols;
 use super::nodes::parser_nodes;
 use super::nodes::Nodes;
+use super::value_tables::*;
 use super::version::parser_version;
 use super::version::Version;
 use nom::combinator::all_consuming;
@@ -32,7 +32,7 @@ pub struct NetworkAst {
     pub can_nodes: Nodes,
 
     // VAL_TABLE_
-    pub signal_value_tables: Option<Vec<DbcSignalValueTable>>,
+    pub signal_value_tables: Option<Vec<ValueTable>>,
 
     // BO_
     pub messages: Vec<DbcMessage>,
@@ -60,7 +60,7 @@ pub fn dbc_value(input: &str) -> IResult<&str, NetworkAst, DbcParseError> {
             multispacey(parser_new_symbols),
             multispacey(parser_bit_timing),
             multispacey(parser_nodes),
-            multispacey(dbc_signal_value_tables),
+            multispacey(parser_value_tables),
             multispacey(many0(dbc_message)),
         ))),
         |(version, new_symbols, bus_configuration, can_nodes, signal_value_tables, messages)| {
@@ -206,50 +206,50 @@ BO_ 112 MM5_10_TX1: 8 DRS_MM5_10
                 bus_configuration: Some(BitTiming { value: None }),
                 can_nodes: Nodes(vec!["ABS".into(), "DRS_MM5_10".into()]),
                 signal_value_tables: Some(vec![
-                    DbcSignalValueTable {
+                    ValueTable {
                         name: "ABS_fault_info".to_string(),
-                        values: DbcSignalValueTableList {
+                        values: ValueDescriptions {
                             values: vec![
-                                DbcSignalValueTableListItem {
+                                ValueDescriptionItem {
                                     num: 2,
                                     str: "active faults stored".to_string()
                                 },
-                                DbcSignalValueTableListItem {
+                                ValueDescriptionItem {
                                     num: 1,
                                     str: "inactive faults stored".to_string()
                                 },
-                                DbcSignalValueTableListItem {
+                                ValueDescriptionItem {
                                     num: 0,
                                     str: "no faults stored".to_string()
                                 }
                             ]
                         }
                     },
-                    DbcSignalValueTable {
+                    ValueTable {
                         name: "vt_WheelSpeedQualifier".to_string(),
-                        values: DbcSignalValueTableList {
+                        values: ValueDescriptions {
                             values: vec![
-                                DbcSignalValueTableListItem {
+                                ValueDescriptionItem {
                                     num: 5,
                                     str: "InvalidUnderVoltage".to_string()
                                 },
-                                DbcSignalValueTableListItem {
+                                ValueDescriptionItem {
                                     num: 4,
                                     str: "NotCalculated".to_string()
                                 },
-                                DbcSignalValueTableListItem {
+                                ValueDescriptionItem {
                                     num: 3,
                                     str: "ReducedMonitored".to_string()
                                 },
-                                DbcSignalValueTableListItem {
+                                ValueDescriptionItem {
                                     num: 2,
                                     str: "Faulty".to_string()
                                 },
-                                DbcSignalValueTableListItem {
+                                ValueDescriptionItem {
                                     num: 1,
                                     str: "Normal".to_string()
                                 },
-                                DbcSignalValueTableListItem {
+                                ValueDescriptionItem {
                                     num: 0,
                                     str: "NotInitialized".to_string()
                                 }
