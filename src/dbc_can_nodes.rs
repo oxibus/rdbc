@@ -45,27 +45,32 @@ pub fn dbc_can_nodes(input: &str) -> IResult<&str, DbcCanNodes, DbcParseError> {
     }
 }
 
-#[test]
-fn test_dbc_can_nodes() {
-    assert_eq!(
-        dbc_can_nodes(
-            r#"BU_: ABS DRS_MM5_10
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_dbc_can_nodes() {
+        assert_eq!(
+            dbc_can_nodes(
+                r#"BU_: ABS DRS_MM5_10
 
 "#
-        ),
-        Ok(("", DbcCanNodes(vec!["ABS".into(), "DRS_MM5_10".into()]))),
-    );
+            ),
+            Ok(("", DbcCanNodes(vec!["ABS".into(), "DRS_MM5_10".into()]))),
+        );
 
-    assert_eq!(
-        dbc_can_nodes(r#"BU_:Matrix"#),
-        Ok(("", DbcCanNodes(vec!["Matrix".into()]))),
-    );
+        assert_eq!(
+            dbc_can_nodes(r#"BU_:Matrix"#),
+            Ok(("", DbcCanNodes(vec!["Matrix".into()]))),
+        );
 
-    assert_eq!(
-        dbc_can_nodes(r#"BU_: Node2 Node1 Node0"#),
-        Ok((
-            "",
-            DbcCanNodes(vec!["Node2".into(), "Node1".into(), "Node0".into()])
-        )),
-    );
+        assert_eq!(
+            dbc_can_nodes(r#"BU_: Node2 Node1 Node0"#),
+            Ok((
+                "",
+                DbcCanNodes(vec!["Node2".into(), "Node1".into(), "Node0".into()])
+            )),
+        );
+    }
 }

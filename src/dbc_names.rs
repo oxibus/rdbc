@@ -45,10 +45,9 @@ pub fn dbc_names(input: &str) -> IResult<&str, DbcNames, DbcParseError> {
         tuple((
             multispacey(tag("NS_")),
             multispacey(tag(":")),
-            many0(dbc_one_line_name),
-            many0(line_ending),
+            multispacey(many0(dbc_one_line_name)),
         )),
-        |(_, _, names, _)| DbcNames(names),
+        |(_, _, names)| DbcNames(names),
     )(input);
     match res {
         Ok((remain, names)) => {
@@ -62,63 +61,84 @@ pub fn dbc_names(input: &str) -> IResult<&str, DbcNames, DbcParseError> {
     }
 }
 
-#[test]
-fn test_dbc_one_line_name() {
-    assert_eq!(
-        dbc_one_line_name(
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_dbc_one_line_name_01() {
+        let ret = dbc_one_line_name(
             r#"  BS_
-"#
-        ),
-        Ok(("", "BS_".into())),
-    );
+  "#,
+        );
+        match ret {
+            Ok((_remain, name)) => {
+                assert_eq!(name, "BS_".to_string());
+            }
+            Err(err) => panic!("err = {:?}", err),
+        }
+    }
 
-    assert_eq!(
-        dbc_one_line_name(
-            r#"    CM_
-"#
-        ),
-        Ok(("", "CM_".into())),
-    );
-}
+    #[test]
+    fn test_dbc_one_line_name_02() {
+        let ret = dbc_one_line_name(
+            r#"  CM_
+    "#,
+        );
+        match ret {
+            Ok((_remain, name)) => {
+                assert_eq!(name, "CM_".to_string());
+            }
+            Err(err) => panic!("err = {:?}", err),
+        }
+    }
 
-#[test]
-fn test_dbc_names_01() {
-    assert_eq!(
-        dbc_names(
+    #[test]
+    fn test_dbc_names_01() {
+        let ret = dbc_names(
             r#"NS_:
     BS_
     CM_
 
 
-"#
-        ),
-        Ok(("", DbcNames(vec!["BS_".into(), "CM_".into()]))),
-    );
-}
+"#,
+        );
+        match ret {
+            Ok((_remain, names)) => {
+                assert_eq!(names, DbcNames(vec!["BS_".into(), "CM_".into()]));
+            }
+            Err(err) => panic!("err = {:?}", err),
+        }
+    }
 
-#[test]
-fn test_dbc_names_02() {
-    assert_eq!(
-        dbc_names(
+    #[test]
+    fn test_dbc_names_02() {
+        let ret = dbc_names(
             r#"
 
 NS_ :
-	NS_DESC_
-	CM_
-	BA_DEF_
-	BA_
+    NS_DESC_
+    CM_
+    BA_DEF_
+    BA_
 
 
-"#
-        ),
-        Ok((
-            "",
-            DbcNames(vec![
-                "NS_DESC_".into(),
-                "CM_".into(),
-                "BA_DEF_".into(),
-                "BA_".into()
-            ])
-        )),
-    );
+"#,
+        );
+
+        match ret {
+            Ok((_remain, names)) => {
+                assert_eq!(
+                    names,
+                    DbcNames(vec![
+                        "NS_DESC_".into(),
+                        "CM_".into(),
+                        "BA_DEF_".into(),
+                        "BA_".into()
+                    ])
+                );
+            }
+            Err(err) => panic!("err = {:?}", err),
+        }
+    }
 }

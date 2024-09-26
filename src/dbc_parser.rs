@@ -7,7 +7,6 @@ use super::dbc_error::DbcParseError;
 use super::dbc_message::*;
 use super::dbc_names::dbc_names;
 use super::dbc_names::DbcNames;
-use super::dbc_signal::*;
 use super::dbc_signal_value_table::*;
 use super::dbc_version::dbc_version;
 use super::dbc_version::DbcVersion;
@@ -87,11 +86,16 @@ pub fn parse_dbc(input: &str) -> Result<OneDbc, DbcParseError> {
     Ok(result)
 }
 
-#[test]
-fn test_dbc_01() {
-    assert_eq!(
-        parse_dbc(
-            r#"VERSION "1.0"
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::dbc_signal;
+
+    #[test]
+    fn test_dbc_01() {
+        assert_eq!(
+            parse_dbc(
+                r#"VERSION "1.0"
 
 
 NS_:
@@ -108,71 +112,71 @@ BO_ 112 MM5_10_TX1: 8 DRS_MM5_10
  SG_ AY1 : 32|16@1+ (0.000127465,-4.1768) [-4.1768|4.1765] "g"  ABS
 
 "#
-        ),
-        Ok(OneDbc {
-            version: DbcVersion("1.0".into()),
-            names: DbcNames(vec!["BS_".into(), "CM_".into()]),
-            bus_configuration: Some(DbcBusConfiguration(None)),
-            can_nodes: DbcCanNodes(vec!["ABS".into(), "DRS_MM5_10".into()]),
-            signal_value_tables: None,
-            messages: vec![
-                DbcMessage {
-                    header: DbcMessageHeader {
-                        can_id: 117,
-                        name: "DRS_RX_ID0".into(),
-                        length: 8,
-                        sending_node: "ABS".into(),
-                    },
-                    signals: vec![],
-                },
-                DbcMessage {
-                    header: DbcMessageHeader {
-                        can_id: 112,
-                        name: "MM5_10_TX1".into(),
-                        length: 8,
-                        sending_node: "DRS_MM5_10".into(),
-                    },
-                    signals: vec![
-                        DbcSignal {
-                            name: "Yaw_Rate".into(),
-                            multiplexer: None,
-                            start_bit: 0,
-                            length: 16,
-                            endianness: DbcSignalEndianness::LittleEndian,
-                            signed: DbcSignalSigned::Unsigned,
-                            factor: 0.005,
-                            offset: -163.84,
-                            min: Some(-163.84),
-                            max: Some(163.83),
-                            unit: Some("°/s".into()),
-                            receiving_nodes: Some(vec!["ABS".into()]),
+            ),
+            Ok(OneDbc {
+                version: DbcVersion("1.0".into()),
+                names: DbcNames(vec!["BS_".into(), "CM_".into()]),
+                bus_configuration: Some(DbcBusConfiguration(None)),
+                can_nodes: DbcCanNodes(vec!["ABS".into(), "DRS_MM5_10".into()]),
+                signal_value_tables: None,
+                messages: vec![
+                    DbcMessage {
+                        header: DbcMessageHeader {
+                            can_id: 117,
+                            name: "DRS_RX_ID0".into(),
+                            length: 8,
+                            sending_node: "ABS".into(),
                         },
-                        DbcSignal {
-                            name: "AY1".into(),
-                            multiplexer: None,
-                            start_bit: 32,
-                            length: 16,
-                            endianness: DbcSignalEndianness::LittleEndian,
-                            signed: DbcSignalSigned::Unsigned,
-                            factor: 0.000127465,
-                            offset: -4.1768,
-                            min: Some(-4.1768),
-                            max: Some(4.1765),
-                            unit: Some("g".into()),
-                            receiving_nodes: Some(vec!["ABS".into()]),
-                        }
-                    ],
-                },
-            ],
-        }),
-    );
-}
+                        signals: vec![],
+                    },
+                    DbcMessage {
+                        header: DbcMessageHeader {
+                            can_id: 112,
+                            name: "MM5_10_TX1".into(),
+                            length: 8,
+                            sending_node: "DRS_MM5_10".into(),
+                        },
+                        signals: vec![
+                            dbc_signal::DbcSignal {
+                                name: "Yaw_Rate".into(),
+                                multiplexer: None,
+                                start_bit: 0,
+                                length: 16,
+                                endianness: dbc_signal::DbcSignalEndianness::LittleEndian,
+                                signed: dbc_signal::DbcSignalSigned::Unsigned,
+                                factor: 0.005,
+                                offset: -163.84,
+                                min: Some(-163.84),
+                                max: Some(163.83),
+                                unit: Some("°/s".into()),
+                                receiving_nodes: Some(vec!["ABS".into()]),
+                            },
+                            dbc_signal::DbcSignal {
+                                name: "AY1".into(),
+                                multiplexer: None,
+                                start_bit: 32,
+                                length: 16,
+                                endianness: dbc_signal::DbcSignalEndianness::LittleEndian,
+                                signed: dbc_signal::DbcSignalSigned::Unsigned,
+                                factor: 0.000127465,
+                                offset: -4.1768,
+                                min: Some(-4.1768),
+                                max: Some(4.1765),
+                                unit: Some("g".into()),
+                                receiving_nodes: Some(vec!["ABS".into()]),
+                            }
+                        ],
+                    },
+                ],
+            }),
+        );
+    }
 
-#[test]
-fn test_dbc_02() {
-    assert_eq!(
-        parse_dbc(
-            r#"VERSION "1.0"
+    #[test]
+    fn test_dbc_02() {
+        assert_eq!(
+            parse_dbc(
+                r#"VERSION "1.0"
 
 
 NS_:
@@ -193,113 +197,114 @@ BO_ 112 MM5_10_TX1: 8 DRS_MM5_10
  SG_ AY1 : 32|16@1+ (0.000127465,-4.1768) [-4.1768|4.1765] "g"  ABS
 
 "#
-        ),
-        Ok(OneDbc {
-            version: DbcVersion("1.0".into()),
-            names: DbcNames(vec!["BS_".into(), "CM_".into()]),
-            bus_configuration: Some(DbcBusConfiguration(None)),
-            can_nodes: DbcCanNodes(vec!["ABS".into(), "DRS_MM5_10".into()]),
-            signal_value_tables: Some(vec![
-                DbcSignalValueTable {
-                    name: "ABS_fault_info".to_string(),
-                    values: DbcSignalValueTableList {
-                        values: vec![
-                            DbcSignalValueTableListItem {
-                                num: 2,
-                                str: "active faults stored".to_string()
-                            },
-                            DbcSignalValueTableListItem {
-                                num: 1,
-                                str: "inactive faults stored".to_string()
-                            },
-                            DbcSignalValueTableListItem {
-                                num: 0,
-                                str: "no faults stored".to_string()
-                            }
-                        ]
-                    }
-                },
-                DbcSignalValueTable {
-                    name: "vt_WheelSpeedQualifier".to_string(),
-                    values: DbcSignalValueTableList {
-                        values: vec![
-                            DbcSignalValueTableListItem {
-                                num: 5,
-                                str: "InvalidUnderVoltage".to_string()
-                            },
-                            DbcSignalValueTableListItem {
-                                num: 4,
-                                str: "NotCalculated".to_string()
-                            },
-                            DbcSignalValueTableListItem {
-                                num: 3,
-                                str: "ReducedMonitored".to_string()
-                            },
-                            DbcSignalValueTableListItem {
-                                num: 2,
-                                str: "Faulty".to_string()
-                            },
-                            DbcSignalValueTableListItem {
-                                num: 1,
-                                str: "Normal".to_string()
-                            },
-                            DbcSignalValueTableListItem {
-                                num: 0,
-                                str: "NotInitialized".to_string()
-                            }
-                        ]
-                    }
-                }
-            ]),
-            messages: vec![
-                DbcMessage {
-                    header: DbcMessageHeader {
-                        can_id: 117,
-                        name: "DRS_RX_ID0".into(),
-                        length: 8,
-                        sending_node: "ABS".into(),
-                    },
-                    signals: vec![],
-                },
-                DbcMessage {
-                    header: DbcMessageHeader {
-                        can_id: 112,
-                        name: "MM5_10_TX1".into(),
-                        length: 8,
-                        sending_node: "DRS_MM5_10".into(),
-                    },
-                    signals: vec![
-                        DbcSignal {
-                            name: "Yaw_Rate".into(),
-                            multiplexer: None,
-                            start_bit: 0,
-                            length: 16,
-                            endianness: DbcSignalEndianness::LittleEndian,
-                            signed: DbcSignalSigned::Unsigned,
-                            factor: 0.005,
-                            offset: -163.84,
-                            min: Some(-163.84),
-                            max: Some(163.83),
-                            unit: Some("°/s".into()),
-                            receiving_nodes: Some(vec!["ABS".into()]),
-                        },
-                        DbcSignal {
-                            name: "AY1".into(),
-                            multiplexer: None,
-                            start_bit: 32,
-                            length: 16,
-                            endianness: DbcSignalEndianness::LittleEndian,
-                            signed: DbcSignalSigned::Unsigned,
-                            factor: 0.000127465,
-                            offset: -4.1768,
-                            min: Some(-4.1768),
-                            max: Some(4.1765),
-                            unit: Some("g".into()),
-                            receiving_nodes: Some(vec!["ABS".into()]),
+            ),
+            Ok(OneDbc {
+                version: DbcVersion("1.0".into()),
+                names: DbcNames(vec!["BS_".into(), "CM_".into()]),
+                bus_configuration: Some(DbcBusConfiguration(None)),
+                can_nodes: DbcCanNodes(vec!["ABS".into(), "DRS_MM5_10".into()]),
+                signal_value_tables: Some(vec![
+                    DbcSignalValueTable {
+                        name: "ABS_fault_info".to_string(),
+                        values: DbcSignalValueTableList {
+                            values: vec![
+                                DbcSignalValueTableListItem {
+                                    num: 2,
+                                    str: "active faults stored".to_string()
+                                },
+                                DbcSignalValueTableListItem {
+                                    num: 1,
+                                    str: "inactive faults stored".to_string()
+                                },
+                                DbcSignalValueTableListItem {
+                                    num: 0,
+                                    str: "no faults stored".to_string()
+                                }
+                            ]
                         }
-                    ],
-                },
-            ],
-        }),
-    );
+                    },
+                    DbcSignalValueTable {
+                        name: "vt_WheelSpeedQualifier".to_string(),
+                        values: DbcSignalValueTableList {
+                            values: vec![
+                                DbcSignalValueTableListItem {
+                                    num: 5,
+                                    str: "InvalidUnderVoltage".to_string()
+                                },
+                                DbcSignalValueTableListItem {
+                                    num: 4,
+                                    str: "NotCalculated".to_string()
+                                },
+                                DbcSignalValueTableListItem {
+                                    num: 3,
+                                    str: "ReducedMonitored".to_string()
+                                },
+                                DbcSignalValueTableListItem {
+                                    num: 2,
+                                    str: "Faulty".to_string()
+                                },
+                                DbcSignalValueTableListItem {
+                                    num: 1,
+                                    str: "Normal".to_string()
+                                },
+                                DbcSignalValueTableListItem {
+                                    num: 0,
+                                    str: "NotInitialized".to_string()
+                                }
+                            ]
+                        }
+                    }
+                ]),
+                messages: vec![
+                    DbcMessage {
+                        header: DbcMessageHeader {
+                            can_id: 117,
+                            name: "DRS_RX_ID0".into(),
+                            length: 8,
+                            sending_node: "ABS".into(),
+                        },
+                        signals: vec![],
+                    },
+                    DbcMessage {
+                        header: DbcMessageHeader {
+                            can_id: 112,
+                            name: "MM5_10_TX1".into(),
+                            length: 8,
+                            sending_node: "DRS_MM5_10".into(),
+                        },
+                        signals: vec![
+                            dbc_signal::DbcSignal {
+                                name: "Yaw_Rate".into(),
+                                multiplexer: None,
+                                start_bit: 0,
+                                length: 16,
+                                endianness: dbc_signal::DbcSignalEndianness::LittleEndian,
+                                signed: dbc_signal::DbcSignalSigned::Unsigned,
+                                factor: 0.005,
+                                offset: -163.84,
+                                min: Some(-163.84),
+                                max: Some(163.83),
+                                unit: Some("°/s".into()),
+                                receiving_nodes: Some(vec!["ABS".into()]),
+                            },
+                            dbc_signal::DbcSignal {
+                                name: "AY1".into(),
+                                multiplexer: None,
+                                start_bit: 32,
+                                length: 16,
+                                endianness: dbc_signal::DbcSignalEndianness::LittleEndian,
+                                signed: dbc_signal::DbcSignalSigned::Unsigned,
+                                factor: 0.000127465,
+                                offset: -4.1768,
+                                min: Some(-4.1768),
+                                max: Some(4.1765),
+                                unit: Some("g".into()),
+                                receiving_nodes: Some(vec!["ABS".into()]),
+                            }
+                        ],
+                    },
+                ],
+            }),
+        );
+    }
 }

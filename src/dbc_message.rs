@@ -88,162 +88,167 @@ pub fn dbc_message(input: &str) -> IResult<&str, DbcMessage, DbcParseError> {
     )(input)
 }
 
-#[test]
-fn test_dbc_message_header_01() {
-    assert_eq!(
-        dbc_message_header(r#"BO_ 2348941054 Normal: 8 Vector__XXX"#),
-        Ok((
-            "",
-            DbcMessageHeader {
-                can_id: 2348941054,
-                name: "Normal".into(),
-                length: 8,
-                sending_node: "Vector__XXX".into(),
-            }
-        )),
-    );
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-#[test]
-fn test_dbc_message_header_02() {
-    assert_eq!(
-        dbc_message_header(r#"BO_ 2147487969 CANMultiplexed: 2 Node0"#),
-        Ok((
-            "",
-            DbcMessageHeader {
-                can_id: 2147487969,
-                name: "CANMultiplexed".into(),
-                length: 2,
-                sending_node: "Node0".into(),
-            }
-        )),
-    );
-}
+    #[test]
+    fn test_dbc_message_header_01() {
+        assert_eq!(
+            dbc_message_header(r#"BO_ 2348941054 Normal: 8 Vector__XXX"#),
+            Ok((
+                "",
+                DbcMessageHeader {
+                    can_id: 2348941054,
+                    name: "Normal".into(),
+                    length: 8,
+                    sending_node: "Vector__XXX".into(),
+                }
+            )),
+        );
+    }
 
-#[test]
-fn test_dbc_message_header_03() {
-    assert_eq!(
-        dbc_message_header(r#"BO_ 1234 CANMessage: 8 Node0"#),
-        Ok((
-            "",
-            DbcMessageHeader {
-                can_id: 1234,
-                name: "CANMessage".into(),
-                length: 8,
-                sending_node: "Node0".into(),
-            }
-        )),
-    );
-}
+    #[test]
+    fn test_dbc_message_header_02() {
+        assert_eq!(
+            dbc_message_header(r#"BO_ 2147487969 CANMultiplexed: 2 Node0"#),
+            Ok((
+                "",
+                DbcMessageHeader {
+                    can_id: 2147487969,
+                    name: "CANMultiplexed".into(),
+                    length: 2,
+                    sending_node: "Node0".into(),
+                }
+            )),
+        );
+    }
 
-#[test]
-fn test_dbc_message_header_04() {
-    assert_eq!(
-        dbc_message_header(r#"BO_ 835 BREMSE_33: 8 ABS"#),
-        Ok((
-            "",
-            DbcMessageHeader {
-                can_id: 835,
-                name: "BREMSE_33".into(),
-                length: 8,
-                sending_node: "ABS".into(),
-            }
-        )),
-    );
-}
+    #[test]
+    fn test_dbc_message_header_03() {
+        assert_eq!(
+            dbc_message_header(r#"BO_ 1234 CANMessage: 8 Node0"#),
+            Ok((
+                "",
+                DbcMessageHeader {
+                    can_id: 1234,
+                    name: "CANMessage".into(),
+                    length: 8,
+                    sending_node: "Node0".into(),
+                }
+            )),
+        );
+    }
 
-#[test]
-fn test_dbc_message_header_05() {
-    assert_eq!(
-        dbc_message_header(r#"BO_ 117 DRS_RX_ID0: 8 ABS"#),
-        Ok((
-            "",
-            DbcMessageHeader {
-                can_id: 117,
-                name: "DRS_RX_ID0".into(),
-                length: 8,
-                sending_node: "ABS".into(),
-            }
-        )),
-    );
-}
+    #[test]
+    fn test_dbc_message_header_04() {
+        assert_eq!(
+            dbc_message_header(r#"BO_ 835 BREMSE_33: 8 ABS"#),
+            Ok((
+                "",
+                DbcMessageHeader {
+                    can_id: 835,
+                    name: "BREMSE_33".into(),
+                    length: 8,
+                    sending_node: "ABS".into(),
+                }
+            )),
+        );
+    }
 
-#[test]
-fn test_dbc_message_header_06() {
-    assert_eq!(
-        dbc_message_header(r#"BO_ 1 M1: 8 FOO"#),
-        Ok((
-            "",
-            DbcMessageHeader {
-                can_id: 1,
-                name: "M1".into(),
-                length: 8,
-                sending_node: "FOO".into(),
-            }
-        )),
-    );
-}
+    #[test]
+    fn test_dbc_message_header_05() {
+        assert_eq!(
+            dbc_message_header(r#"BO_ 117 DRS_RX_ID0: 8 ABS"#),
+            Ok((
+                "",
+                DbcMessageHeader {
+                    can_id: 117,
+                    name: "DRS_RX_ID0".into(),
+                    length: 8,
+                    sending_node: "ABS".into(),
+                }
+            )),
+        );
+    }
 
-#[test]
-fn test_dbc_message_header_07() {
-    assert_eq!(
-        dbc_message_header(r#"BO_ 1234 INV2EventMsg1: 8 Inv2"#),
-        Ok((
-            "",
-            DbcMessageHeader {
-                can_id: 1234,
-                name: "INV2EventMsg1".into(),
-                length: 8,
-                sending_node: "Inv2".into(),
-            }
-        )),
-    );
-}
+    #[test]
+    fn test_dbc_message_header_06() {
+        assert_eq!(
+            dbc_message_header(r#"BO_ 1 M1: 8 FOO"#),
+            Ok((
+                "",
+                DbcMessageHeader {
+                    can_id: 1,
+                    name: "M1".into(),
+                    length: 8,
+                    sending_node: "FOO".into(),
+                }
+            )),
+        );
+    }
 
-#[test]
-fn test_dbc_message_header_08() {
-    assert_eq!(
-        dbc_message_header(r#"BO_ 83 Message_2: 8 ECU2"#),
-        Ok((
-            "",
-            DbcMessageHeader {
-                can_id: 83,
-                name: "Message_2".into(),
-                length: 8,
-                sending_node: "ECU2".into(),
-            }
-        )),
-    );
-}
+    #[test]
+    fn test_dbc_message_header_07() {
+        assert_eq!(
+            dbc_message_header(r#"BO_ 1234 INV2EventMsg1: 8 Inv2"#),
+            Ok((
+                "",
+                DbcMessageHeader {
+                    can_id: 1234,
+                    name: "INV2EventMsg1".into(),
+                    length: 8,
+                    sending_node: "Inv2".into(),
+                }
+            )),
+        );
+    }
 
-#[test]
-fn test_dbc_message_header_09() {
-    assert_eq!(
-        dbc_message_header(r#"BO_ 2147483705 TheMessage: 8 Vector__XXX"#),
-        Ok((
-            "",
-            DbcMessageHeader {
-                can_id: 2147483705,
-                name: "TheMessage".into(),
-                length: 8,
-                sending_node: "Vector__XXX".into(),
-            }
-        )),
-    );
-}
+    #[test]
+    fn test_dbc_message_header_08() {
+        assert_eq!(
+            dbc_message_header(r#"BO_ 83 Message_2: 8 ECU2"#),
+            Ok((
+                "",
+                DbcMessageHeader {
+                    can_id: 83,
+                    name: "Message_2".into(),
+                    length: 8,
+                    sending_node: "ECU2".into(),
+                }
+            )),
+        );
+    }
 
-#[test]
-fn test_dbc_message_header_10() {
-    assert_eq!(
-        dbc_message_header(r#"BO_ 1 Message1: 1 Vector__XXX"#),
-        Ok((
-            "",
-            DbcMessageHeader {
-                can_id: 1,
-                name: "Message1".into(),
-                length: 1,
-                sending_node: "Vector__XXX".into(),
-            }
-        )),
-    );
+    #[test]
+    fn test_dbc_message_header_09() {
+        assert_eq!(
+            dbc_message_header(r#"BO_ 2147483705 TheMessage: 8 Vector__XXX"#),
+            Ok((
+                "",
+                DbcMessageHeader {
+                    can_id: 2147483705,
+                    name: "TheMessage".into(),
+                    length: 8,
+                    sending_node: "Vector__XXX".into(),
+                }
+            )),
+        );
+    }
+
+    #[test]
+    fn test_dbc_message_header_10() {
+        assert_eq!(
+            dbc_message_header(r#"BO_ 1 Message1: 1 Vector__XXX"#),
+            Ok((
+                "",
+                DbcMessageHeader {
+                    can_id: 1,
+                    name: "Message1".into(),
+                    length: 1,
+                    sending_node: "Vector__XXX".into(),
+                }
+            )),
+        );
+    }
 }

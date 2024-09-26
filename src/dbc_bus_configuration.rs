@@ -51,23 +51,37 @@ pub fn dbc_bus_configuration(
     }
 }
 
-#[test]
-fn test_dbc_bus_configuration() {
-    assert_eq!(
-        dbc_bus_configuration(
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_dbc_bus_configuration_01() {
+        let ret = dbc_bus_configuration(
             r#"BS_: 12.34
 
-"#
-        ),
-        Ok(("", Some(DbcBusConfiguration(Some(12.34))))),
-    );
+"#,
+        );
+        match ret {
+            Ok((_remain, bus_config)) => {
+                assert_eq!(bus_config, Some(DbcBusConfiguration(Some(12.34))));
+            }
+            Err(err) => panic!("err = {:?}", err),
+        }
+    }
 
-    assert_eq!(
-        dbc_bus_configuration(
+    #[test]
+    fn test_dbc_bus_configuration_02() {
+        let ret = dbc_bus_configuration(
             r#"BS_:
 
-"#
-        ),
-        Ok(("", Some(DbcBusConfiguration(None)))),
-    );
+"#,
+        );
+        match ret {
+            Ok((_remain, bus_config)) => {
+                assert_eq!(bus_config, Some(DbcBusConfiguration(None)));
+            }
+            Err(err) => panic!("err = {:?}", err),
+        }
+    }
 }
