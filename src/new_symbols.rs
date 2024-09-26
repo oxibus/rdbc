@@ -66,7 +66,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_dbc_one_line_name_01() {
+    fn test_parser_one_line_new_symbols_01() {
         let ret = parser_one_line_new_symbols(
             r#"  BS_
   "#,
@@ -80,7 +80,7 @@ mod tests {
     }
 
     #[test]
-    fn test_dbc_one_line_name_02() {
+    fn test_parser_one_line_new_symbols_02() {
         let ret = parser_one_line_new_symbols(
             r#"  CM_
     "#,
@@ -94,7 +94,7 @@ mod tests {
     }
 
     #[test]
-    fn test_dbc_names_01() {
+    fn test_parser_new_symbols_01() {
         let ret = parser_new_symbols(
             r#"NS_:
     BS_
@@ -112,7 +112,7 @@ mod tests {
     }
 
     #[test]
-    fn test_dbc_names_02() {
+    fn test_parser_new_symbols_02() {
         let ret = parser_new_symbols(
             r#"
 
