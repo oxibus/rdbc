@@ -247,138 +247,158 @@ pub fn dbc_signal(input: &str) -> IResult<&str, DbcSignal, DbcParseError> {
     }
 }
 
-#[test]
-fn test_dbc_signal_multiplexer_01() {
-    assert_eq!(
-        dbc_signal_multiplexer(r#"M"#),
-        Ok(("", DbcSignalMultiplexer::M)),
-    );
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-#[test]
-fn test_dbc_signal_multiplexer_02() {
-    assert_eq!(
-        dbc_signal_multiplexer(r#"m0"#),
-        Ok(("", DbcSignalMultiplexer::MultiplexerIdentifier(0))),
-    );
-}
+    #[test]
+    fn test_dbc_signal_multiplexer_01() {
+        assert_eq!(
+            dbc_signal_multiplexer(r#"M"#),
+            Ok(("", DbcSignalMultiplexer::M)),
+        );
+    }
 
-#[test]
-fn test_dbc_signal_multiplexer_03() {
-    assert_eq!(
-        dbc_signal_multiplexer(r#"m123"#),
-        Ok(("", DbcSignalMultiplexer::MultiplexerIdentifier(123))),
-    );
-}
+    #[test]
+    fn test_dbc_signal_multiplexer_02() {
+        assert_eq!(
+            dbc_signal_multiplexer(r#"m0"#),
+            Ok(("", DbcSignalMultiplexer::MultiplexerIdentifier(0))),
+        );
+    }
 
-#[test]
-fn test_dbc_signal_01() {
-    assert_eq!(
-        dbc_signal(
+    #[test]
+    fn test_dbc_signal_multiplexer_03() {
+        assert_eq!(
+            dbc_signal_multiplexer(r#"m123"#),
+            Ok(("", DbcSignalMultiplexer::MultiplexerIdentifier(123))),
+        );
+    }
+
+    #[test]
+    fn test_dbc_signal_01() {
+        let ret = dbc_signal(
             r#" SG_ AY1 : 32|16@1+ (0.000127465,-4.1768) [-4.1768|4.1765] "g"  ABS
 
-"#
-        ),
-        Ok((
-            "",
-            DbcSignal {
-                name: "AY1".into(),
-                multiplexer: None,
-                start_bit: 32,
-                length: 16,
-                endianness: DbcSignalEndianness::LittleEndian,
-                signed: DbcSignalSigned::Unsigned,
-                factor: 0.000127465,
-                offset: -4.1768,
-                min: Some(-4.1768),
-                max: Some(4.1765),
-                unit: Some("g".into()),
-                receiving_nodes: Some(vec!["ABS".into()]),
+"#,
+        );
+        match ret {
+            Ok((_remain, signal)) => {
+                assert_eq!(
+                    signal,
+                    DbcSignal {
+                        name: "AY1".into(),
+                        multiplexer: None,
+                        start_bit: 32,
+                        length: 16,
+                        endianness: DbcSignalEndianness::LittleEndian,
+                        signed: DbcSignalSigned::Unsigned,
+                        factor: 0.000127465,
+                        offset: -4.1768,
+                        min: Some(-4.1768),
+                        max: Some(4.1765),
+                        unit: Some("g".into()),
+                        receiving_nodes: Some(vec!["ABS".into()]),
+                    }
+                );
             }
-        )),
-    );
-}
+            Err(err) => panic!("err = {:?}", err),
+        }
+    }
 
-#[test]
-fn test_dbc_signal_02() {
-    assert_eq!(
-        dbc_signal(
+    #[test]
+    fn test_dbc_signal_02() {
+        let ret = dbc_signal(
             r#" SG_ S2 m0 : 8|8@1- (1.0,0.0) [0.0|0.0] "" Vector__XXX
 
-"#
-        ),
-        Ok((
-            "",
-            DbcSignal {
-                name: "S2".into(),
-                multiplexer: Some(DbcSignalMultiplexer::MultiplexerIdentifier(0)),
-                start_bit: 8,
-                length: 8,
-                endianness: DbcSignalEndianness::LittleEndian,
-                signed: DbcSignalSigned::Signed,
-                factor: 1.0,
-                offset: 0.0,
-                min: Some(0.0),
-                max: Some(0.0),
-                unit: Some("".into()),
-                receiving_nodes: Some(vec!["Vector__XXX".into()]),
-            }
-        )),
-    );
-}
+"#,
+        );
 
-#[test]
-fn test_dbc_signal_03() {
-    assert_eq!(
-        dbc_signal(
+        match ret {
+            Ok((_remain, signal)) => {
+                assert_eq!(
+                    signal,
+                    DbcSignal {
+                        name: "S2".into(),
+                        multiplexer: Some(DbcSignalMultiplexer::MultiplexerIdentifier(0)),
+                        start_bit: 8,
+                        length: 8,
+                        endianness: DbcSignalEndianness::LittleEndian,
+                        signed: DbcSignalSigned::Signed,
+                        factor: 1.0,
+                        offset: 0.0,
+                        min: Some(0.0),
+                        max: Some(0.0),
+                        unit: Some("".into()),
+                        receiving_nodes: Some(vec!["Vector__XXX".into()]),
+                    }
+                );
+            }
+            Err(err) => panic!("err = {:?}", err),
+        }
+    }
+
+    #[test]
+    fn test_dbc_signal_03() {
+        let ret = dbc_signal(
             r#" SG_ S2 m0 : 8|8@1- (1,0) [0|0] "" Vector__XXX
 
-"#
-        ),
-        Ok((
-            "",
-            DbcSignal {
-                name: "S2".into(),
-                multiplexer: Some(DbcSignalMultiplexer::MultiplexerIdentifier(0)),
-                start_bit: 8,
-                length: 8,
-                endianness: DbcSignalEndianness::LittleEndian,
-                signed: DbcSignalSigned::Signed,
-                factor: 1.0,
-                offset: 0.0,
-                min: Some(0.0),
-                max: Some(0.0),
-                unit: Some("".into()),
-                receiving_nodes: Some(vec!["Vector__XXX".into()]),
-            }
-        )),
-    );
-}
+"#,
+        );
 
-#[test]
-fn test_dbc_signal_04() {
-    assert_eq!(
-        dbc_signal(
+        match ret {
+            Ok((_remain, signal)) => {
+                assert_eq!(
+                    signal,
+                    DbcSignal {
+                        name: "S2".into(),
+                        multiplexer: Some(DbcSignalMultiplexer::MultiplexerIdentifier(0)),
+                        start_bit: 8,
+                        length: 8,
+                        endianness: DbcSignalEndianness::LittleEndian,
+                        signed: DbcSignalSigned::Signed,
+                        factor: 1.0,
+                        offset: 0.0,
+                        min: Some(0.0),
+                        max: Some(0.0),
+                        unit: Some("".into()),
+                        receiving_nodes: Some(vec!["Vector__XXX".into()]),
+                    }
+                );
+            }
+            Err(err) => panic!("err = {:?}", err),
+        }
+    }
+
+    #[test]
+    fn test_dbc_signal_04() {
+        let ret = dbc_signal(
             r#"  SG_ Signal1 : 32|32@1+ (100,0) [0|100] "%"  Node1,Node2
 
-"#
-        ),
-        Ok((
-            "",
-            DbcSignal {
-                name: "Signal1".into(),
-                multiplexer: None,
-                start_bit: 32,
-                length: 32,
-                endianness: DbcSignalEndianness::LittleEndian,
-                signed: DbcSignalSigned::Unsigned,
-                factor: 100.0,
-                offset: 0.0,
-                min: Some(0.0),
-                max: Some(100.0),
-                unit: Some("%".into()),
-                receiving_nodes: Some(vec!["Node1".into(), "Node2".into()]),
+"#,
+        );
+
+        match ret {
+            Ok((_remain, signal)) => {
+                assert_eq!(
+                    signal,
+                    DbcSignal {
+                        name: "Signal1".into(),
+                        multiplexer: None,
+                        start_bit: 32,
+                        length: 32,
+                        endianness: DbcSignalEndianness::LittleEndian,
+                        signed: DbcSignalSigned::Unsigned,
+                        factor: 100.0,
+                        offset: 0.0,
+                        min: Some(0.0),
+                        max: Some(100.0),
+                        unit: Some("%".into()),
+                        receiving_nodes: Some(vec!["Node1".into(), "Node2".into()]),
+                    }
+                );
             }
-        )),
-    );
+            Err(err) => panic!("err = {:?}", err),
+        }
+    }
 }

@@ -109,75 +109,49 @@ pub fn dbc_signal_value_tables(
     })(input)
 }
 
-#[test]
-fn test_dbc_signal_value_table_list_item_01() {
-    assert_eq!(
-        dbc_signal_value_table_list_item(r#"2 "active faults stored""#),
-        Ok((
-            "",
-            DbcSignalValueTableListItem {
-                num: 2,
-                str: "active faults stored".to_string()
-            }
-        )),
-    );
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-#[test]
-fn test_dbc_signal_value_table_list_01() {
-    assert_eq!(
-        dbc_signal_value_table_list(r#"2 "active faults stored""#),
-        Ok((
-            "",
-            DbcSignalValueTableList {
-                values: vec![DbcSignalValueTableListItem {
+    #[test]
+    fn test_dbc_signal_value_table_list_item_01() {
+        assert_eq!(
+            dbc_signal_value_table_list_item(r#"2 "active faults stored""#),
+            Ok((
+                "",
+                DbcSignalValueTableListItem {
                     num: 2,
                     str: "active faults stored".to_string()
-                }]
-            }
-        )),
-    );
-}
+                }
+            )),
+        );
+    }
 
-#[test]
-fn test_dbc_signal_value_table_list_02() {
-    assert_eq!(
-        dbc_signal_value_table_list(
-            r#" 2 "active faults stored" 1 "inactive faults stored" 0 "no faults stored" "#
-        ),
-        Ok((
-            "",
-            DbcSignalValueTableList {
-                values: vec![
-                    DbcSignalValueTableListItem {
+    #[test]
+    fn test_dbc_signal_value_table_list_01() {
+        assert_eq!(
+            dbc_signal_value_table_list(r#"2 "active faults stored""#),
+            Ok((
+                "",
+                DbcSignalValueTableList {
+                    values: vec![DbcSignalValueTableListItem {
                         num: 2,
                         str: "active faults stored".to_string()
-                    },
-                    DbcSignalValueTableListItem {
-                        num: 1,
-                        str: "inactive faults stored".to_string()
-                    },
-                    DbcSignalValueTableListItem {
-                        num: 0,
-                        str: "no faults stored".to_string()
-                    }
-                ]
-            }
-        )),
-    );
-}
+                    }]
+                }
+            )),
+        );
+    }
 
-#[test]
-fn test_dbc_signal_value_table_01() {
-    assert_eq!(
-        dbc_signal_value_table(
-            r#" VAL_TABLE_ ABS_fault_info 2 "active faults stored" 1 "inactive faults stored" 0 "no faults stored" ; "#
-        ),
-        Ok((
-            "",
-            DbcSignalValueTable {
-                name: "ABS_fault_info".to_string(),
-                values: DbcSignalValueTableList {
+    #[test]
+    fn test_dbc_signal_value_table_list_02() {
+        assert_eq!(
+            dbc_signal_value_table_list(
+                r#" 2 "active faults stored" 1 "inactive faults stored" 0 "no faults stored" "#
+            ),
+            Ok((
+                "",
+                DbcSignalValueTableList {
                     values: vec![
                         DbcSignalValueTableListItem {
                             num: 2,
@@ -193,7 +167,38 @@ fn test_dbc_signal_value_table_01() {
                         }
                     ]
                 }
-            }
-        )),
-    );
+            )),
+        );
+    }
+
+    #[test]
+    fn test_dbc_signal_value_table_01() {
+        assert_eq!(
+            dbc_signal_value_table(
+                r#" VAL_TABLE_ ABS_fault_info 2 "active faults stored" 1 "inactive faults stored" 0 "no faults stored" ; "#
+            ),
+            Ok((
+                "",
+                DbcSignalValueTable {
+                    name: "ABS_fault_info".to_string(),
+                    values: DbcSignalValueTableList {
+                        values: vec![
+                            DbcSignalValueTableListItem {
+                                num: 2,
+                                str: "active faults stored".to_string()
+                            },
+                            DbcSignalValueTableListItem {
+                                num: 1,
+                                str: "inactive faults stored".to_string()
+                            },
+                            DbcSignalValueTableListItem {
+                                num: 0,
+                                str: "no faults stored".to_string()
+                            }
+                        ]
+                    }
+                }
+            )),
+        );
+    }
 }
