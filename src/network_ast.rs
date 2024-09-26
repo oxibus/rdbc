@@ -118,7 +118,7 @@ BO_ 112 MM5_10_TX1: 8 DRS_MM5_10
             Ok(NetworkAst {
                 version: Version("1.0".into()),
                 new_symbols: NewSymbols(vec!["BS_".into(), "CM_".into()]),
-                bus_configuration: Some(BitTiming(None)),
+                bus_configuration: Some(BitTiming { value: None }),
                 can_nodes: DbcCanNodes(vec!["ABS".into(), "DRS_MM5_10".into()]),
                 signal_value_tables: None,
                 messages: vec![
@@ -203,7 +203,7 @@ BO_ 112 MM5_10_TX1: 8 DRS_MM5_10
             Ok(NetworkAst {
                 version: Version("1.0".into()),
                 new_symbols: NewSymbols(vec!["BS_".into(), "CM_".into()]),
-                bus_configuration: Some(BitTiming(None)),
+                bus_configuration: Some(BitTiming { value: None }),
                 can_nodes: DbcCanNodes(vec!["ABS".into(), "DRS_MM5_10".into()]),
                 signal_value_tables: Some(vec![
                     DbcSignalValueTable {

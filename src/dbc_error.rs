@@ -7,8 +7,10 @@ pub enum DbcParseError {
     BadVersion,
     #[error("bad names")]
     BadNames,
-    #[error("bad bus config")]
-    BadBusConfig,
+    #[error("bad bit timing")]
+    BadBitTiming,
+    #[error("bad bit timing value")]
+    BadBitTimingValue,
     #[error("bad can nodes")]
     BadCanNodes,
     #[error("bad signal")]
