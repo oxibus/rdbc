@@ -9,13 +9,15 @@ use nom::sequence::tuple;
 use nom::IResult;
 use std::fmt;
 
-/// Bus configuration.
-/// Format:: `BS_: <Speed>`
-/// Speed in kBit/s
+/// The bit timing section defines the baudrate and the settings of the BTR registers of
+/// the network. This section is obsolete and not used any more. Nevertheless he
+/// keyword 'BS_' must appear in the DBC file.
+///
+/// Format:: `bit_timing = 'BS_:' [baudrate ':' BTR1 ',' BTR2 ] ;`
 #[derive(PartialEq, Debug, Clone)]
-pub struct DbcBusConfiguration(pub Option<f64>);
+pub struct BitTiming(pub Option<f64>);
 
-impl fmt::Display for DbcBusConfiguration {
+impl fmt::Display for BitTiming {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self.0 {
             Some(speed) => write!(f, "BS_: {}", speed),
@@ -24,9 +26,7 @@ impl fmt::Display for DbcBusConfiguration {
     }
 }
 
-pub fn dbc_bus_configuration(
-    input: &str,
-) -> IResult<&str, Option<DbcBusConfiguration>, DbcParseError> {
+pub fn parser_bit_timing(input: &str) -> IResult<&str, Option<BitTiming>, DbcParseError> {
     let res = map(
         tuple((
             multispacey(tag("BS_")),
@@ -35,8 +35,8 @@ pub fn dbc_bus_configuration(
             many0(line_ending),
         )),
         |(_, _, speed, _)| match speed {
-            None => Some(DbcBusConfiguration(None)),
-            Some(speed) => Some(DbcBusConfiguration(Some(speed))),
+            None => Some(BitTiming(None)),
+            Some(speed) => Some(BitTiming(Some(speed))),
         },
     )(input);
     match res {
@@ -56,30 +56,30 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_dbc_bus_configuration_01() {
-        let ret = dbc_bus_configuration(
+    fn test_parser_bit_timing_01() {
+        let ret = parser_bit_timing(
             r#"BS_: 12.34
 
 "#,
         );
         match ret {
             Ok((_remain, bus_config)) => {
-                assert_eq!(bus_config, Some(DbcBusConfiguration(Some(12.34))));
+                assert_eq!(bus_config, Some(BitTiming(Some(12.34))));
             }
             Err(err) => panic!("err = {:?}", err),
         }
     }
 
     #[test]
-    fn test_dbc_bus_configuration_02() {
-        let ret = dbc_bus_configuration(
+    fn test_parser_bit_timing_02() {
+        let ret = parser_bit_timing(
             r#"BS_:
 
 "#,
         );
         match ret {
             Ok((_remain, bus_config)) => {
-                assert_eq!(bus_config, Some(DbcBusConfiguration(None)));
+                assert_eq!(bus_config, Some(BitTiming(None)));
             }
             Err(err) => panic!("err = {:?}", err),
         }

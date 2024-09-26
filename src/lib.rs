@@ -1,4 +1,4 @@
-pub mod dbc_bus_configuration;
+pub mod bit_timing;
 pub mod dbc_can_nodes;
 pub mod dbc_common_parsers;
 pub mod dbc_error;

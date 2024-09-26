@@ -1,5 +1,5 @@
-use super::dbc_bus_configuration::dbc_bus_configuration;
-use super::dbc_bus_configuration::DbcBusConfiguration;
+use super::bit_timing::parser_bit_timing;
+use super::bit_timing::BitTiming;
 use super::dbc_can_nodes::dbc_can_nodes;
 use super::dbc_can_nodes::DbcCanNodes;
 use super::dbc_common_parsers::*;
@@ -26,7 +26,7 @@ pub struct NetworkAst {
     pub new_symbols: NewSymbols,
 
     // BS_:
-    pub bus_configuration: Option<DbcBusConfiguration>,
+    pub bus_configuration: Option<BitTiming>,
 
     // BU_:
     pub can_nodes: DbcCanNodes,
@@ -58,7 +58,7 @@ pub fn dbc_value(input: &str) -> IResult<&str, NetworkAst, DbcParseError> {
         multispacey(tuple((
             multispacey(parser_version),
             multispacey(parser_new_symbols),
-            multispacey(dbc_bus_configuration),
+            multispacey(parser_bit_timing),
             multispacey(dbc_can_nodes),
             multispacey(dbc_signal_value_tables),
             multispacey(many0(dbc_message)),
@@ -118,7 +118,7 @@ BO_ 112 MM5_10_TX1: 8 DRS_MM5_10
             Ok(NetworkAst {
                 version: Version("1.0".into()),
                 new_symbols: NewSymbols(vec!["BS_".into(), "CM_".into()]),
-                bus_configuration: Some(DbcBusConfiguration(None)),
+                bus_configuration: Some(BitTiming(None)),
                 can_nodes: DbcCanNodes(vec!["ABS".into(), "DRS_MM5_10".into()]),
                 signal_value_tables: None,
                 messages: vec![
@@ -203,7 +203,7 @@ BO_ 112 MM5_10_TX1: 8 DRS_MM5_10
             Ok(NetworkAst {
                 version: Version("1.0".into()),
                 new_symbols: NewSymbols(vec!["BS_".into(), "CM_".into()]),
-                bus_configuration: Some(DbcBusConfiguration(None)),
+                bus_configuration: Some(BitTiming(None)),
                 can_nodes: DbcCanNodes(vec!["ABS".into(), "DRS_MM5_10".into()]),
                 signal_value_tables: Some(vec![
                     DbcSignalValueTable {
