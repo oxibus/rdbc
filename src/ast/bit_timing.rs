@@ -2,6 +2,7 @@ use super::dbc_common_parsers::*;
 use super::dbc_error::DbcParseError;
 use nom::bytes::complete::tag;
 use nom::character::complete::line_ending;
+use nom::character::complete::u64;
 use nom::combinator::map;
 use nom::combinator::opt;
 use nom::multi::many0;
@@ -12,11 +13,11 @@ use std::fmt;
 #[derive(PartialEq, Debug, Clone)]
 pub struct BitTimingValue {
     // Baudrate
-    pub baudrate: f64,
+    pub baudrate: u64,
     // bit timing register 1
-    pub btr1: f64,
+    pub btr1: u64,
     // bit timing register 2
-    pub btr2: f64,
+    pub btr2: u64,
 }
 
 impl fmt::Display for BitTimingValue {
@@ -47,11 +48,11 @@ impl fmt::Display for BitTiming {
 pub fn parser_bit_timing_value(input: &str) -> IResult<&str, BitTimingValue, DbcParseError> {
     let res: Result<(&str, BitTimingValue), nom::Err<DbcParseError>> = map(
         tuple((
-            spacey(number_value),
+            spacey(u64),
             spacey(tag(":")),
-            spacey(number_value),
+            spacey(u64),
             spacey(tag(":")),
-            spacey(number_value),
+            spacey(u64),
         )),
         |(baudrate, _, btr1, _, btr2)| BitTimingValue {
             baudrate,
@@ -104,7 +105,7 @@ mod tests {
     #[test]
     fn test_parser_bit_timing_01() {
         let ret = parser_bit_timing(
-            r#"BS_: 12.34:123:456
+            r#"BS_: 12:123:456
 
 "#,
         );
@@ -114,9 +115,9 @@ mod tests {
                     bus_config,
                     Some(BitTiming {
                         value: Some(BitTimingValue {
-                            baudrate: 12.34,
-                            btr1: 123f64,
-                            btr2: 456f64,
+                            baudrate: 12,
+                            btr1: 123,
+                            btr2: 456,
                         })
                     })
                 );
@@ -158,7 +159,7 @@ mod tests {
     #[test]
     fn test_parser_bit_timing_04() {
         let ret = parser_bit_timing(
-            r#"BS_: 12.34:123:456 ;
+            r#"BS_: 12:123:456 ;
 
 "#,
         );
@@ -168,9 +169,9 @@ mod tests {
                     bus_config,
                     Some(BitTiming {
                         value: Some(BitTimingValue {
-                            baudrate: 12.34,
-                            btr1: 123f64,
-                            btr2: 456f64,
+                            baudrate: 12,
+                            btr1: 123,
+                            btr2: 456,
                         })
                     })
                 );
