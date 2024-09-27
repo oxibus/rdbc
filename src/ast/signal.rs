@@ -180,7 +180,7 @@ fn dbc_signal_min_max(input: &str) -> IResult<&str, (f64, f64), DbcParseError> {
 }
 
 fn dbc_signal_receiving_nodes(input: &str) -> IResult<&str, Vec<String>, DbcParseError> {
-    let (remain, nodes) = spacey(separated_list0(tag(","), spacey(dbc_node_name)))(input)?;
+    let (remain, nodes) = spacey(separated_list0(tag(","), spacey(node_name)))(input)?;
     Ok((remain, nodes.into_iter().map(String::from).collect()))
 }
 

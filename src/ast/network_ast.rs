@@ -61,7 +61,7 @@ pub fn dbc_value(input: &str) -> IResult<&str, NetworkAst, DbcParseError> {
             multispacey(parser_bit_timing),
             multispacey(parser_nodes),
             multispacey(parser_value_tables),
-            multispacey(many0(dbc_message)),
+            multispacey(many0(parser_dbc_message)),
         ))),
         |(version, new_symbols, bit_timing, nodes, value_tables, messages)| NetworkAst {
             version,

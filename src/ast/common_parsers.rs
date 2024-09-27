@@ -140,6 +140,6 @@ pub fn unsigned_integer(input: &str) -> IResult<&str, u32, DbcParseError> {
     u32(input)
 }
 
-pub fn dbc_node_name(input: &str) -> IResult<&str, &str, DbcParseError> {
+pub fn node_name(input: &str) -> IResult<&str, &str, DbcParseError> {
     dbc_object_name(input)
 }

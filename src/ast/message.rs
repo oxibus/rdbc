@@ -2,6 +2,7 @@ use super::common_parsers::*;
 use super::error::DbcParseError;
 use super::signal::dbc_signal;
 use super::signal::Signal;
+use nom::branch::alt;
 use nom::bytes::complete::tag;
 use nom::character::complete::line_ending;
 use nom::combinator::map;
@@ -83,20 +84,24 @@ fn parser_message_size(input: &str) -> IResult<&str, u32, DbcParseError> {
     unsigned_integer(input)
 }
 
+fn parser_transmitter(input: &str) -> IResult<&str, &str, DbcParseError> {
+    alt((node_name, tag("Vector__XXX")))(input)
+}
+
 fn parser_message_header(input: &str) -> IResult<&str, MessageHeader, DbcParseError> {
     let res = map(
         tuple((
             multispacey(tag("BO_")),
-            spacey(parser_message_id), // can id
+            spacey(parser_message_id),
             spacey(parser_message_name),
             spacey(tag(":")),
-            spacey(parser_message_size), // size
-            spacey(dbc_node_name),
+            spacey(parser_message_size),
+            spacey(parser_transmitter),
         )),
-        |(_, id, message_name, _, length, sending_node_name)| MessageHeader {
+        |(_, id, message_name, _, size, sending_node_name)| MessageHeader {
             id,
             name: String::from(message_name),
-            size: length,
+            size,
             transmitter: String::from(sending_node_name),
         },
     )(input);
@@ -113,7 +118,7 @@ fn parser_message_header(input: &str) -> IResult<&str, MessageHeader, DbcParseEr
     }
 }
 
-pub fn dbc_message(input: &str) -> IResult<&str, Message, DbcParseError> {
+pub fn parser_dbc_message(input: &str) -> IResult<&str, Message, DbcParseError> {
     map(
         tuple((parser_message_header, many0(dbc_signal), many0(line_ending))),
         |(header, signals, _)| Message { header, signals },
