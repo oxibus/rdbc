@@ -124,8 +124,8 @@ BO_ 112 MM5_10_TX1: 8 DRS_MM5_10
                         header: MessageHeader {
                             id: 117,
                             name: "DRS_RX_ID0".into(),
-                            length: 8,
-                            sending_node: "ABS".into(),
+                            size: 8,
+                            transmitter: "ABS".into(),
                         },
                         signals: vec![],
                     },
@@ -133,8 +133,8 @@ BO_ 112 MM5_10_TX1: 8 DRS_MM5_10
                         header: MessageHeader {
                             id: 112,
                             name: "MM5_10_TX1".into(),
-                            length: 8,
-                            sending_node: "DRS_MM5_10".into(),
+                            size: 8,
+                            transmitter: "DRS_MM5_10".into(),
                         },
                         signals: vec![
                             signal::Signal {
@@ -260,8 +260,8 @@ BO_ 112 MM5_10_TX1: 8 DRS_MM5_10
                         header: MessageHeader {
                             id: 117,
                             name: "DRS_RX_ID0".into(),
-                            length: 8,
-                            sending_node: "ABS".into(),
+                            size: 8,
+                            transmitter: "ABS".into(),
                         },
                         signals: vec![],
                     },
@@ -269,8 +269,8 @@ BO_ 112 MM5_10_TX1: 8 DRS_MM5_10
                         header: MessageHeader {
                             id: 112,
                             name: "MM5_10_TX1".into(),
-                            length: 8,
-                            sending_node: "DRS_MM5_10".into(),
+                            size: 8,
+                            transmitter: "DRS_MM5_10".into(),
                         },
                         signals: vec![
                             signal::Signal {

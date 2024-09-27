@@ -8,6 +8,7 @@ use nom::character::complete::digit1;
 use nom::character::complete::multispace0;
 use nom::character::complete::one_of;
 use nom::character::complete::space0;
+use nom::character::complete::u32;
 use nom::combinator::map;
 use nom::combinator::opt;
 use nom::combinator::recognize;
@@ -129,6 +130,14 @@ pub fn number_value(input: &str) -> IResult<&str, f64, DbcParseError> {
 
 pub fn dbc_object_name(input: &str) -> IResult<&str, &str, DbcParseError> {
     take_while1(|c: char| c.is_alphanumeric() || c == '_')(input)
+}
+
+pub fn dbc_identifier(input: &str) -> IResult<&str, &str, DbcParseError> {
+    dbc_object_name(input)
+}
+
+pub fn unsigned_integer(input: &str) -> IResult<&str, u32, DbcParseError> {
+    u32(input)
 }
 
 pub fn dbc_node_name(input: &str) -> IResult<&str, &str, DbcParseError> {
