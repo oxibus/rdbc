@@ -1,6 +1,6 @@
 use super::common_parsers::*;
 use super::error::DbcParseError;
-use super::signal::dbc_signal;
+use super::signal::parser_signal;
 use super::signal::Signal;
 use nom::branch::alt;
 use nom::bytes::complete::tag;
@@ -120,7 +120,11 @@ fn parser_message_header(input: &str) -> IResult<&str, MessageHeader, DbcParseEr
 
 pub fn parser_dbc_message(input: &str) -> IResult<&str, Message, DbcParseError> {
     map(
-        tuple((parser_message_header, many0(dbc_signal), many0(line_ending))),
+        tuple((
+            parser_message_header,
+            many0(parser_signal),
+            many0(line_ending),
+        )),
         |(header, signals, _)| Message { header, signals },
     )(input)
 }

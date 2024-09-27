@@ -37,36 +37,57 @@ impl fmt::Display for DbcSignalMultiplexer {
 
 /// Endianness: 1 = little-endian, Intel; 0 = big-endian, Motorola
 #[derive(PartialEq, Debug, Clone)]
-pub enum DbcSignalEndianness {
+pub enum ByteOrder {
     LittleEndian,
     BigEndian,
 }
 
-impl fmt::Display for DbcSignalEndianness {
+impl fmt::Display for ByteOrder {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            DbcSignalEndianness::LittleEndian => write!(f, "1"),
-            DbcSignalEndianness::BigEndian => write!(f, "0"),
+            ByteOrder::LittleEndian => write!(f, "1"),
+            ByteOrder::BigEndian => write!(f, "0"),
         }
     }
 }
 
 /// Signed: + = unsigned; - = signed
 #[derive(PartialEq, Debug, Clone)]
-pub enum DbcSignalSigned {
+pub enum ValueType {
     Signed,
     Unsigned,
 }
 
-impl fmt::Display for DbcSignalSigned {
+impl fmt::Display for ValueType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            DbcSignalSigned::Signed => write!(f, "-"),
-            DbcSignalSigned::Unsigned => write!(f, "+"),
+            ValueType::Signed => write!(f, "-"),
+            ValueType::Unsigned => write!(f, "+"),
         }
     }
 }
 
+/// The message's signal section lists all signals placed on the message, their position
+/// in the message's data field and their properties.
+///
+/// ```text
+/// signal = 'SG_' signal_name multiplexer_indicator ':' start_bit '|'
+/// signal_size '@' byte_order value_type '(' factor ',' offset ')'
+/// '[' minimum '|' maximum ']' unit receiver {',' receiver} ;
+/// signal_name = DBC_identifier ;
+/// multiplexer_indicator = ' ' | [m multiplexer_switch_value] [M] ;
+/// start_bit = unsigned_integer ;
+/// signal_size = unsigned_integer ;
+/// byte_order = '0' | '1' ; (* 0=big endian, 1=little endian *)
+/// value_type = '+' | '-' ; (* +=unsigned, -=signed *)
+/// factor = double ;
+/// offset = double ;
+/// minimum = double ;
+/// maximum = double ;
+/// unit = char_string ;
+/// receiver = node_name | 'Vector__XXX' ;
+/// ```
+///
 /// Signal definition.
 /// Format: `SG_ <SignalName> [M|m<MultiplexerIdentifier>] : <StartBit>|<Length>@<Endianness><Signed> (<Factor>,<Offset>) [<Min>|<Max>] "[Unit]" [ReceivingNodes]`
 /// Length in bits.
@@ -78,16 +99,16 @@ impl fmt::Display for DbcSignalSigned {
 pub struct Signal {
     pub name: String,
     pub multiplexer: Option<DbcSignalMultiplexer>,
-    pub start_bit: i64,
-    pub length: i64,
-    pub endianness: DbcSignalEndianness,
-    pub signed: DbcSignalSigned,
+    pub start_bit: u32,
+    pub size: u32,
+    pub byte_order: ByteOrder,
+    pub value_type: ValueType,
     pub factor: f64,
     pub offset: f64,
     pub min: Option<f64>,
     pub max: Option<f64>,
     pub unit: Option<String>,
-    pub receiving_nodes: Option<Vec<String>>,
+    pub receivers: Option<Vec<String>>,
 }
 
 impl fmt::Display for Signal {
@@ -96,11 +117,11 @@ impl fmt::Display for Signal {
             Some(m) => format!("{m} "),
             None => "".to_string(),
         };
-        let signed = match &self.signed {
-            DbcSignalSigned::Signed => "-",
-            DbcSignalSigned::Unsigned => "+",
+        let value_type = match &self.value_type {
+            ValueType::Signed => "-",
+            ValueType::Unsigned => "+",
         };
-        let endianness = &self.endianness.to_string();
+        let byte_order = &self.byte_order.to_string();
         let min_max = match (&self.min, &self.max) {
             (Some(min), Some(max)) => format!("[{min}|{max}]"),
             _ => "".to_string(),
@@ -109,9 +130,9 @@ impl fmt::Display for Signal {
             Some(u) => format!("\"{u}\""),
             None => "".to_string(),
         };
-        let mut receiving_nodes_str = String::new();
-        if let Some(nodes) = &self.receiving_nodes {
-            receiving_nodes_str = nodes.join(",");
+        let mut receivers_str = String::new();
+        if let Some(nodes) = &self.receivers {
+            receivers_str = nodes.join(",");
         };
 
         write!(
@@ -120,23 +141,23 @@ impl fmt::Display for Signal {
             self.name,
             multiplexer,
             self.start_bit,
-            self.length,
-            endianness,
-            signed,
+            self.size,
+            byte_order,
+            value_type,
             self.factor,
             self.offset,
             min_max,
             unit,
-            receiving_nodes_str
+            receivers_str
         )
     }
 }
 
-fn dbc_signal_name(input: &str) -> IResult<&str, &str, DbcParseError> {
-    dbc_object_name(input)
+fn parser_signal_name(input: &str) -> IResult<&str, &str, DbcParseError> {
+    dbc_identifier(input)
 }
 
-fn dbc_signal_multiplexer(input: &str) -> IResult<&str, DbcSignalMultiplexer, DbcParseError> {
+fn parser_signal_multiplexer(input: &str) -> IResult<&str, DbcSignalMultiplexer, DbcParseError> {
     alt((
         map(tag("M"), |_| DbcSignalMultiplexer::M),
         map(tuple((tag("m"), integer_value)), |(_, num)| {
@@ -145,21 +166,29 @@ fn dbc_signal_multiplexer(input: &str) -> IResult<&str, DbcSignalMultiplexer, Db
     ))(input)
 }
 
-fn dbc_signal_endianness(input: &str) -> IResult<&str, DbcSignalEndianness, DbcParseError> {
+fn parser_signal_start_bit(input: &str) -> IResult<&str, u32, DbcParseError> {
+    unsigned_integer(input)
+}
+
+fn parser_signal_size(input: &str) -> IResult<&str, u32, DbcParseError> {
+    unsigned_integer(input)
+}
+
+fn parser_signal_byte_order(input: &str) -> IResult<&str, ByteOrder, DbcParseError> {
     alt((
-        map(tag("1"), |_| DbcSignalEndianness::LittleEndian),
-        map(tag("0"), |_| DbcSignalEndianness::BigEndian),
+        map(tag("1"), |_| ByteOrder::LittleEndian),
+        map(tag("0"), |_| ByteOrder::BigEndian),
     ))(input)
 }
 
-fn dbc_signal_signed(input: &str) -> IResult<&str, DbcSignalSigned, DbcParseError> {
+fn parser_signal_value_type(input: &str) -> IResult<&str, ValueType, DbcParseError> {
     alt((
-        map(tag("+"), |_| DbcSignalSigned::Unsigned),
-        map(tag("-"), |_| DbcSignalSigned::Signed),
+        map(tag("+"), |_| ValueType::Unsigned),
+        map(tag("-"), |_| ValueType::Signed),
     ))(input)
 }
 
-fn dbc_signal_factor_offset(input: &str) -> IResult<&str, (f64, f64), DbcParseError> {
+fn parser_signal_factor_offset(input: &str) -> IResult<&str, (f64, f64), DbcParseError> {
     let (remain, (factor, offset)) = delimited(
         spacey(tag("(")),
         separated_pair(number_value, spacey(tag(",")), number_value),
@@ -169,7 +198,7 @@ fn dbc_signal_factor_offset(input: &str) -> IResult<&str, (f64, f64), DbcParseEr
     Ok((remain, (factor, offset)))
 }
 
-fn dbc_signal_min_max(input: &str) -> IResult<&str, (f64, f64), DbcParseError> {
+fn parser_signal_min_max(input: &str) -> IResult<&str, (f64, f64), DbcParseError> {
     let (remain, (min_value, max_value)) = delimited(
         spacey(tag("[")),
         separated_pair(number_value, spacey(tag("|")), number_value),
@@ -179,28 +208,32 @@ fn dbc_signal_min_max(input: &str) -> IResult<&str, (f64, f64), DbcParseError> {
     Ok((remain, (min_value, max_value)))
 }
 
-fn dbc_signal_receiving_nodes(input: &str) -> IResult<&str, Vec<String>, DbcParseError> {
+fn parser_signal_unit(input: &str) -> IResult<&str, String, DbcParseError> {
+    string_literal(input)
+}
+
+fn parser_signal_receivers(input: &str) -> IResult<&str, Vec<String>, DbcParseError> {
     let (remain, nodes) = spacey(separated_list0(tag(","), spacey(node_name)))(input)?;
     Ok((remain, nodes.into_iter().map(String::from).collect()))
 }
 
-pub fn dbc_signal(input: &str) -> IResult<&str, Signal, DbcParseError> {
+pub fn parser_signal(input: &str) -> IResult<&str, Signal, DbcParseError> {
     let res = map(
         tuple((
             multispacey(tag("SG_")),
-            spacey(dbc_signal_name),
-            spacey(opt(dbc_signal_multiplexer)),
+            spacey(parser_signal_name),
+            spacey(opt(parser_signal_multiplexer)),
             spacey(tag(":")),
-            spacey(integer_value), // start bit
-            tag("|"),
-            integer_value, // length
-            tag("@"),
-            dbc_signal_endianness,
-            spacey(dbc_signal_signed),
-            spacey(dbc_signal_factor_offset),
-            spacey(opt(dbc_signal_min_max)),
-            spacey(opt(string_literal)), // "[Unit]"
-            spacey(opt(dbc_signal_receiving_nodes)),
+            spacey(parser_signal_start_bit),
+            spacey(tag("|")),
+            spacey(parser_signal_size),
+            spacey(tag("@")),
+            spacey(parser_signal_byte_order),
+            spacey(parser_signal_value_type),
+            spacey(parser_signal_factor_offset),
+            spacey(opt(parser_signal_min_max)),
+            spacey(opt(parser_signal_unit)),
+            spacey(opt(parser_signal_receivers)),
             many0(line_ending),
         )),
         |(
@@ -210,10 +243,10 @@ pub fn dbc_signal(input: &str) -> IResult<&str, Signal, DbcParseError> {
             _,
             start_bit,
             _,
-            length,
+            size,
             _,
-            endianness,
-            signed,
+            byte_order,
+            value_type,
             factor_offset,
             min_max,
             unit,
@@ -223,15 +256,15 @@ pub fn dbc_signal(input: &str) -> IResult<&str, Signal, DbcParseError> {
             name: String::from(name),
             multiplexer,
             start_bit,
-            length,
-            endianness,
-            signed,
+            size,
+            byte_order,
+            value_type,
             factor: factor_offset.0,
             offset: factor_offset.1,
             min: min_max.map(|(min, _)| min),
             max: min_max.map(|(_, max)| max),
             unit,
-            receiving_nodes,
+            receivers: receiving_nodes,
         },
     )(input);
 
@@ -254,7 +287,7 @@ mod tests {
     #[test]
     fn test_dbc_signal_multiplexer_01() {
         assert_eq!(
-            dbc_signal_multiplexer(r#"M"#),
+            parser_signal_multiplexer(r#"M"#),
             Ok(("", DbcSignalMultiplexer::M)),
         );
     }
@@ -262,7 +295,7 @@ mod tests {
     #[test]
     fn test_dbc_signal_multiplexer_02() {
         assert_eq!(
-            dbc_signal_multiplexer(r#"m0"#),
+            parser_signal_multiplexer(r#"m0"#),
             Ok(("", DbcSignalMultiplexer::MultiplexerIdentifier(0))),
         );
     }
@@ -270,14 +303,14 @@ mod tests {
     #[test]
     fn test_dbc_signal_multiplexer_03() {
         assert_eq!(
-            dbc_signal_multiplexer(r#"m123"#),
+            parser_signal_multiplexer(r#"m123"#),
             Ok(("", DbcSignalMultiplexer::MultiplexerIdentifier(123))),
         );
     }
 
     #[test]
     fn test_dbc_signal_01() {
-        let ret = dbc_signal(
+        let ret = parser_signal(
             r#" SG_ AY1 : 32|16@1+ (0.000127465,-4.1768) [-4.1768|4.1765] "g"  ABS
 
 "#,
@@ -290,15 +323,15 @@ mod tests {
                         name: "AY1".into(),
                         multiplexer: None,
                         start_bit: 32,
-                        length: 16,
-                        endianness: DbcSignalEndianness::LittleEndian,
-                        signed: DbcSignalSigned::Unsigned,
+                        size: 16,
+                        byte_order: ByteOrder::LittleEndian,
+                        value_type: ValueType::Unsigned,
                         factor: 0.000127465,
                         offset: -4.1768,
                         min: Some(-4.1768),
                         max: Some(4.1765),
                         unit: Some("g".into()),
-                        receiving_nodes: Some(vec!["ABS".into()]),
+                        receivers: Some(vec!["ABS".into()]),
                     }
                 );
             }
@@ -308,7 +341,7 @@ mod tests {
 
     #[test]
     fn test_dbc_signal_02() {
-        let ret = dbc_signal(
+        let ret = parser_signal(
             r#" SG_ S2 m0 : 8|8@1- (1.0,0.0) [0.0|0.0] "" Vector__XXX
 
 "#,
@@ -322,15 +355,15 @@ mod tests {
                         name: "S2".into(),
                         multiplexer: Some(DbcSignalMultiplexer::MultiplexerIdentifier(0)),
                         start_bit: 8,
-                        length: 8,
-                        endianness: DbcSignalEndianness::LittleEndian,
-                        signed: DbcSignalSigned::Signed,
+                        size: 8,
+                        byte_order: ByteOrder::LittleEndian,
+                        value_type: ValueType::Signed,
                         factor: 1.0,
                         offset: 0.0,
                         min: Some(0.0),
                         max: Some(0.0),
                         unit: Some("".into()),
-                        receiving_nodes: Some(vec!["Vector__XXX".into()]),
+                        receivers: Some(vec!["Vector__XXX".into()]),
                     }
                 );
             }
@@ -340,7 +373,7 @@ mod tests {
 
     #[test]
     fn test_dbc_signal_03() {
-        let ret = dbc_signal(
+        let ret = parser_signal(
             r#" SG_ S2 m0 : 8|8@1- (1,0) [0|0] "" Vector__XXX
 
 "#,
@@ -354,15 +387,15 @@ mod tests {
                         name: "S2".into(),
                         multiplexer: Some(DbcSignalMultiplexer::MultiplexerIdentifier(0)),
                         start_bit: 8,
-                        length: 8,
-                        endianness: DbcSignalEndianness::LittleEndian,
-                        signed: DbcSignalSigned::Signed,
+                        size: 8,
+                        byte_order: ByteOrder::LittleEndian,
+                        value_type: ValueType::Signed,
                         factor: 1.0,
                         offset: 0.0,
                         min: Some(0.0),
                         max: Some(0.0),
                         unit: Some("".into()),
-                        receiving_nodes: Some(vec!["Vector__XXX".into()]),
+                        receivers: Some(vec!["Vector__XXX".into()]),
                     }
                 );
             }
@@ -372,7 +405,7 @@ mod tests {
 
     #[test]
     fn test_dbc_signal_04() {
-        let ret = dbc_signal(
+        let ret = parser_signal(
             r#"  SG_ Signal1 : 32|32@1+ (100,0) [0|100] "%"  Node1,Node2
 
 "#,
@@ -386,15 +419,15 @@ mod tests {
                         name: "Signal1".into(),
                         multiplexer: None,
                         start_bit: 32,
-                        length: 32,
-                        endianness: DbcSignalEndianness::LittleEndian,
-                        signed: DbcSignalSigned::Unsigned,
+                        size: 32,
+                        byte_order: ByteOrder::LittleEndian,
+                        value_type: ValueType::Unsigned,
                         factor: 100.0,
                         offset: 0.0,
                         min: Some(0.0),
                         max: Some(100.0),
                         unit: Some("%".into()),
-                        receiving_nodes: Some(vec!["Node1".into(), "Node2".into()]),
+                        receivers: Some(vec!["Node1".into(), "Node2".into()]),
                     }
                 );
             }
