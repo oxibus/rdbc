@@ -43,6 +43,9 @@ pub struct ValueDescriptions {
 
 impl fmt::Display for ValueDescriptions {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        if !self.values.is_empty() {
+            write!(f, " ")?;
+        }
         write!(
             f,
             "{}",
@@ -77,7 +80,7 @@ pub struct ValueTable {
 
 impl fmt::Display for ValueTable {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "VAL_TABLE_ {} {};", self.name, self.values)
+        write!(f, "VAL_TABLE_ {}{};", self.name, self.values)
     }
 }
 
@@ -219,6 +222,45 @@ mod tests {
                     }
                 }
             )),
+        );
+    }
+
+    #[test]
+    fn test_value_table_string_01() {
+        assert_eq!(
+            ValueTable {
+                name: "ABS_fault_info".to_string(),
+                values: ValueDescriptions {
+                    values: vec![
+                        ValueDescriptionItem {
+                            num: 2,
+                            str: "active faults stored".to_string()
+                        },
+                        ValueDescriptionItem {
+                            num: 1,
+                            str: "inactive faults stored".to_string()
+                        },
+                        ValueDescriptionItem {
+                            num: 0,
+                            str: "no faults stored".to_string()
+                        }
+                    ]
+                }
+            }
+            .to_string(),
+            "VAL_TABLE_ ABS_fault_info 2 \"active faults stored\" 1 \"inactive faults stored\" 0 \"no faults stored\";"
+        );
+    }
+
+    #[test]
+    fn test_value_table_string_02() {
+        assert_eq!(
+            ValueTable {
+                name: "name".to_string(),
+                values: ValueDescriptions { values: vec![] }
+            }
+            .to_string(),
+            "VAL_TABLE_ name;"
         );
     }
 }

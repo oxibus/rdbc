@@ -26,13 +26,13 @@ pub struct NetworkAst {
     pub new_symbols: NewSymbols,
 
     // BS_:
-    pub bus_configuration: Option<BitTiming>,
+    pub bit_timing: Option<BitTiming>,
 
     // BU_:
-    pub can_nodes: Nodes,
+    pub nodes: Nodes,
 
     // VAL_TABLE_
-    pub signal_value_tables: Option<Vec<ValueTable>>,
+    pub value_tables: Option<Vec<ValueTable>>,
 
     // BO_
     pub messages: Vec<DbcMessage>,
@@ -42,10 +42,10 @@ impl fmt::Display for NetworkAst {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         writeln!(f, "{}\n", self.version)?;
         writeln!(f, "{}", self.new_symbols)?;
-        if let Some(bc) = &self.bus_configuration {
-            writeln!(f, "{}\n", bc)?;
+        if let Some(bc) = &self.bit_timing {
+            writeln!(f, "{}", bc)?;
         }
-        writeln!(f, "{}\n", self.can_nodes)?;
+        writeln!(f, "{}", self.nodes)?;
         for message in &self.messages {
             writeln!(f, "{}", message)?;
         }
@@ -63,15 +63,13 @@ pub fn dbc_value(input: &str) -> IResult<&str, NetworkAst, DbcParseError> {
             multispacey(parser_value_tables),
             multispacey(many0(dbc_message)),
         ))),
-        |(version, new_symbols, bus_configuration, can_nodes, signal_value_tables, messages)| {
-            NetworkAst {
-                version,
-                new_symbols,
-                bus_configuration,
-                can_nodes,
-                signal_value_tables,
-                messages,
-            }
+        |(version, new_symbols, bit_timing, nodes, value_tables, messages)| NetworkAst {
+            version,
+            new_symbols,
+            bit_timing,
+            nodes,
+            value_tables,
+            messages,
         },
     )(input)
 }
@@ -118,9 +116,9 @@ BO_ 112 MM5_10_TX1: 8 DRS_MM5_10
             Ok(NetworkAst {
                 version: Version("1.0".into()),
                 new_symbols: NewSymbols(vec!["BS_".into(), "CM_".into()]),
-                bus_configuration: Some(BitTiming { value: None }),
-                can_nodes: Nodes(vec!["ABS".into(), "DRS_MM5_10".into()]),
-                signal_value_tables: None,
+                bit_timing: Some(BitTiming { value: None }),
+                nodes: Nodes(vec!["ABS".into(), "DRS_MM5_10".into()]),
+                value_tables: None,
                 messages: vec![
                     DbcMessage {
                         header: DbcMessageHeader {
@@ -203,9 +201,9 @@ BO_ 112 MM5_10_TX1: 8 DRS_MM5_10
             Ok(NetworkAst {
                 version: Version("1.0".into()),
                 new_symbols: NewSymbols(vec!["BS_".into(), "CM_".into()]),
-                bus_configuration: Some(BitTiming { value: None }),
-                can_nodes: Nodes(vec!["ABS".into(), "DRS_MM5_10".into()]),
-                signal_value_tables: Some(vec![
+                bit_timing: Some(BitTiming { value: None }),
+                nodes: Nodes(vec!["ABS".into(), "DRS_MM5_10".into()]),
+                value_tables: Some(vec![
                     ValueTable {
                         name: "ABS_fault_info".to_string(),
                         values: ValueDescriptions {

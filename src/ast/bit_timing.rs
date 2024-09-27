@@ -179,4 +179,22 @@ mod tests {
             Err(err) => panic!("err = {:?}", err),
         }
     }
+
+    #[test]
+    fn test_bit_timing_string_01() {
+        let bit_timing = BitTiming {
+            value: Some(BitTimingValue {
+                baudrate: 12,
+                btr1: 123,
+                btr2: 456,
+            }),
+        };
+        assert_eq!(bit_timing.to_string(), "BS_: 12:123:456\n");
+    }
+
+    #[test]
+    fn test_bit_timing_string_02() {
+        let bit_timing = BitTiming { value: None };
+        assert_eq!(bit_timing.to_string(), "BS_:\n");
+    }
 }

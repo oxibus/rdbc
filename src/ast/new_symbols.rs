@@ -141,4 +141,16 @@ NS_ :
             Err(err) => panic!("err = {:?}", err),
         }
     }
+
+    #[test]
+    fn test_new_symbol_string_01() {
+        let names = NewSymbols(vec!["NS_DESC_".into(), "CM_".into()]);
+        assert_eq!(format!("{}", names), "NS_:\n\tNS_DESC_\n\tCM_\n");
+    }
+
+    #[test]
+    fn test_new_symbol_string_02() {
+        let names = NewSymbols(vec![]);
+        assert_eq!(format!("{}", names), "NS_:\n");
+    }
 }

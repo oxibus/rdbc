@@ -61,4 +61,16 @@ mod tests {
             Ok(("", Version("9".into())))
         );
     }
+
+    #[test]
+    fn test_version_string_01() {
+        let version = Version("9".into());
+        assert_eq!(version.to_string(), "VERSION \"9\"");
+    }
+
+    #[test]
+    fn test_version_string_02() {
+        let version = Version("0.0.1".into());
+        assert_eq!(version.to_string(), "VERSION \"0.0.1\"");
+    }
 }

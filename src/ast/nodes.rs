@@ -32,6 +32,7 @@ impl fmt::Display for Nodes {
         for node in &self.0 {
             write!(f, " {node}")?;
         }
+        write!(f, "\n")?;
         Ok(())
     }
 }
@@ -63,7 +64,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_dbc_can_nodes() {
+    fn test_dbc_can_nodes_01() {
         assert_eq!(
             parser_nodes(
                 r#"BU_: ABS DRS_MM5_10
@@ -72,12 +73,18 @@ mod tests {
             ),
             Ok(("", Nodes(vec!["ABS".into(), "DRS_MM5_10".into()]))),
         );
+    }
 
+    #[test]
+    fn test_dbc_can_nodes_02() {
         assert_eq!(
             parser_nodes(r#"BU_:Matrix"#),
             Ok(("", Nodes(vec!["Matrix".into()]))),
         );
+    }
 
+    #[test]
+    fn test_dbc_can_nodes_03() {
         assert_eq!(
             parser_nodes(r#"BU_: Node2 Node1 Node0"#),
             Ok((
@@ -85,5 +92,18 @@ mod tests {
                 Nodes(vec!["Node2".into(), "Node1".into(), "Node0".into()])
             )),
         );
+    }
+
+    #[test]
+    fn test_nodes_string_01() {
+        assert_eq!(
+            Nodes(vec!["ABS".into(), "DRS_MM5_10".into()]).to_string(),
+            "BU_: ABS DRS_MM5_10\n",
+        );
+    }
+
+    #[test]
+    fn test_nodes_string_02() {
+        assert_eq!(Nodes(vec![]).to_string(), "BU_:\n",);
     }
 }
