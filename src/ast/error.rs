@@ -17,6 +17,8 @@ pub enum DbcParseError {
     BadSignal,
     #[error("bad message header")]
     BadMessageHeader,
+    #[error("bad network comment")]
+    BadNetworkComment,
     #[error("bad integer")]
     BadInt,
     #[error("bad float")]

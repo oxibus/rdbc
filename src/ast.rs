@@ -1,4 +1,5 @@
 pub mod bit_timing;
+pub mod comment;
 pub mod common_parsers;
 pub mod error;
 pub mod message;
