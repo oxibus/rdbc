@@ -1,5 +1,5 @@
-use super::dbc_common_parsers::*;
-use super::dbc_error::DbcParseError;
+use super::common_parsers::*;
+use super::error::DbcParseError;
 use nom::bytes::complete::tag;
 use nom::combinator::map;
 use nom::sequence::preceded;

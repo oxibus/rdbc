@@ -1,8 +1,8 @@
 use super::bit_timing::parser_bit_timing;
 use super::bit_timing::BitTiming;
-use super::dbc_common_parsers::*;
-use super::dbc_error::DbcParseError;
-use super::dbc_message::*;
+use super::common_parsers::*;
+use super::error::DbcParseError;
+use super::message::*;
 use super::new_symbols::parser_new_symbols;
 use super::new_symbols::NewSymbols;
 use super::nodes::parser_nodes;
@@ -35,7 +35,7 @@ pub struct NetworkAst {
     pub value_tables: Option<Vec<ValueTable>>,
 
     // BO_
-    pub messages: Vec<DbcMessage>,
+    pub messages: Vec<Message>,
 }
 
 impl fmt::Display for NetworkAst {
@@ -89,7 +89,7 @@ pub fn parse_dbc(input: &str) -> Result<NetworkAst, DbcParseError> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::ast::dbc_signal;
+    use crate::ast::signal;
 
     #[test]
     fn test_dbc_01() {
@@ -120,30 +120,30 @@ BO_ 112 MM5_10_TX1: 8 DRS_MM5_10
                 nodes: Nodes(vec!["ABS".into(), "DRS_MM5_10".into()]),
                 value_tables: None,
                 messages: vec![
-                    DbcMessage {
-                        header: DbcMessageHeader {
-                            can_id: 117,
+                    Message {
+                        header: MessageHeader {
+                            id: 117,
                             name: "DRS_RX_ID0".into(),
                             length: 8,
                             sending_node: "ABS".into(),
                         },
                         signals: vec![],
                     },
-                    DbcMessage {
-                        header: DbcMessageHeader {
-                            can_id: 112,
+                    Message {
+                        header: MessageHeader {
+                            id: 112,
                             name: "MM5_10_TX1".into(),
                             length: 8,
                             sending_node: "DRS_MM5_10".into(),
                         },
                         signals: vec![
-                            dbc_signal::DbcSignal {
+                            signal::Signal {
                                 name: "Yaw_Rate".into(),
                                 multiplexer: None,
                                 start_bit: 0,
                                 length: 16,
-                                endianness: dbc_signal::DbcSignalEndianness::LittleEndian,
-                                signed: dbc_signal::DbcSignalSigned::Unsigned,
+                                endianness: signal::DbcSignalEndianness::LittleEndian,
+                                signed: signal::DbcSignalSigned::Unsigned,
                                 factor: 0.005,
                                 offset: -163.84,
                                 min: Some(-163.84),
@@ -151,13 +151,13 @@ BO_ 112 MM5_10_TX1: 8 DRS_MM5_10
                                 unit: Some("°/s".into()),
                                 receiving_nodes: Some(vec!["ABS".into()]),
                             },
-                            dbc_signal::DbcSignal {
+                            signal::Signal {
                                 name: "AY1".into(),
                                 multiplexer: None,
                                 start_bit: 32,
                                 length: 16,
-                                endianness: dbc_signal::DbcSignalEndianness::LittleEndian,
-                                signed: dbc_signal::DbcSignalSigned::Unsigned,
+                                endianness: signal::DbcSignalEndianness::LittleEndian,
+                                signed: signal::DbcSignalSigned::Unsigned,
                                 factor: 0.000127465,
                                 offset: -4.1768,
                                 min: Some(-4.1768),
@@ -256,30 +256,30 @@ BO_ 112 MM5_10_TX1: 8 DRS_MM5_10
                     }
                 ]),
                 messages: vec![
-                    DbcMessage {
-                        header: DbcMessageHeader {
-                            can_id: 117,
+                    Message {
+                        header: MessageHeader {
+                            id: 117,
                             name: "DRS_RX_ID0".into(),
                             length: 8,
                             sending_node: "ABS".into(),
                         },
                         signals: vec![],
                     },
-                    DbcMessage {
-                        header: DbcMessageHeader {
-                            can_id: 112,
+                    Message {
+                        header: MessageHeader {
+                            id: 112,
                             name: "MM5_10_TX1".into(),
                             length: 8,
                             sending_node: "DRS_MM5_10".into(),
                         },
                         signals: vec![
-                            dbc_signal::DbcSignal {
+                            signal::Signal {
                                 name: "Yaw_Rate".into(),
                                 multiplexer: None,
                                 start_bit: 0,
                                 length: 16,
-                                endianness: dbc_signal::DbcSignalEndianness::LittleEndian,
-                                signed: dbc_signal::DbcSignalSigned::Unsigned,
+                                endianness: signal::DbcSignalEndianness::LittleEndian,
+                                signed: signal::DbcSignalSigned::Unsigned,
                                 factor: 0.005,
                                 offset: -163.84,
                                 min: Some(-163.84),
@@ -287,13 +287,13 @@ BO_ 112 MM5_10_TX1: 8 DRS_MM5_10
                                 unit: Some("°/s".into()),
                                 receiving_nodes: Some(vec!["ABS".into()]),
                             },
-                            dbc_signal::DbcSignal {
+                            signal::Signal {
                                 name: "AY1".into(),
                                 multiplexer: None,
                                 start_bit: 32,
                                 length: 16,
-                                endianness: dbc_signal::DbcSignalEndianness::LittleEndian,
-                                signed: dbc_signal::DbcSignalSigned::Unsigned,
+                                endianness: signal::DbcSignalEndianness::LittleEndian,
+                                signed: signal::DbcSignalSigned::Unsigned,
                                 factor: 0.000127465,
                                 offset: -4.1768,
                                 min: Some(-4.1768),

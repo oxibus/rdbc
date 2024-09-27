@@ -1,5 +1,5 @@
-use super::dbc_common_parsers::*;
-use super::dbc_error::DbcParseError;
+use super::common_parsers::*;
+use super::error::DbcParseError;
 use nom::branch::alt;
 use nom::bytes::complete::tag;
 use nom::character::complete::line_ending;
@@ -75,7 +75,7 @@ impl fmt::Display for DbcSignalSigned {
 /// M: If M than this signals contains a multiplexer identifier.
 /// MultiplexerIdentifier: Signal definition is only used if the value of the multiplexer signal equals to this value.
 #[derive(PartialEq, Debug, Clone)]
-pub struct DbcSignal {
+pub struct Signal {
     pub name: String,
     pub multiplexer: Option<DbcSignalMultiplexer>,
     pub start_bit: i64,
@@ -90,7 +90,7 @@ pub struct DbcSignal {
     pub receiving_nodes: Option<Vec<String>>,
 }
 
-impl fmt::Display for DbcSignal {
+impl fmt::Display for Signal {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let multiplexer = match &self.multiplexer {
             Some(m) => format!("{m} "),
@@ -184,7 +184,7 @@ fn dbc_signal_receiving_nodes(input: &str) -> IResult<&str, Vec<String>, DbcPars
     Ok((remain, nodes.into_iter().map(String::from).collect()))
 }
 
-pub fn dbc_signal(input: &str) -> IResult<&str, DbcSignal, DbcParseError> {
+pub fn dbc_signal(input: &str) -> IResult<&str, Signal, DbcParseError> {
     let res = map(
         tuple((
             multispacey(tag("SG_")),
@@ -219,7 +219,7 @@ pub fn dbc_signal(input: &str) -> IResult<&str, DbcSignal, DbcParseError> {
             unit,
             receiving_nodes,
             _,
-        )| DbcSignal {
+        )| Signal {
             name: String::from(name),
             multiplexer,
             start_bit,
@@ -286,7 +286,7 @@ mod tests {
             Ok((_remain, signal)) => {
                 assert_eq!(
                     signal,
-                    DbcSignal {
+                    Signal {
                         name: "AY1".into(),
                         multiplexer: None,
                         start_bit: 32,
@@ -318,7 +318,7 @@ mod tests {
             Ok((_remain, signal)) => {
                 assert_eq!(
                     signal,
-                    DbcSignal {
+                    Signal {
                         name: "S2".into(),
                         multiplexer: Some(DbcSignalMultiplexer::MultiplexerIdentifier(0)),
                         start_bit: 8,
@@ -350,7 +350,7 @@ mod tests {
             Ok((_remain, signal)) => {
                 assert_eq!(
                     signal,
-                    DbcSignal {
+                    Signal {
                         name: "S2".into(),
                         multiplexer: Some(DbcSignalMultiplexer::MultiplexerIdentifier(0)),
                         start_bit: 8,
@@ -382,7 +382,7 @@ mod tests {
             Ok((_remain, signal)) => {
                 assert_eq!(
                     signal,
-                    DbcSignal {
+                    Signal {
                         name: "Signal1".into(),
                         multiplexer: None,
                         start_bit: 32,

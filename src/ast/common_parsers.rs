@@ -1,4 +1,4 @@
-use super::dbc_error::DbcParseError;
+use super::error::DbcParseError;
 use escape8259::unescape;
 use nom::branch::alt;
 use nom::bytes::complete::tag;
