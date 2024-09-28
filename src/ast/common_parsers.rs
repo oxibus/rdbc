@@ -145,6 +145,56 @@ pub fn signed_integer(input: &str) -> IResult<&str, i32, DbcParseError> {
     i32(input)
 }
 
+pub fn dbc_key_word(input: &str) -> IResult<&str, &str, DbcParseError> {
+    alt((
+        alt((
+            tag("VERSION"),
+            tag("NS_"),
+            tag("NS_DESC_"),
+            tag("CM_"),
+            tag("BA_DEF_"),
+            tag("BA_"),
+            tag("VAL_"),
+            tag("CAT_DEF_"),
+            tag("CAT_"),
+            tag("FILTER"),
+        )),
+        alt((
+            tag("BA_DEF_DEF_"),
+            tag("EV_DATA_"),
+            tag("ENVVAR_DATA_"),
+            tag("SGTYPE_"),
+            tag("SGTYPE_VAL_"),
+            tag("BA_DEF_SGTYPE_"),
+            tag("BA_SGTYPE_"),
+            tag("SIG_TYPE_REF_"),
+            tag("VAL_TABLE_"),
+            tag("SIG_GROUP_"),
+        )),
+        alt((
+            tag("SIG_VALTYPE_"),
+            tag("SIGTYPE_VALTYPE_"),
+            tag("BO_TX_BU_"),
+            tag("BA_DEF_REL_"),
+            tag("BA_REL_"),
+            tag("BA_DEF_DEF_REL_"),
+            tag("BU_SG_REL_"),
+            tag("BU_EV_REL_"),
+            tag("BU_BO_REL_"),
+            tag("SG_MUL_VAL_"),
+        )),
+        alt((
+            tag("BS_"),
+            tag("BU_"),
+            tag("BO_"),
+            tag("SG_"),
+            tag("EV_"),
+            tag("VECTOR__INDEPENDENT_SIG_MSG"),
+            tag("VECTOR__XXX"),
+        )),
+    ))(input)
+}
+
 pub fn dbc_object_name(input: &str) -> IResult<&str, &str, DbcParseError> {
     take_while1(|c: char| c.is_alphanumeric() || c == '_')(input)
 }
