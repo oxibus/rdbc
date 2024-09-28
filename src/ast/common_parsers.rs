@@ -14,12 +14,12 @@ use nom::character::complete::satisfy;
 use nom::character::complete::space0;
 use nom::character::complete::u32;
 use nom::combinator::map;
+use nom::combinator::not;
 use nom::combinator::opt;
 use nom::combinator::recognize;
 use nom::multi::many0;
 use nom::sequence::delimited;
 use nom::sequence::pair;
-use nom::sequence::preceded;
 use nom::sequence::tuple;
 use nom::AsChar;
 use nom::IResult;
@@ -210,7 +210,11 @@ pub fn dbc_object_name(input: &str) -> IResult<&str, &str, DbcParseError> {
 }
 
 pub fn dbc_identifier(input: &str) -> IResult<&str, &str, DbcParseError> {
-    dbc_object_name(input)
+    let res = not(dbc_key_word)(input);
+    match res {
+        Ok((remain, _)) => c_identifier(remain),
+        Err(_) => Err(nom::Err::Error(DbcParseError::UseKeywordAsIdentifier)),
+    }
 }
 
 pub fn node_name(input: &str) -> IResult<&str, &str, DbcParseError> {
@@ -257,5 +261,28 @@ mod tests {
     #[test]
     fn test_c_identifier_07() {
         assert_eq!(c_identifier("Big-Data"), Ok(("-Data", "Big")));
+    }
+
+    #[test]
+    fn test_dbc_identifier_01() {
+        assert_eq!(dbc_identifier("a"), Ok(("", "a")));
+    }
+
+    #[test]
+    fn test_dbc_identifier_02() {
+        assert_eq!(
+            dbc_identifier("BS_"),
+            Err(nom::Err::Error(DbcParseError::UseKeywordAsIdentifier))
+        );
+    }
+
+    #[test]
+    fn test_dbc_identifier_03() {
+        assert_eq!(dbc_identifier("hello_world"), Ok(("", "hello_world")));
+    }
+
+    #[test]
+    fn test_dbc_identifier_04() {
+        assert_eq!(dbc_identifier("_HelloWorld"), Ok(("", "_HelloWorld")));
     }
 }

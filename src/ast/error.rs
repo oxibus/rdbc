@@ -27,6 +27,10 @@ pub enum DbcParseError {
     BadEscape,
     #[error("unknown parser error")]
     Unparseable,
+    #[error("invalid c identifier")]
+    InvalidCIdentifier,
+    #[error("invalid dbc identifier")]
+    UseKeywordAsIdentifier,
     #[error("debug message")]
     DebugMsg(String),
 }

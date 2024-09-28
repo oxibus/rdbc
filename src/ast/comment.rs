@@ -1,13 +1,9 @@
 use super::common_parsers::*;
 use super::error::DbcParseError;
-use nom::branch::alt;
 use nom::bytes::complete::tag;
-use nom::character::complete::line_ending;
 use nom::combinator::map;
-use nom::multi::{self, many0};
 use nom::sequence::tuple;
 use nom::IResult;
-use std::fmt;
 
 #[derive(PartialEq, Debug, Clone)]
 pub struct NetworkCommnet {
