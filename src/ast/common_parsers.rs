@@ -1,5 +1,4 @@
 use super::error::DbcParseError;
-use escape8259::unescape;
 use nom::branch::alt;
 use nom::bytes::complete::tag;
 use nom::bytes::complete::take_while1;
@@ -77,10 +76,10 @@ pub fn string_body(input: &str) -> IResult<&str, &str, DbcParseError> {
 }
 
 pub fn string_literal(input: &str) -> IResult<&str, String, DbcParseError> {
-    let (remain, raw_string) = delimited(tag("\""), string_body, tag("\""))(input)?;
+    let res = delimited(tag("\""), string_body, tag("\""))(input);
 
-    match unescape(raw_string) {
-        Ok(s) => Ok((remain, s)),
+    match res {
+        Ok((remain, s)) => Ok((remain, s.to_string())),
         Err(_) => Err(nom::Err::Failure(DbcParseError::BadEscape)),
     }
 }
@@ -292,5 +291,21 @@ mod tests {
     #[test]
     fn test_dbc_identifier_04() {
         assert_eq!(dbc_identifier("_HelloWorld"), Ok(("", "_HelloWorld")));
+    }
+
+    #[test]
+    fn test_char_string_01() {
+        assert_eq!(char_string("\"hello\""), Ok(("", "hello".to_string())));
+    }
+
+    #[test]
+    fn test_char_string_02() {
+        assert_eq!(
+            char_string(
+                r#""hello
+world""#
+            ),
+            Ok(("", "hello\nworld".to_string()))
+        );
     }
 }

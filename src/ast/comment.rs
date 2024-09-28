@@ -227,7 +227,7 @@ mod tests {
                 "",
                 NodeComment {
                     node_name: "BAR".into(),
-                    comment: "fam \"1\"".into()
+                    comment: r#"fam \"1\""#.into()
                 }
             )),
         );
