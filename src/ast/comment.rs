@@ -6,7 +6,7 @@ use nom::sequence::tuple;
 use nom::IResult;
 
 #[derive(PartialEq, Debug, Clone)]
-pub struct NetworkCommnet {
+pub struct NetworkComment {
     pub comment: String,
 }
 
@@ -49,31 +49,58 @@ pub struct EnvironmentVariableComment {
 /// ```
 #[derive(PartialEq, Debug, Clone)]
 pub enum Comment {
-    Network(NetworkCommnet),
+    Network(NetworkComment),
     Node(NodeComment),
     Message(MessageComment),
     Signal(SignalComment),
     EnvironmentVariable(EnvironmentVariableComment),
 }
 
-pub fn parser_network_comment(input: &str) -> IResult<&str, NetworkCommnet, DbcParseError> {
+pub fn parser_network_comment(input: &str) -> IResult<&str, NetworkComment, DbcParseError> {
     let res = map(
         tuple((
             multispacey(tag("CM_")),
             multispacey(char_string),
             multispacey(tag(";")),
         )),
-        |(_, comment, _)| NetworkCommnet { comment },
+        |(_, comment, _)| NetworkComment { comment },
     )(input);
 
     match res {
         Ok((remain, comment)) => {
-            log::info!("parse comment: {:?}", comment);
+            log::info!("parse network comment: {:?}", comment);
             Ok((remain, comment))
         }
         Err(e) => {
-            log::trace!("parse comment failed, e = {:?}", e);
+            log::trace!("parse network comment failed, e = {:?}", e);
             Err(nom::Err::Error(DbcParseError::BadNetworkComment))
+        }
+    }
+}
+
+pub fn parser_node_comment(input: &str) -> IResult<&str, NodeComment, DbcParseError> {
+    let res = map(
+        tuple((
+            multispacey(tag("CM_")),
+            multispacey(tag("BU_")),
+            multispacey(node_name),
+            multispacey(char_string),
+            multispacey(tag(";")),
+        )),
+        |(_, _, node_name, comment, _)| NodeComment {
+            node_name: node_name.to_string(),
+            comment,
+        },
+    )(input);
+
+    match res {
+        Ok((remain, comment)) => {
+            log::info!("parse node comment: {:?}", comment);
+            Ok((remain, comment))
+        }
+        Err(e) => {
+            log::trace!("parse node comment failed, e = {:?}", e);
+            Err(nom::Err::Error(DbcParseError::BadNodeComment))
         }
     }
 }
@@ -88,7 +115,7 @@ mod tests {
             parser_network_comment(r#"CM_ "comment";"#),
             Ok((
                 "",
-                NetworkCommnet {
+                NetworkComment {
                     comment: "comment".into()
                 }
             )),
@@ -101,8 +128,64 @@ mod tests {
             parser_network_comment(r#"CM_ "DBC Template with single line description";"#),
             Ok((
                 "",
-                NetworkCommnet {
+                NetworkComment {
                     comment: "DBC Template with single line description".into()
+                }
+            )),
+        );
+    }
+
+    #[test]
+    fn test_parser_node_comment_01() {
+        assert_eq!(
+            parser_node_comment(r#"CM_ BU_ Node0 "The 0th Node";"#),
+            Ok((
+                "",
+                NodeComment {
+                    node_name: "Node0".into(),
+                    comment: "The 0th Node".into()
+                }
+            )),
+        );
+    }
+
+    #[test]
+    fn test_parser_node_comment_02() {
+        assert_eq!(
+            parser_node_comment(r#"CM_ BU_ TestNode "";"#),
+            Ok((
+                "",
+                NodeComment {
+                    node_name: "TestNode".into(),
+                    comment: "".into()
+                }
+            )),
+        );
+    }
+
+    #[test]
+    fn test_parser_node_comment_03() {
+        assert_eq!(
+            parser_node_comment(r#"CM_ BU_ BAR "fam \"1\"";"#),
+            Ok((
+                "",
+                NodeComment {
+                    node_name: "BAR".into(),
+                    comment: "fam \"1\"".into()
+                }
+            )),
+        );
+    }
+
+    #[test]
+    fn test_parser_node_comment_04() {
+        assert_eq!(
+            parser_node_comment(r#"CM_ BU_ DRIVER "// The driver controller driving the car //";"#),
+            Ok((
+                "",
+                NodeComment {
+                    node_name: "DRIVER".into(),
+                    comment: "// The driver controller driving the car //".into()
                 }
             )),
         );
