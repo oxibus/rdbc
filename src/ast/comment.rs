@@ -105,6 +105,33 @@ pub fn parser_node_comment(input: &str) -> IResult<&str, NodeComment, DbcParseEr
     }
 }
 
+pub fn parser_message_comment(input: &str) -> IResult<&str, MessageComment, DbcParseError> {
+    let res = map(
+        tuple((
+            multispacey(tag("CM_")),
+            multispacey(tag("BO_")),
+            multispacey(parser_message_id),
+            multispacey(char_string),
+            multispacey(tag(";")),
+        )),
+        |(_, _, message_id, comment, _)| MessageComment {
+            message_id,
+            comment,
+        },
+    )(input);
+
+    match res {
+        Ok((remain, comment)) => {
+            log::info!("parse message comment: {:?}", comment);
+            Ok((remain, comment))
+        }
+        Err(e) => {
+            log::trace!("parse message comment failed, e = {:?}", e);
+            Err(nom::Err::Error(DbcParseError::BadMessageComment))
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -186,6 +213,52 @@ mod tests {
                 NodeComment {
                     node_name: "DRIVER".into(),
                     comment: "// The driver controller driving the car //".into()
+                }
+            )),
+        );
+    }
+
+    #[test]
+    fn test_parser_message_comment_01() {
+        assert_eq!(
+            parser_message_comment(
+                r#"CM_ BO_ 496 "Example message used as template in MotoHawk models.";"#
+            ),
+            Ok((
+                "",
+                MessageComment {
+                    message_id: 496,
+                    comment: "Example message used as template in MotoHawk models.".into()
+                }
+            )),
+        );
+    }
+
+    #[test]
+    fn test_parser_message_comment_02() {
+        assert_eq!(
+            parser_message_comment(r#"CM_ BO_ 472 "No sender message.";"#),
+            Ok((
+                "",
+                MessageComment {
+                    message_id: 472,
+                    comment: "No sender message.".into()
+                }
+            )),
+        );
+    }
+
+    #[test]
+    fn test_parser_message_comment_03() {
+        assert_eq!(
+            parser_message_comment(
+                r#"CM_ BO_ 2303364386 "This cumulative distance calculation is updated when the trigger is active.";"#
+            ),
+            Ok((
+                "",
+                MessageComment {
+                    message_id: 2303364386,
+                    comment: "This cumulative distance calculation is updated when the trigger is active.".into()
                 }
             )),
         );
