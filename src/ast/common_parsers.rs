@@ -3,6 +3,7 @@ use escape8259::unescape;
 use nom::branch::alt;
 use nom::bytes::complete::tag;
 use nom::bytes::complete::take_while1;
+use nom::character::complete::alphanumeric1;
 use nom::character::complete::digit0;
 use nom::character::complete::digit1;
 use nom::character::complete::i32;
@@ -18,7 +19,9 @@ use nom::combinator::recognize;
 use nom::multi::many0;
 use nom::sequence::delimited;
 use nom::sequence::pair;
+use nom::sequence::preceded;
 use nom::sequence::tuple;
+use nom::AsChar;
 use nom::IResult;
 
 pub fn spacey<F, I, O, E>(f: F) -> impl FnMut(I) -> IResult<I, O, E>
@@ -84,6 +87,13 @@ pub fn string_literal(input: &str) -> IResult<&str, String, DbcParseError> {
 
 pub fn char_string(input: &str) -> IResult<&str, String, DbcParseError> {
     string_literal(input)
+}
+
+pub fn c_identifier(input: &str) -> IResult<&str, &str, DbcParseError> {
+    recognize(tuple((
+        alt((tag("_"), recognize(satisfy(|c| c.is_alpha())))),
+        opt(recognize(many0(alt((tag("_"), alphanumeric1))))),
+    )))(input)
 }
 
 pub fn digit1to9(input: &str) -> IResult<&str, char, DbcParseError> {
@@ -205,4 +215,47 @@ pub fn dbc_identifier(input: &str) -> IResult<&str, &str, DbcParseError> {
 
 pub fn node_name(input: &str) -> IResult<&str, &str, DbcParseError> {
     dbc_object_name(input)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_c_identifier_01() {
+        assert_eq!(c_identifier("a"), Ok(("", "a")));
+    }
+
+    #[test]
+    fn test_c_identifier_02() {
+        assert_eq!(c_identifier("abc"), Ok(("", "abc")));
+    }
+
+    #[test]
+    fn test_c_identifier_03() {
+        assert_eq!(c_identifier("hello_world"), Ok(("", "hello_world")));
+    }
+
+    #[test]
+    fn test_c_identifier_04() {
+        assert_eq!(c_identifier("_hello_world"), Ok(("", "_hello_world")));
+    }
+
+    #[test]
+    fn test_c_identifier_05() {
+        assert_eq!(
+            c_identifier("_hello_world_123zzz"),
+            Ok(("", "_hello_world_123zzz"))
+        );
+    }
+
+    #[test]
+    fn test_c_identifier_06() {
+        assert_eq!(c_identifier("BigData"), Ok(("", "BigData")));
+    }
+
+    #[test]
+    fn test_c_identifier_07() {
+        assert_eq!(c_identifier("Big-Data"), Ok(("-Data", "Big")));
+    }
 }
