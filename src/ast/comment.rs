@@ -309,4 +309,38 @@ mod tests {
             )),
         );
     }
+
+    #[test]
+    fn test_parser_signal_comment_02() {
+        assert_eq!(
+            parser_signal_comment(
+                r#"CM_ SG_ 834 WheelQuality_FL "Bit matrix
+Bit0 ( 1) Signal Reduced Monitored
+Bit1 ( 2) Reduced Accuracy
+Bit2 ( 4) Interfered
+Bit3 ( 8) Suspicious Plausibility
+Bit4 (16) Suspicious Lost
+Bit5 (32) Not Initialized
+Bit6 (64) Invalid Generic
+Bit7 (128) Invalid Individual";"#
+            ),
+            Ok((
+                "",
+                SignalComment {
+                    message_id: 834,
+                    signal_name: "WheelQuality_FL".into(),
+                    comment: r#"Bit matrix
+Bit0 ( 1) Signal Reduced Monitored
+Bit1 ( 2) Reduced Accuracy
+Bit2 ( 4) Interfered
+Bit3 ( 8) Suspicious Plausibility
+Bit4 (16) Suspicious Lost
+Bit5 (32) Not Initialized
+Bit6 (64) Invalid Generic
+Bit7 (128) Invalid Individual"#
+                        .into()
+                }
+            )),
+        );
+    }
 }
