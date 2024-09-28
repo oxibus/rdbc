@@ -5,8 +5,11 @@ use nom::bytes::complete::tag;
 use nom::bytes::complete::take_while1;
 use nom::character::complete::digit0;
 use nom::character::complete::digit1;
+use nom::character::complete::i32;
 use nom::character::complete::multispace0;
+use nom::character::complete::none_of;
 use nom::character::complete::one_of;
+use nom::character::complete::satisfy;
 use nom::character::complete::space0;
 use nom::character::complete::u32;
 use nom::combinator::map;
@@ -38,14 +41,15 @@ where
     delimited(multispace0, f, multispace0)
 }
 
-pub fn is_nonescaped_string_char(c: char) -> bool {
-    let cv = c as u32;
-    (cv >= 0x20) && (cv != 0x22) && (cv != 0x5C)
+pub fn printable_character(input: &str) -> IResult<&str, &str, DbcParseError> {
+    recognize(satisfy(|c| {
+        let c = c as u32;
+        c >= 0x20 && c <= 0x74
+    }))(input)
 }
 
-// One or more unescaped text characters
 pub fn nonescaped_string(input: &str) -> IResult<&str, &str, DbcParseError> {
-    take_while1(is_nonescaped_string_char)(input)
+    recognize(none_of("\"\\"))(input)
 }
 
 pub fn escape_code(input: &str) -> IResult<&str, &str, DbcParseError> {
@@ -78,9 +82,14 @@ pub fn string_literal(input: &str) -> IResult<&str, String, DbcParseError> {
     }
 }
 
+pub fn char_string(input: &str) -> IResult<&str, String, DbcParseError> {
+    string_literal(input)
+}
+
 pub fn digit1to9(input: &str) -> IResult<&str, char, DbcParseError> {
     one_of("123456789")(input)
 }
+
 pub fn uint(input: &str) -> IResult<&str, &str, DbcParseError> {
     alt((tag("0"), recognize(pair(digit1to9, digit0))))(input)
 }
@@ -128,16 +137,20 @@ pub fn number_value(input: &str) -> IResult<&str, f64, DbcParseError> {
     ))(input)
 }
 
+pub fn unsigned_integer(input: &str) -> IResult<&str, u32, DbcParseError> {
+    u32(input)
+}
+
+pub fn signed_integer(input: &str) -> IResult<&str, i32, DbcParseError> {
+    i32(input)
+}
+
 pub fn dbc_object_name(input: &str) -> IResult<&str, &str, DbcParseError> {
     take_while1(|c: char| c.is_alphanumeric() || c == '_')(input)
 }
 
 pub fn dbc_identifier(input: &str) -> IResult<&str, &str, DbcParseError> {
     dbc_object_name(input)
-}
-
-pub fn unsigned_integer(input: &str) -> IResult<&str, u32, DbcParseError> {
-    u32(input)
 }
 
 pub fn node_name(input: &str) -> IResult<&str, &str, DbcParseError> {
