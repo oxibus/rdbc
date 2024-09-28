@@ -132,6 +132,35 @@ pub fn parser_message_comment(input: &str) -> IResult<&str, MessageComment, DbcP
     }
 }
 
+pub fn parser_signal_comment(input: &str) -> IResult<&str, SignalComment, DbcParseError> {
+    let res = map(
+        tuple((
+            multispacey(tag("CM_")),
+            multispacey(tag("SG_")),
+            multispacey(parser_message_id),
+            multispacey(parser_signal_name),
+            multispacey(char_string),
+            multispacey(tag(";")),
+        )),
+        |(_, _, message_id, signal_name, comment, _)| SignalComment {
+            message_id,
+            signal_name: signal_name.to_string(),
+            comment,
+        },
+    )(input);
+
+    match res {
+        Ok((remain, comment)) => {
+            log::info!("parse signal comment: {:?}", comment);
+            Ok((remain, comment))
+        }
+        Err(e) => {
+            log::trace!("parse signal comment failed, e = {:?}", e);
+            Err(nom::Err::Error(DbcParseError::BadSignalComment))
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -259,6 +288,23 @@ mod tests {
                 MessageComment {
                     message_id: 2303364386,
                     comment: "This cumulative distance calculation is updated when the trigger is active.".into()
+                }
+            )),
+        );
+    }
+
+    #[test]
+    fn test_parser_signal_comment_01() {
+        assert_eq!(
+            parser_signal_comment(
+                r#"CM_ SG_ 586 whlspeed_RL_Bremse2 "Radgeschwindigkeit / wheel speed direct RL";"#
+            ),
+            Ok((
+                "",
+                SignalComment {
+                    message_id: 586,
+                    signal_name: "whlspeed_RL_Bremse2".into(),
+                    comment: "Radgeschwindigkeit / wheel speed direct RL".into()
                 }
             )),
         );
