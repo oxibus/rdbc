@@ -153,10 +153,6 @@ impl fmt::Display for Signal {
     }
 }
 
-fn parser_signal_name(input: &str) -> IResult<&str, &str, DbcParseError> {
-    dbc_identifier(input)
-}
-
 fn parser_signal_multiplexer(input: &str) -> IResult<&str, DbcSignalMultiplexer, DbcParseError> {
     alt((
         map(tag("M"), |_| DbcSignalMultiplexer::M),
@@ -213,7 +209,7 @@ fn parser_signal_unit(input: &str) -> IResult<&str, String, DbcParseError> {
 }
 
 fn parser_signal_receivers(input: &str) -> IResult<&str, Vec<String>, DbcParseError> {
-    let (remain, nodes) = spacey(separated_list0(tag(","), spacey(node_name)))(input)?;
+    let (remain, nodes) = spacey(separated_list0(tag(","), spacey(parser_node_name)))(input)?;
     Ok((remain, nodes.into_iter().map(String::from).collect()))
 }
 

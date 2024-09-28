@@ -83,7 +83,7 @@ pub fn parser_node_comment(input: &str) -> IResult<&str, NodeComment, DbcParseEr
         tuple((
             multispacey(tag("CM_")),
             multispacey(tag("BU_")),
-            multispacey(node_name),
+            multispacey(parser_node_name),
             multispacey(char_string),
             multispacey(tag(";")),
         )),

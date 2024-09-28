@@ -217,8 +217,16 @@ pub fn dbc_identifier(input: &str) -> IResult<&str, &str, DbcParseError> {
     }
 }
 
-pub fn node_name(input: &str) -> IResult<&str, &str, DbcParseError> {
-    dbc_object_name(input)
+pub fn parser_node_name(input: &str) -> IResult<&str, &str, DbcParseError> {
+    dbc_identifier(input)
+}
+
+pub fn parser_message_id(input: &str) -> IResult<&str, u32, DbcParseError> {
+    unsigned_integer(input)
+}
+
+pub fn parser_signal_name(input: &str) -> IResult<&str, &str, DbcParseError> {
+    dbc_identifier(input)
 }
 
 #[cfg(test)]

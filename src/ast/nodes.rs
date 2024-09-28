@@ -42,7 +42,7 @@ pub fn parser_nodes(input: &str) -> IResult<&str, Nodes, DbcParseError> {
         tuple((
             multispacey(tag("BU_")),
             spacey(tag(":")),
-            many0(spacey(node_name)),
+            many0(spacey(parser_node_name)),
             many0(line_ending),
         )),
         |(_, _, names, _)| Nodes(names.into_iter().map(String::from).collect()),

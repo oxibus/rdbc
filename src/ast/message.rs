@@ -72,10 +72,6 @@ impl fmt::Display for Message {
     }
 }
 
-fn parser_message_id(input: &str) -> IResult<&str, u32, DbcParseError> {
-    unsigned_integer(input)
-}
-
 fn parser_message_name(input: &str) -> IResult<&str, &str, DbcParseError> {
     dbc_identifier(input)
 }
@@ -85,7 +81,7 @@ fn parser_message_size(input: &str) -> IResult<&str, u32, DbcParseError> {
 }
 
 fn parser_transmitter(input: &str) -> IResult<&str, &str, DbcParseError> {
-    alt((node_name, tag("Vector__XXX")))(input)
+    alt((parser_node_name, tag("Vector__XXX")))(input)
 }
 
 fn parser_message_header(input: &str) -> IResult<&str, MessageHeader, DbcParseError> {
