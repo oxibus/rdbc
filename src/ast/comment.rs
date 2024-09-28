@@ -1,5 +1,6 @@
 use super::common_parsers::*;
 use super::error::DbcParseError;
+use nom::branch::alt;
 use nom::bytes::complete::tag;
 use nom::combinator::map;
 use nom::sequence::tuple;
@@ -56,7 +57,28 @@ pub enum Comment {
     EnvironmentVariable(EnvironmentVariableComment),
 }
 
-pub fn parser_network_comment(input: &str) -> IResult<&str, NetworkComment, DbcParseError> {
+pub fn parser_comment(input: &str) -> IResult<&str, Comment, DbcParseError> {
+    let res = alt((
+        parser_network_comment,
+        parser_node_comment,
+        parser_message_comment,
+        parser_signal_comment,
+        parser_environment_variable_comment,
+    ))(input);
+
+    match res {
+        Ok((remain, comment)) => {
+            log::info!("parse comment: {:?}", comment);
+            Ok((remain, comment))
+        }
+        Err(e) => {
+            log::trace!("parse comment failed, e = {:?}", e);
+            Err(nom::Err::Error(DbcParseError::BadComment))
+        }
+    }
+}
+
+pub fn parser_network_comment(input: &str) -> IResult<&str, Comment, DbcParseError> {
     let res = map(
         tuple((
             multispacey(tag("CM_")),
@@ -69,7 +91,7 @@ pub fn parser_network_comment(input: &str) -> IResult<&str, NetworkComment, DbcP
     match res {
         Ok((remain, comment)) => {
             log::info!("parse network comment: {:?}", comment);
-            Ok((remain, comment))
+            Ok((remain, Comment::Network(comment)))
         }
         Err(e) => {
             log::trace!("parse network comment failed, e = {:?}", e);
@@ -78,7 +100,7 @@ pub fn parser_network_comment(input: &str) -> IResult<&str, NetworkComment, DbcP
     }
 }
 
-pub fn parser_node_comment(input: &str) -> IResult<&str, NodeComment, DbcParseError> {
+pub fn parser_node_comment(input: &str) -> IResult<&str, Comment, DbcParseError> {
     let res = map(
         tuple((
             multispacey(tag("CM_")),
@@ -96,7 +118,7 @@ pub fn parser_node_comment(input: &str) -> IResult<&str, NodeComment, DbcParseEr
     match res {
         Ok((remain, comment)) => {
             log::info!("parse node comment: {:?}", comment);
-            Ok((remain, comment))
+            Ok((remain, Comment::Node(comment)))
         }
         Err(e) => {
             log::trace!("parse node comment failed, e = {:?}", e);
@@ -105,7 +127,7 @@ pub fn parser_node_comment(input: &str) -> IResult<&str, NodeComment, DbcParseEr
     }
 }
 
-pub fn parser_message_comment(input: &str) -> IResult<&str, MessageComment, DbcParseError> {
+pub fn parser_message_comment(input: &str) -> IResult<&str, Comment, DbcParseError> {
     let res = map(
         tuple((
             multispacey(tag("CM_")),
@@ -123,7 +145,7 @@ pub fn parser_message_comment(input: &str) -> IResult<&str, MessageComment, DbcP
     match res {
         Ok((remain, comment)) => {
             log::info!("parse message comment: {:?}", comment);
-            Ok((remain, comment))
+            Ok((remain, Comment::Message(comment)))
         }
         Err(e) => {
             log::trace!("parse message comment failed, e = {:?}", e);
@@ -132,7 +154,7 @@ pub fn parser_message_comment(input: &str) -> IResult<&str, MessageComment, DbcP
     }
 }
 
-pub fn parser_signal_comment(input: &str) -> IResult<&str, SignalComment, DbcParseError> {
+pub fn parser_signal_comment(input: &str) -> IResult<&str, Comment, DbcParseError> {
     let res = map(
         tuple((
             multispacey(tag("CM_")),
@@ -152,7 +174,7 @@ pub fn parser_signal_comment(input: &str) -> IResult<&str, SignalComment, DbcPar
     match res {
         Ok((remain, comment)) => {
             log::info!("parse signal comment: {:?}", comment);
-            Ok((remain, comment))
+            Ok((remain, Comment::Signal(comment)))
         }
         Err(e) => {
             log::trace!("parse signal comment failed, e = {:?}", e);
@@ -161,9 +183,7 @@ pub fn parser_signal_comment(input: &str) -> IResult<&str, SignalComment, DbcPar
     }
 }
 
-pub fn parser_environment_variable_comment(
-    input: &str,
-) -> IResult<&str, EnvironmentVariableComment, DbcParseError> {
+pub fn parser_environment_variable_comment(input: &str) -> IResult<&str, Comment, DbcParseError> {
     let res = map(
         tuple((
             multispacey(tag("CM_")),
@@ -181,7 +201,7 @@ pub fn parser_environment_variable_comment(
     match res {
         Ok((remain, comment)) => {
             log::info!("parse environment variable comment: {:?}", comment);
-            Ok((remain, comment))
+            Ok((remain, Comment::EnvironmentVariable(comment)))
         }
         Err(e) => {
             log::trace!("parse environment variable comment failed, e = {:?}", e);
@@ -197,14 +217,41 @@ mod tests {
     use super::*;
 
     #[test]
+    fn test_parser_comment_01() {
+        assert_eq!(
+            parser_comment(r#"CM_ "comment";"#),
+            Ok((
+                "",
+                Comment::Network(NetworkComment {
+                    comment: "comment".into()
+                })
+            )),
+        );
+    }
+
+    #[test]
+    fn test_parser_comment_02() {
+        assert_eq!(
+            parser_comment(r#"CM_ BU_ Node0 "The 0th Node";"#),
+            Ok((
+                "",
+                Comment::Node(NodeComment {
+                    node_name: "Node0".into(),
+                    comment: "The 0th Node".into()
+                })
+            )),
+        );
+    }
+
+    #[test]
     fn test_parser_network_comment_01() {
         assert_eq!(
             parser_network_comment(r#"CM_ "comment";"#),
             Ok((
                 "",
-                NetworkComment {
+                Comment::Network(NetworkComment {
                     comment: "comment".into()
-                }
+                })
             )),
         );
     }
@@ -215,9 +262,9 @@ mod tests {
             parser_network_comment(r#"CM_ "DBC Template with single line description";"#),
             Ok((
                 "",
-                NetworkComment {
+                Comment::Network(NetworkComment {
                     comment: "DBC Template with single line description".into()
-                }
+                })
             )),
         );
     }
@@ -228,10 +275,10 @@ mod tests {
             parser_node_comment(r#"CM_ BU_ Node0 "The 0th Node";"#),
             Ok((
                 "",
-                NodeComment {
+                Comment::Node(NodeComment {
                     node_name: "Node0".into(),
                     comment: "The 0th Node".into()
-                }
+                })
             )),
         );
     }
@@ -242,10 +289,10 @@ mod tests {
             parser_node_comment(r#"CM_ BU_ TestNode "";"#),
             Ok((
                 "",
-                NodeComment {
+                Comment::Node(NodeComment {
                     node_name: "TestNode".into(),
                     comment: "".into()
-                }
+                })
             )),
         );
     }
@@ -256,10 +303,10 @@ mod tests {
             parser_node_comment(r#"CM_ BU_ BAR "fam \"1\"";"#),
             Ok((
                 "",
-                NodeComment {
+                Comment::Node(NodeComment {
                     node_name: "BAR".into(),
                     comment: r#"fam \"1\""#.into()
-                }
+                })
             )),
         );
     }
@@ -270,10 +317,10 @@ mod tests {
             parser_node_comment(r#"CM_ BU_ DRIVER "// The driver controller driving the car //";"#),
             Ok((
                 "",
-                NodeComment {
+                Comment::Node(NodeComment {
                     node_name: "DRIVER".into(),
                     comment: "// The driver controller driving the car //".into()
-                }
+                })
             )),
         );
     }
@@ -286,10 +333,10 @@ mod tests {
             ),
             Ok((
                 "",
-                MessageComment {
+                Comment::Message(MessageComment {
                     message_id: 496,
                     comment: "Example message used as template in MotoHawk models.".into()
-                }
+                })
             )),
         );
     }
@@ -300,10 +347,10 @@ mod tests {
             parser_message_comment(r#"CM_ BO_ 472 "No sender message.";"#),
             Ok((
                 "",
-                MessageComment {
+                Comment::Message(MessageComment {
                     message_id: 472,
                     comment: "No sender message.".into()
-                }
+                })
             )),
         );
     }
@@ -316,10 +363,10 @@ mod tests {
             ),
             Ok((
                 "",
-                MessageComment {
+                Comment::Message(MessageComment {
                     message_id: 2303364386,
                     comment: "This cumulative distance calculation is updated when the trigger is active.".into()
-                }
+                })
             )),
         );
     }
@@ -332,11 +379,11 @@ mod tests {
             ),
             Ok((
                 "",
-                SignalComment {
+                Comment::Signal(SignalComment {
                     message_id: 586,
                     signal_name: "whlspeed_RL_Bremse2".into(),
                     comment: "Radgeschwindigkeit / wheel speed direct RL".into()
-                }
+                })
             )),
         );
     }
@@ -357,7 +404,7 @@ Bit7 (128) Invalid Individual";"#
             ),
             Ok((
                 "",
-                SignalComment {
+                Comment::Signal(SignalComment {
                     message_id: 834,
                     signal_name: "WheelQuality_FL".into(),
                     comment: r#"Bit matrix
@@ -370,7 +417,7 @@ Bit5 (32) Not Initialized
 Bit6 (64) Invalid Generic
 Bit7 (128) Invalid Individual"#
                         .into()
-                }
+                })
             )),
         );
     }
@@ -381,10 +428,10 @@ Bit7 (128) Invalid Individual"#
             parser_environment_variable_comment(r#"CM_ EV_ EMC_Azimuth "Elevation Head";"#),
             Ok((
                 "",
-                EnvironmentVariableComment {
+                Comment::EnvironmentVariable(EnvironmentVariableComment {
                     environment_variable_name: "EMC_Azimuth".into(),
                     comment: "Elevation Head".into()
-                }
+                })
             )),
         );
     }
@@ -397,10 +444,10 @@ Bit7 (128) Invalid Individual"#
             ),
             Ok((
                 "",
-                EnvironmentVariableComment {
+                Comment::EnvironmentVariable(EnvironmentVariableComment {
                     environment_variable_name: "RWEnvVar_wData".into(),
                     comment: "This a comment for an environment variable".into()
-                }
+                })
             )),
         );
     }
