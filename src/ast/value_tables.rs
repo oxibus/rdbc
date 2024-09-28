@@ -87,10 +87,9 @@ impl fmt::Display for ValueTable {
 fn parser_value_description_item(
     input: &str,
 ) -> IResult<&str, ValueDescriptionItem, DbcParseError> {
-    map(
-        tuple((spacey(u64), spacey(string_literal))),
-        |(num, str)| ValueDescriptionItem { num, str },
-    )(input)
+    map(tuple((spacey(u64), spacey(char_string))), |(num, str)| {
+        ValueDescriptionItem { num, str }
+    })(input)
 }
 
 fn parser_value_descriptions(input: &str) -> IResult<&str, ValueDescriptions, DbcParseError> {

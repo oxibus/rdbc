@@ -19,7 +19,7 @@ impl fmt::Display for Version {
 }
 
 pub fn parser_version(input: &str) -> IResult<&str, Version, DbcParseError> {
-    let res = map(preceded(spacey(tag("VERSION")), string_literal), |s| {
+    let res = map(preceded(spacey(tag("VERSION")), char_string), |s| {
         Version(s)
     })(input);
     match res {

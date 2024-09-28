@@ -209,7 +209,7 @@ fn parser_signal_min_max(input: &str) -> IResult<&str, (f64, f64), DbcParseError
 }
 
 fn parser_signal_unit(input: &str) -> IResult<&str, String, DbcParseError> {
-    string_literal(input)
+    char_string(input)
 }
 
 fn parser_signal_receivers(input: &str) -> IResult<&str, Vec<String>, DbcParseError> {

@@ -60,7 +60,7 @@ pub fn parser_network_comment(input: &str) -> IResult<&str, NetworkCommnet, DbcP
     let res = map(
         tuple((
             multispacey(tag("CM_")),
-            multispacey(string_literal),
+            multispacey(char_string),
             multispacey(tag(";")),
         )),
         |(_, comment, _)| NetworkCommnet { comment },
