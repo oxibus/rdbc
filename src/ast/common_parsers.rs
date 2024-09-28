@@ -228,6 +228,10 @@ pub fn parser_signal_name(input: &str) -> IResult<&str, &str, DbcParseError> {
     dbc_identifier(input)
 }
 
+pub fn parser_env_var_name(input: &str) -> IResult<&str, &str, DbcParseError> {
+    dbc_identifier(input)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

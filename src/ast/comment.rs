@@ -161,6 +161,37 @@ pub fn parser_signal_comment(input: &str) -> IResult<&str, SignalComment, DbcPar
     }
 }
 
+pub fn parser_environment_variable_comment(
+    input: &str,
+) -> IResult<&str, EnvironmentVariableComment, DbcParseError> {
+    let res = map(
+        tuple((
+            multispacey(tag("CM_")),
+            multispacey(tag("EV_")),
+            multispacey(parser_env_var_name),
+            multispacey(char_string),
+            multispacey(tag(";")),
+        )),
+        |(_, _, environment_variable_name, comment, _)| EnvironmentVariableComment {
+            environment_variable_name: environment_variable_name.to_string(),
+            comment,
+        },
+    )(input);
+
+    match res {
+        Ok((remain, comment)) => {
+            log::info!("parse environment variable comment: {:?}", comment);
+            Ok((remain, comment))
+        }
+        Err(e) => {
+            log::trace!("parse environment variable comment failed, e = {:?}", e);
+            Err(nom::Err::Error(
+                DbcParseError::BadEnvironmentVariableComment,
+            ))
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -339,6 +370,36 @@ Bit5 (32) Not Initialized
 Bit6 (64) Invalid Generic
 Bit7 (128) Invalid Individual"#
                         .into()
+                }
+            )),
+        );
+    }
+
+    #[test]
+    fn test_parser_environmental_variable_comment_01() {
+        assert_eq!(
+            parser_environment_variable_comment(r#"CM_ EV_ EMC_Azimuth "Elevation Head";"#),
+            Ok((
+                "",
+                EnvironmentVariableComment {
+                    environment_variable_name: "EMC_Azimuth".into(),
+                    comment: "Elevation Head".into()
+                }
+            )),
+        );
+    }
+
+    #[test]
+    fn test_parser_environmental_variable_comment_02() {
+        assert_eq!(
+            parser_environment_variable_comment(
+                r#"CM_ EV_ RWEnvVar_wData "This a comment for an environment variable";"#
+            ),
+            Ok((
+                "",
+                EnvironmentVariableComment {
+                    environment_variable_name: "RWEnvVar_wData".into(),
+                    comment: "This a comment for an environment variable".into()
                 }
             )),
         );
