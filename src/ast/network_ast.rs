@@ -1,6 +1,8 @@
 use super::bit_timing::parser_bit_timing;
 use super::bit_timing::BitTiming;
 use super::common_parsers::*;
+use super::env_var_value_descriptions::parser_env_var_value_descriptions;
+use super::env_var_value_descriptions::EnvironmentVariableValueDescriptions;
 use super::error::DbcParseError;
 use super::message::*;
 use super::new_symbols::parser_new_symbols;
@@ -41,6 +43,9 @@ pub struct NetworkAst {
 
     // VAL_ message_id signal_name [value_descriptions];
     pub signal_value_descriptions: Vec<SignalValueDescriptions>,
+
+    // VAL_ env_var_name [value_descriptions];
+    pub env_var_value_descriptions: Vec<EnvironmentVariableValueDescriptions>,
 }
 
 impl fmt::Display for NetworkAst {
@@ -68,6 +73,7 @@ pub fn dbc_value(input: &str) -> IResult<&str, NetworkAst, DbcParseError> {
             multispacey(parser_value_tables),
             multispacey(many0(parser_dbc_message)),
             multispacey(many0(parser_signal_value_descriptions)),
+            multispacey(many0(parser_env_var_value_descriptions)),
         ))),
         |(
             version,
@@ -77,6 +83,7 @@ pub fn dbc_value(input: &str) -> IResult<&str, NetworkAst, DbcParseError> {
             value_tables,
             messages,
             signal_value_descriptions,
+            env_var_value_descriptions,
         )| NetworkAst {
             version,
             new_symbols,
@@ -85,6 +92,7 @@ pub fn dbc_value(input: &str) -> IResult<&str, NetworkAst, DbcParseError> {
             value_tables,
             messages,
             signal_value_descriptions,
+            env_var_value_descriptions,
         },
     )(input)
 }
@@ -186,6 +194,7 @@ BO_ 112 MM5_10_TX1: 8 DRS_MM5_10
                     },
                 ],
                 signal_value_descriptions: vec![],
+                env_var_value_descriptions: vec![],
             }),
         );
     }
@@ -217,6 +226,10 @@ BO_ 112 MM5_10_TX1: 8 DRS_MM5_10
 
 VAL_ 2147487969 Value1 3 "Three" 2 "Two" 1 "One" 0 "Zero" ;
 VAL_ 2147487969 Value0 2 "Value2" 1 "Value1" 0 "Value0" ;
+
+VAL_ RWEnvVar_wData 2 "Value2" 1 "Value1" 0 "Value0" ;
+VAL_ WriteOnlyEnvVar 2 "Value2" 1 "Value1" 0 "Value0" ;
+VAL_ ReadOnlyEnvVar 2 "Value2" 1 "Value1" 0 "Value0" ;
 "#
             ),
             Ok(NetworkAst {
@@ -353,6 +366,65 @@ VAL_ 2147487969 Value0 2 "Value2" 1 "Value1" 0 "Value0" ;
                     SignalValueDescriptions {
                         message_id: 2147487969,
                         signal_name: "Value0".to_string(),
+                        value_descriptions: ValueDescriptions {
+                            values: vec![
+                                ValueDescriptionItem {
+                                    num: 2,
+                                    str: "Value2".to_string()
+                                },
+                                ValueDescriptionItem {
+                                    num: 1,
+                                    str: "Value1".to_string()
+                                },
+                                ValueDescriptionItem {
+                                    num: 0,
+                                    str: "Value0".to_string()
+                                }
+                            ]
+                        }
+                    },
+                ],
+                env_var_value_descriptions: vec![
+                    EnvironmentVariableValueDescriptions {
+                        env_var_name: "RWEnvVar_wData".to_string(),
+                        value_descriptions: ValueDescriptions {
+                            values: vec![
+                                ValueDescriptionItem {
+                                    num: 2,
+                                    str: "Value2".to_string()
+                                },
+                                ValueDescriptionItem {
+                                    num: 1,
+                                    str: "Value1".to_string()
+                                },
+                                ValueDescriptionItem {
+                                    num: 0,
+                                    str: "Value0".to_string()
+                                }
+                            ]
+                        }
+                    },
+                    EnvironmentVariableValueDescriptions {
+                        env_var_name: "WriteOnlyEnvVar".to_string(),
+                        value_descriptions: ValueDescriptions {
+                            values: vec![
+                                ValueDescriptionItem {
+                                    num: 2,
+                                    str: "Value2".to_string()
+                                },
+                                ValueDescriptionItem {
+                                    num: 1,
+                                    str: "Value1".to_string()
+                                },
+                                ValueDescriptionItem {
+                                    num: 0,
+                                    str: "Value0".to_string()
+                                }
+                            ]
+                        }
+                    },
+                    EnvironmentVariableValueDescriptions {
+                        env_var_name: "ReadOnlyEnvVar".to_string(),
                         value_descriptions: ValueDescriptions {
                             values: vec![
                                 ValueDescriptionItem {
