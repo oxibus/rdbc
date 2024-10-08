@@ -33,7 +33,11 @@ pub struct ValueTable {
 
 impl fmt::Display for ValueTable {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "VAL_TABLE_ {}{};", self.name, self.values)
+        write!(f, "VAL_TABLE_ {}", self.name)?;
+        if !self.values.values.is_empty() {
+            write!(f, " {}", self.values)?;
+        }
+        write!(f, ";")
     }
 }
 
