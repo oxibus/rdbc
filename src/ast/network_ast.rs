@@ -90,6 +90,8 @@ pub fn parse_dbc(input: &str) -> Result<NetworkAst, DbcParseError> {
 mod tests {
     use super::*;
     use crate::ast::signal;
+    use crate::ast::value_descriptions::ValueDescriptionItem;
+    use crate::ast::value_descriptions::ValueDescriptions;
 
     #[test]
     fn test_dbc_01() {
