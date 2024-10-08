@@ -21,11 +21,11 @@ use std::fmt;
 /// VAL_TABLE_ ABS_fault_info 2 "active faults stored" 1 "inactive faults stored" 0 "no faults stored" ;
 /// VAL_TABLE_ vt_WheelSpeedQualifier 5 "InvalidUnderVoltage" 4 "NotCalculated" 3 "ReducedMonitored" 2 "Faulty" 1 "Normal" 0 "NotInitialized" ;
 ///
-/// VAL_ message_id signal_name [value_description];
+/// VAL_ message_id signal_name [value_descriptions];
 /// VAL_ 2147487969 Value1 3 "Three" 2 "Two" 1 "One" 0 "Zero" ;
 /// VAL_ 2147487969 Value0 2 "Value2" 1 "Value1" 0 "Value0" ;
 ///
-/// VAL_ env_var_name [value_description];
+/// VAL_ env_var_name [value_descriptions];
 /// VAL_ RWEnvVar_wData 2 "Value2" 1 "Value1" 0 "Value0" ;
 /// VAL_ WriteOnlyEnvVar 2 "Value2" 1 "Value1" 0 "Value0" ;
 /// VAL_ ReadOnlyEnvVar 2 "Value2" 1 "Value1" 0 "Value0" ;

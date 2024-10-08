@@ -28,14 +28,14 @@ use std::fmt;
 #[derive(PartialEq, Debug, Clone)]
 pub struct ValueTable {
     pub name: String,
-    pub values: ValueDescriptions,
+    pub value_descriptions: ValueDescriptions,
 }
 
 impl fmt::Display for ValueTable {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "VAL_TABLE_ {}", self.name)?;
-        if !self.values.values.is_empty() {
-            write!(f, " {}", self.values)?;
+        if !self.value_descriptions.values.is_empty() {
+            write!(f, " {}", self.value_descriptions)?;
         }
         write!(f, ";")
     }
@@ -56,7 +56,7 @@ pub fn parser_value_table(input: &str) -> IResult<&str, ValueTable, DbcParseErro
         )),
         |(_, name, values, _, _)| ValueTable {
             name: name.to_string(),
-            values,
+            value_descriptions: values,
         },
     )(input)
 }
@@ -89,7 +89,7 @@ mod tests {
                 "",
                 ValueTable {
                     name: "ABS_fault_info".to_string(),
-                    values: ValueDescriptions {
+                    value_descriptions: ValueDescriptions {
                         values: vec![
                             ValueDescriptionItem {
                                 num: 2,
@@ -115,7 +115,7 @@ mod tests {
         assert_eq!(
             ValueTable {
                 name: "ABS_fault_info".to_string(),
-                values: ValueDescriptions {
+                value_descriptions: ValueDescriptions {
                     values: vec![
                         ValueDescriptionItem {
                             num: 2,
@@ -142,7 +142,7 @@ mod tests {
         assert_eq!(
             ValueTable {
                 name: "name".to_string(),
-                values: ValueDescriptions { values: vec![] }
+                value_descriptions: ValueDescriptions { values: vec![] }
             }
             .to_string(),
             "VAL_TABLE_ name;"

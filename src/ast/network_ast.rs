@@ -7,6 +7,8 @@ use super::new_symbols::parser_new_symbols;
 use super::new_symbols::NewSymbols;
 use super::nodes::parser_nodes;
 use super::nodes::Nodes;
+use super::signal_value_descriptions::parser_signal_value_descriptions;
+use super::signal_value_descriptions::SignalValueDescriptions;
 use super::value_tables::*;
 use super::version::parser_version;
 use super::version::Version;
@@ -36,6 +38,9 @@ pub struct NetworkAst {
 
     // BO_
     pub messages: Vec<Message>,
+
+    // VAL_ message_id signal_name [value_descriptions];
+    pub signal_value_descriptions: Vec<SignalValueDescriptions>,
 }
 
 impl fmt::Display for NetworkAst {
@@ -62,14 +67,24 @@ pub fn dbc_value(input: &str) -> IResult<&str, NetworkAst, DbcParseError> {
             multispacey(parser_nodes),
             multispacey(parser_value_tables),
             multispacey(many0(parser_dbc_message)),
+            multispacey(many0(parser_signal_value_descriptions)),
         ))),
-        |(version, new_symbols, bit_timing, nodes, value_tables, messages)| NetworkAst {
+        |(
             version,
             new_symbols,
             bit_timing,
             nodes,
             value_tables,
             messages,
+            signal_value_descriptions,
+        )| NetworkAst {
+            version,
+            new_symbols,
+            bit_timing,
+            nodes,
+            value_tables,
+            messages,
+            signal_value_descriptions,
         },
     )(input)
 }
@@ -170,6 +185,7 @@ BO_ 112 MM5_10_TX1: 8 DRS_MM5_10
                         ],
                     },
                 ],
+                signal_value_descriptions: vec![],
             }),
         );
     }
@@ -198,6 +214,9 @@ BO_ 112 MM5_10_TX1: 8 DRS_MM5_10
  SG_ Yaw_Rate : 0|16@1+ (0.005,-163.84) [-163.84|163.83] "°/s"  ABS
  SG_ AY1 : 32|16@1+ (0.000127465,-4.1768) [-4.1768|4.1765] "g"  ABS
 
+
+VAL_ 2147487969 Value1 3 "Three" 2 "Two" 1 "One" 0 "Zero" ;
+VAL_ 2147487969 Value0 2 "Value2" 1 "Value1" 0 "Value0" ;
 "#
             ),
             Ok(NetworkAst {
@@ -208,7 +227,7 @@ BO_ 112 MM5_10_TX1: 8 DRS_MM5_10
                 value_tables: Some(vec![
                     ValueTable {
                         name: "ABS_fault_info".to_string(),
-                        values: ValueDescriptions {
+                        value_descriptions: ValueDescriptions {
                             values: vec![
                                 ValueDescriptionItem {
                                     num: 2,
@@ -227,7 +246,7 @@ BO_ 112 MM5_10_TX1: 8 DRS_MM5_10
                     },
                     ValueTable {
                         name: "vt_WheelSpeedQualifier".to_string(),
-                        values: ValueDescriptions {
+                        value_descriptions: ValueDescriptions {
                             values: vec![
                                 ValueDescriptionItem {
                                     num: 5,
@@ -304,6 +323,52 @@ BO_ 112 MM5_10_TX1: 8 DRS_MM5_10
                                 receivers: Some(vec!["ABS".into()]),
                             }
                         ],
+                    },
+                ],
+                signal_value_descriptions: vec![
+                    SignalValueDescriptions {
+                        message_id: 2147487969,
+                        signal_name: "Value1".to_string(),
+                        value_descriptions: ValueDescriptions {
+                            values: vec![
+                                ValueDescriptionItem {
+                                    num: 3,
+                                    str: "Three".to_string()
+                                },
+                                ValueDescriptionItem {
+                                    num: 2,
+                                    str: "Two".to_string()
+                                },
+                                ValueDescriptionItem {
+                                    num: 1,
+                                    str: "One".to_string()
+                                },
+                                ValueDescriptionItem {
+                                    num: 0,
+                                    str: "Zero".to_string()
+                                }
+                            ]
+                        }
+                    },
+                    SignalValueDescriptions {
+                        message_id: 2147487969,
+                        signal_name: "Value0".to_string(),
+                        value_descriptions: ValueDescriptions {
+                            values: vec![
+                                ValueDescriptionItem {
+                                    num: 2,
+                                    str: "Value2".to_string()
+                                },
+                                ValueDescriptionItem {
+                                    num: 1,
+                                    str: "Value1".to_string()
+                                },
+                                ValueDescriptionItem {
+                                    num: 0,
+                                    str: "Value0".to_string()
+                                }
+                            ]
+                        }
                     },
                 ],
             }),

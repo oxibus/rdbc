@@ -7,6 +7,7 @@ pub mod network_ast;
 pub mod new_symbols;
 pub mod nodes;
 pub mod signal;
+pub mod signal_value_descriptions;
 pub mod value_descriptions;
 pub mod value_tables;
 pub mod version;
