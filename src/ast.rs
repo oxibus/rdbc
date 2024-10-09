@@ -1,3 +1,7 @@
+pub mod attribute;
+pub mod attribute_default;
+pub mod attribute_definition;
+pub mod attribute_value;
 pub mod bit_timing;
 pub mod comment;
 pub mod common_parsers;
