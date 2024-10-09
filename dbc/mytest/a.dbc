@@ -52,6 +52,8 @@ EV_ RWEnvVar_wData: 0 [0|1234] "" 60 2 DUMMY_NODE_VECTOR3  Node2;
 EV_ WriteOnlyEnvVar: 1 [0|1234] "" 60 3 DUMMY_NODE_VECTOR2  Node2;
 EV_ ReadOnlyEnvVar: 0 [0|100] "MPH" 20 4 DUMMY_NODE_VECTOR1  Node2;
 
+ENVVAR_DATA_ RWEnvVar_wData: 10;
+
 VAL_ 2147487969 Value1 3 "Three" 2 "Two" 1 "One" 0 "Zero" ;
 VAL_ 2147487969 Value0 2 "Value2" 1 "Value1" 0 "Value0" ;
 

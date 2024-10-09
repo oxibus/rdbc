@@ -2,6 +2,7 @@ pub mod bit_timing;
 pub mod comment;
 pub mod common_parsers;
 pub mod env_var;
+pub mod env_var_data;
 pub mod env_var_value_descriptions;
 pub mod error;
 pub mod message;

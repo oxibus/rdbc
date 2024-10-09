@@ -3,6 +3,8 @@ use super::bit_timing::BitTiming;
 use super::common_parsers::*;
 use super::env_var::parser_env_var;
 use super::env_var::EnvironmentVariable;
+use super::env_var_data::parser_env_var_data;
+use super::env_var_data::EnvironmentVariableData;
 use super::env_var_value_descriptions::parser_env_var_value_descriptions;
 use super::env_var_value_descriptions::EnvironmentVariableValueDescriptions;
 use super::error::DbcParseError;
@@ -46,6 +48,9 @@ pub struct NetworkAst {
     // EV_
     pub env_vars: Vec<EnvironmentVariable>,
 
+    // ENVVAR_DATA_
+    pub env_vars_data: Vec<EnvironmentVariableData>,
+
     // VAL_ message_id signal_name [value_descriptions];
     pub signal_value_descriptions: Vec<SignalValueDescriptions>,
 
@@ -81,6 +86,11 @@ impl fmt::Display for NetworkAst {
         }
         write!(f, "\n")?;
 
+        for env_var_data in &self.env_vars_data {
+            writeln!(f, "{}", env_var_data)?;
+        }
+        write!(f, "\n")?;
+
         for signal_value_description in &self.signal_value_descriptions {
             writeln!(f, "{}", signal_value_description)?;
         }
@@ -103,6 +113,7 @@ pub fn dbc_value(input: &str) -> IResult<&str, NetworkAst, DbcParseError> {
             multispacey(parser_value_tables),
             multispacey(many0(parser_dbc_message)),
             multispacey(many0(parser_env_var)),
+            multispacey(many0(parser_env_var_data)),
             multispacey(many0(parser_signal_value_descriptions)),
             multispacey(many0(parser_env_var_value_descriptions)),
         ))),
@@ -114,6 +125,7 @@ pub fn dbc_value(input: &str) -> IResult<&str, NetworkAst, DbcParseError> {
             value_tables,
             messages,
             env_vars,
+            env_vars_data,
             signal_value_descriptions,
             env_var_value_descriptions,
         )| NetworkAst {
@@ -124,6 +136,7 @@ pub fn dbc_value(input: &str) -> IResult<&str, NetworkAst, DbcParseError> {
             value_tables,
             messages,
             env_vars,
+            env_vars_data,
             signal_value_descriptions,
             env_var_value_descriptions,
         },
@@ -228,6 +241,7 @@ BO_ 112 MM5_10_TX1: 8 DRS_MM5_10
                     },
                 ],
                 env_vars: vec![],
+                env_vars_data: vec![],
                 signal_value_descriptions: vec![],
                 env_var_value_descriptions: vec![],
             }),
@@ -262,6 +276,8 @@ EV_ UnrestrictedEnvVar: 0 [0|0] "Nm" 0 1 DUMMY_NODE_VECTOR8000  Node0;
 EV_ RWEnvVar_wData: 0 [0|1234] "" 60 2 DUMMY_NODE_VECTOR3  Node2;
 EV_ WriteOnlyEnvVar: 1 [0|1234] "" 60 3 DUMMY_NODE_VECTOR2  Node2;
 EV_ ReadOnlyEnvVar: 0 [0|100] "MPH" 20 4 DUMMY_NODE_VECTOR1  Node2;
+
+ENVVAR_DATA_ RWEnvVar_wData: 10;
 
 VAL_ 2147487969 Value1 3 "Three" 2 "Two" 1 "One" 0 "Zero" ;
 VAL_ 2147487969 Value0 2 "Value2" 1 "Value1" 0 "Value0" ;
@@ -423,6 +439,10 @@ VAL_ ReadOnlyEnvVar 2 "Value2" 1 "Value1" 0 "Value0" ;
                         access_nodes: vec!["Node2".to_string()],
                     }
                 ],
+                env_vars_data: vec![EnvironmentVariableData {
+                    env_var_name: "RWEnvVar_wData".to_string(),
+                    data_size: 10
+                },],
                 signal_value_descriptions: vec![
                     SignalValueDescriptions {
                         message_id: 2147487969,
