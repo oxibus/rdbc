@@ -1,5 +1,7 @@
 use super::bit_timing::parser_bit_timing;
 use super::bit_timing::BitTiming;
+use super::comment::parser_comment;
+use super::comment::Comment;
 use super::common_parsers::*;
 use super::env_var::parser_env_var;
 use super::env_var::EnvironmentVariable;
@@ -51,6 +53,9 @@ pub struct NetworkAst {
     // ENVVAR_DATA_
     pub env_vars_data: Vec<EnvironmentVariableData>,
 
+    // CM_
+    pub comments: Vec<Comment>,
+
     // VAL_ message_id signal_name [value_descriptions];
     pub signal_value_descriptions: Vec<SignalValueDescriptions>,
 
@@ -74,8 +79,8 @@ impl fmt::Display for NetworkAst {
             for table in vt {
                 writeln!(f, "{}", table)?;
             }
+            write!(f, "\n")?;
         }
-        write!(f, "\n")?;
 
         for message in &self.messages {
             writeln!(f, "{}", message)?;
@@ -84,17 +89,30 @@ impl fmt::Display for NetworkAst {
         for env_var in &self.env_vars {
             writeln!(f, "{}", env_var)?;
         }
-        write!(f, "\n")?;
+        if !self.env_vars.is_empty() {
+            write!(f, "\n")?;
+        }
 
         for env_var_data in &self.env_vars_data {
             writeln!(f, "{}", env_var_data)?;
         }
-        write!(f, "\n")?;
+        if !self.env_vars_data.is_empty() {
+            write!(f, "\n")?;
+        }
+
+        for comment in &self.comments {
+            writeln!(f, "{}", comment)?;
+        }
+        if !self.comments.is_empty() {
+            write!(f, "\n")?;
+        }
 
         for signal_value_description in &self.signal_value_descriptions {
             writeln!(f, "{}", signal_value_description)?;
         }
-        write!(f, "\n")?;
+        if !self.signal_value_descriptions.is_empty() {
+            write!(f, "\n")?;
+        }
 
         for env_var_value_description in &self.env_var_value_descriptions {
             writeln!(f, "{}", env_var_value_description)?;
@@ -114,6 +132,7 @@ pub fn dbc_value(input: &str) -> IResult<&str, NetworkAst, DbcParseError> {
             multispacey(many0(parser_dbc_message)),
             multispacey(many0(parser_env_var)),
             multispacey(many0(parser_env_var_data)),
+            multispacey(many0(parser_comment)),
             multispacey(many0(parser_signal_value_descriptions)),
             multispacey(many0(parser_env_var_value_descriptions)),
         ))),
@@ -126,6 +145,7 @@ pub fn dbc_value(input: &str) -> IResult<&str, NetworkAst, DbcParseError> {
             messages,
             env_vars,
             env_vars_data,
+            comments,
             signal_value_descriptions,
             env_var_value_descriptions,
         )| NetworkAst {
@@ -137,6 +157,7 @@ pub fn dbc_value(input: &str) -> IResult<&str, NetworkAst, DbcParseError> {
             messages,
             env_vars,
             env_vars_data,
+            comments,
             signal_value_descriptions,
             env_var_value_descriptions,
         },
@@ -242,6 +263,7 @@ BO_ 112 MM5_10_TX1: 8 DRS_MM5_10
                 ],
                 env_vars: vec![],
                 env_vars_data: vec![],
+                comments: vec![],
                 signal_value_descriptions: vec![],
                 env_var_value_descriptions: vec![],
             }),
@@ -443,6 +465,7 @@ VAL_ ReadOnlyEnvVar 2 "Value2" 1 "Value1" 0 "Value0" ;
                     env_var_name: "RWEnvVar_wData".to_string(),
                     data_size: 10
                 },],
+                comments: vec![],
                 signal_value_descriptions: vec![
                     SignalValueDescriptions {
                         message_id: 2147487969,

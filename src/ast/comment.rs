@@ -5,10 +5,17 @@ use nom::bytes::complete::tag;
 use nom::combinator::map;
 use nom::sequence::tuple;
 use nom::IResult;
+use std::fmt;
 
 #[derive(PartialEq, Debug, Clone)]
 pub struct NetworkComment {
     pub comment: String,
+}
+
+impl fmt::Display for NetworkComment {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "CM_ \"{}\";", self.comment)
+    }
 }
 
 #[derive(PartialEq, Debug, Clone)]
@@ -17,10 +24,22 @@ pub struct NodeComment {
     pub comment: String,
 }
 
+impl fmt::Display for NodeComment {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "CM_ BU_ {} \"{}\";", self.node_name, self.comment)
+    }
+}
+
 #[derive(PartialEq, Debug, Clone)]
 pub struct MessageComment {
     pub message_id: u32,
     pub comment: String,
+}
+
+impl fmt::Display for MessageComment {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "CM_ BO_ {} \"{}\";", self.message_id, self.comment)
+    }
 }
 
 #[derive(PartialEq, Debug, Clone)]
@@ -30,10 +49,30 @@ pub struct SignalComment {
     pub comment: String,
 }
 
+impl fmt::Display for SignalComment {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "CM_ SG_ {} {} \"{}\";",
+            self.message_id, self.signal_name, self.comment
+        )
+    }
+}
+
 #[derive(PartialEq, Debug, Clone)]
 pub struct EnvironmentVariableComment {
     pub environment_variable_name: String,
     pub comment: String,
+}
+
+impl fmt::Display for EnvironmentVariableComment {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "CM_ EV_ {} \"{}\";",
+            self.environment_variable_name, self.comment
+        )
+    }
 }
 
 /// The comment section contains the object comments. For each object having a
@@ -55,6 +94,18 @@ pub enum Comment {
     Message(MessageComment),
     Signal(SignalComment),
     EnvironmentVariable(EnvironmentVariableComment),
+}
+
+impl fmt::Display for Comment {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Comment::Network(comment) => write!(f, "{}", comment),
+            Comment::Node(comment) => write!(f, "{}", comment),
+            Comment::Message(comment) => write!(f, "{}", comment),
+            Comment::Signal(comment) => write!(f, "{}", comment),
+            Comment::EnvironmentVariable(comment) => write!(f, "{}", comment),
+        }
+    }
 }
 
 pub fn parser_comment(input: &str) -> IResult<&str, Comment, DbcParseError> {
