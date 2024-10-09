@@ -35,6 +35,9 @@ BS_:
 
 BU_: Node2 Node1 Node0
 
+VAL_TABLE_ Value0 2 "Value2" 1 "Value1" 0 "Value0" ;
+VAL_TABLE_ Numbers 3 "Three" 2 "Two" 1 "One" 0 "Zero" ;
+
 BO_ 2147487969 CANMultiplexed: 2 Node0
  SG_ Value1 m1 : 8|8@1+ (1,0) [0|0] ""  Node1
  SG_ Value0 m0 : 8|8@1+ (1,0) [0|0] ""  Node0
@@ -44,3 +47,14 @@ BO_ 1234 CANMessage: 8 Node0
  SG_ Signal1 : 32|32@1+ (100,0) [0|100] "%"  Node1,Node2
  SG_ Signal0 : 0|32@1- (1,0) [0|0] ""  Node1,Node2
 
+EV_ UnrestrictedEnvVar: 0 [0|0] "Nm" 0 1 DUMMY_NODE_VECTOR8000  Node0;
+EV_ RWEnvVar_wData: 0 [0|1234] "" 60 2 DUMMY_NODE_VECTOR3  Node2;
+EV_ WriteOnlyEnvVar: 1 [0|1234] "" 60 3 DUMMY_NODE_VECTOR2  Node2;
+EV_ ReadOnlyEnvVar: 0 [0|100] "MPH" 20 4 DUMMY_NODE_VECTOR1  Node2;
+
+VAL_ 2147487969 Value1 3 "Three" 2 "Two" 1 "One" 0 "Zero" ;
+VAL_ 2147487969 Value0 2 "Value2" 1 "Value1" 0 "Value0" ;
+
+VAL_ RWEnvVar_wData 2 "Value2" 1 "Value1" 0 "Value0" ;
+VAL_ WriteOnlyEnvVar 2 "Value2" 1 "Value1" 0 "Value0" ;
+VAL_ ReadOnlyEnvVar 2 "Value2" 1 "Value1" 0 "Value0" ;

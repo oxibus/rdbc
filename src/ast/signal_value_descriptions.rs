@@ -24,7 +24,7 @@ impl fmt::Display for SignalValueDescriptions {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "VAL_ {} {} {}",
+            "VAL_ {} {} {};",
             self.message_id, self.signal_name, self.value_descriptions
         )
     }
@@ -123,7 +123,7 @@ mod tests {
                 }
             }
             .to_string(),
-            r#"VAL_ 2147487969 Value0 2 "Value2" 1 "Value1" 0 "Value0""#,
+            r#"VAL_ 2147487969 Value0 2 "Value2" 1 "Value1" 0 "Value0";"#,
         );
     }
 }

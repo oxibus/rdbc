@@ -1,6 +1,8 @@
 use super::bit_timing::parser_bit_timing;
 use super::bit_timing::BitTiming;
 use super::common_parsers::*;
+use super::env_var::parser_env_var;
+use super::env_var::EnvironmentVariable;
 use super::env_var_value_descriptions::parser_env_var_value_descriptions;
 use super::env_var_value_descriptions::EnvironmentVariableValueDescriptions;
 use super::error::DbcParseError;
@@ -41,6 +43,9 @@ pub struct NetworkAst {
     // BO_
     pub messages: Vec<Message>,
 
+    // EV_
+    pub env_vars: Vec<EnvironmentVariable>,
+
     // VAL_ message_id signal_name [value_descriptions];
     pub signal_value_descriptions: Vec<SignalValueDescriptions>,
 
@@ -51,13 +56,38 @@ pub struct NetworkAst {
 impl fmt::Display for NetworkAst {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         writeln!(f, "{}\n", self.version)?;
+
         writeln!(f, "{}", self.new_symbols)?;
+
         if let Some(bc) = &self.bit_timing {
             writeln!(f, "{}", bc)?;
         }
+
         writeln!(f, "{}", self.nodes)?;
+
+        if let Some(vt) = &self.value_tables {
+            for table in vt {
+                writeln!(f, "{}", table)?;
+            }
+        }
+        write!(f, "\n")?;
+
         for message in &self.messages {
             writeln!(f, "{}", message)?;
+        }
+
+        for env_var in &self.env_vars {
+            writeln!(f, "{}", env_var)?;
+        }
+        write!(f, "\n")?;
+
+        for signal_value_description in &self.signal_value_descriptions {
+            writeln!(f, "{}", signal_value_description)?;
+        }
+        write!(f, "\n")?;
+
+        for env_var_value_description in &self.env_var_value_descriptions {
+            writeln!(f, "{}", env_var_value_description)?;
         }
         Ok(())
     }
@@ -72,6 +102,7 @@ pub fn dbc_value(input: &str) -> IResult<&str, NetworkAst, DbcParseError> {
             multispacey(parser_nodes),
             multispacey(parser_value_tables),
             multispacey(many0(parser_dbc_message)),
+            multispacey(many0(parser_env_var)),
             multispacey(many0(parser_signal_value_descriptions)),
             multispacey(many0(parser_env_var_value_descriptions)),
         ))),
@@ -82,6 +113,7 @@ pub fn dbc_value(input: &str) -> IResult<&str, NetworkAst, DbcParseError> {
             nodes,
             value_tables,
             messages,
+            env_vars,
             signal_value_descriptions,
             env_var_value_descriptions,
         )| NetworkAst {
@@ -91,6 +123,7 @@ pub fn dbc_value(input: &str) -> IResult<&str, NetworkAst, DbcParseError> {
             nodes,
             value_tables,
             messages,
+            env_vars,
             signal_value_descriptions,
             env_var_value_descriptions,
         },
@@ -112,6 +145,7 @@ pub fn parse_dbc(input: &str) -> Result<NetworkAst, DbcParseError> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::ast::env_var::EnvVarType;
     use crate::ast::signal;
     use crate::ast::value_descriptions::ValueDescriptionItem;
     use crate::ast::value_descriptions::ValueDescriptions;
@@ -193,6 +227,7 @@ BO_ 112 MM5_10_TX1: 8 DRS_MM5_10
                         ],
                     },
                 ],
+                env_vars: vec![],
                 signal_value_descriptions: vec![],
                 env_var_value_descriptions: vec![],
             }),
@@ -223,6 +258,10 @@ BO_ 112 MM5_10_TX1: 8 DRS_MM5_10
  SG_ Yaw_Rate : 0|16@1+ (0.005,-163.84) [-163.84|163.83] "°/s"  ABS
  SG_ AY1 : 32|16@1+ (0.000127465,-4.1768) [-4.1768|4.1765] "g"  ABS
 
+EV_ UnrestrictedEnvVar: 0 [0|0] "Nm" 0 1 DUMMY_NODE_VECTOR8000  Node0;
+EV_ RWEnvVar_wData: 0 [0|1234] "" 60 2 DUMMY_NODE_VECTOR3  Node2;
+EV_ WriteOnlyEnvVar: 1 [0|1234] "" 60 3 DUMMY_NODE_VECTOR2  Node2;
+EV_ ReadOnlyEnvVar: 0 [0|100] "MPH" 20 4 DUMMY_NODE_VECTOR1  Node2;
 
 VAL_ 2147487969 Value1 3 "Three" 2 "Two" 1 "One" 0 "Zero" ;
 VAL_ 2147487969 Value0 2 "Value2" 1 "Value1" 0 "Value0" ;
@@ -337,6 +376,52 @@ VAL_ ReadOnlyEnvVar 2 "Value2" 1 "Value1" 0 "Value0" ;
                             }
                         ],
                     },
+                ],
+                env_vars: vec![
+                    EnvironmentVariable {
+                        env_var_name: "UnrestrictedEnvVar".to_string(),
+                        env_var_type: EnvVarType::String,
+                        minimum: 0.0,
+                        maximum: 0.0,
+                        unit: "Nm".to_string(),
+                        initial_value: 0.0,
+                        ev_id: 1,
+                        access_type: 0x8000,
+                        access_nodes: vec!["Node0".to_string()],
+                    },
+                    EnvironmentVariable {
+                        env_var_name: "RWEnvVar_wData".to_string(),
+                        env_var_type: EnvVarType::Integer,
+                        minimum: 0.0,
+                        maximum: 1234.0,
+                        unit: "".to_string(),
+                        initial_value: 60.0,
+                        ev_id: 2,
+                        access_type: 0x0003,
+                        access_nodes: vec!["Node2".to_string()],
+                    },
+                    EnvironmentVariable {
+                        env_var_name: "WriteOnlyEnvVar".to_string(),
+                        env_var_type: EnvVarType::Float,
+                        minimum: 0.0,
+                        maximum: 1234.0,
+                        unit: "".to_string(),
+                        initial_value: 60.0,
+                        ev_id: 3,
+                        access_type: 0x0002,
+                        access_nodes: vec!["Node2".to_string()],
+                    },
+                    EnvironmentVariable {
+                        env_var_name: "ReadOnlyEnvVar".to_string(),
+                        env_var_type: EnvVarType::Integer,
+                        minimum: 0.0,
+                        maximum: 100.0,
+                        unit: "MPH".to_string(),
+                        initial_value: 20.0,
+                        ev_id: 4,
+                        access_type: 0x0001,
+                        access_nodes: vec!["Node2".to_string()],
+                    }
                 ],
                 signal_value_descriptions: vec![
                     SignalValueDescriptions {

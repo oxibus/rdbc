@@ -27,6 +27,8 @@ pub enum DbcParseError {
     BadMessageComment,
     #[error("bad signal comment")]
     BadSignalComment,
+    #[error("bad environment variable")]
+    BadEnvironmentVariable,
     #[error("bad environment variable comment")]
     BadEnvironmentVariableComment,
     #[error("bad signal value descriptions")]
