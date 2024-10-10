@@ -27,16 +27,30 @@ pub enum DbcParseError {
     BadMessageComment,
     #[error("bad signal comment")]
     BadSignalComment,
+
     #[error("bad environment variable")]
     BadEnvironmentVariable,
     #[error("bad environment variable data")]
     BadEnvironmentVariableData,
     #[error("bad environment variable comment")]
     BadEnvironmentVariableComment,
+
     #[error("bad signal value descriptions")]
     BadSignalValueDescriptions,
     #[error("bad environment variable value descriptions")]
     BadEnvironmentVariableValueDescriptions,
+
+    #[error("bad attribute integer value type")]
+    BadAttributeIntegerValueType,
+    #[error("bad attribute hex value type")]
+    BadAttributeHexValueType,
+    #[error("bad attribute float value type")]
+    BadAttributeFloatValueType,
+    #[error("bad attribute string value type")]
+    BadAttributeStringValueType,
+    #[error("bad attribute enum value type")]
+    BadAttributeEnumValueType,
+
     #[error("bad integer")]
     BadInt,
     #[error("bad float")]

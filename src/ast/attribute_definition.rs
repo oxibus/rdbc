@@ -1,3 +1,9 @@
+use super::common_parsers::*;
+use super::error::DbcParseError;
+use nom::bytes::complete::tag;
+use nom::combinator::map;
+use nom::sequence::tuple;
+use nom::IResult;
 use std::fmt;
 
 #[derive(PartialEq, Debug, Clone)]
@@ -9,6 +15,30 @@ pub struct AttributeIntegerValueType {
 impl fmt::Display for AttributeIntegerValueType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "INT {} {}", self.minimum, self.maximum)
+    }
+}
+
+pub fn parser_attribute_integer_value_type(
+    input: &str,
+) -> IResult<&str, AttributeValueType, DbcParseError> {
+    let res = map(
+        tuple((
+            multispacey(tag("INT")),
+            multispacey(signed_integer),
+            multispacey(signed_integer),
+        )),
+        |(_, minimum, maximum)| AttributeIntegerValueType { minimum, maximum },
+    )(input);
+
+    match res {
+        Ok((remain, value)) => {
+            log::info!("parse attribute integer value type: {:?}", value);
+            Ok((remain, AttributeValueType::Integer(value)))
+        }
+        Err(e) => {
+            log::trace!("parse attribute integer value type failed, e = {:?}", e);
+            Err(nom::Err::Error(DbcParseError::BadAttributeIntegerValueType))
+        }
     }
 }
 
@@ -24,6 +54,30 @@ impl fmt::Display for AttributeHexValueType {
     }
 }
 
+pub fn parser_attribute_hex_value_type(
+    input: &str,
+) -> IResult<&str, AttributeValueType, DbcParseError> {
+    let res = map(
+        tuple((
+            multispacey(tag("HEX")),
+            multispacey(signed_integer),
+            multispacey(signed_integer),
+        )),
+        |(_, minimum, maximum)| AttributeHexValueType { minimum, maximum },
+    )(input);
+
+    match res {
+        Ok((remain, value)) => {
+            log::info!("parse attribute hex value type: {:?}", value);
+            Ok((remain, AttributeValueType::Hex(value)))
+        }
+        Err(e) => {
+            log::trace!("parse attribute hex value type failed, e = {:?}", e);
+            Err(nom::Err::Error(DbcParseError::BadAttributeHexValueType))
+        }
+    }
+}
+
 #[derive(PartialEq, Debug, Clone)]
 pub struct AttributeFloatValueType {
     pub minimum: f64,
@@ -33,6 +87,30 @@ pub struct AttributeFloatValueType {
 impl fmt::Display for AttributeFloatValueType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "FLOAT {} {}", self.minimum, self.maximum)
+    }
+}
+
+pub fn parser_attribute_float_value_type(
+    input: &str,
+) -> IResult<&str, AttributeValueType, DbcParseError> {
+    let res = map(
+        tuple((
+            multispacey(tag("FLOAT")),
+            multispacey(number_value),
+            multispacey(number_value),
+        )),
+        |(_, minimum, maximum)| AttributeFloatValueType { minimum, maximum },
+    )(input);
+
+    match res {
+        Ok((remain, value)) => {
+            log::info!("parse attribute float value type: {:?}", value);
+            Ok((remain, AttributeValueType::Float(value)))
+        }
+        Err(e) => {
+            log::trace!("parse attribute float value type failed, e = {:?}", e);
+            Err(nom::Err::Error(DbcParseError::BadAttributeFloatValueType))
+        }
     }
 }
 
@@ -416,6 +494,48 @@ mod tests {
             )
             .to_string(),
             r#"BA_DEF_REL_ BU_EV_REL_ "ControlUnitEnvVarAttr" STRING;"#
+        );
+    }
+
+    #[test]
+    fn test_parser_attribute_integer_value_type_01() {
+        assert_eq!(
+            parser_attribute_integer_value_type("INT 0 100"),
+            Ok((
+                "",
+                AttributeValueType::Integer(AttributeIntegerValueType {
+                    minimum: 0,
+                    maximum: 100
+                })
+            ))
+        );
+    }
+
+    #[test]
+    fn test_parser_attribute_hex_value_type_01() {
+        assert_eq!(
+            parser_attribute_hex_value_type("HEX 256 320"),
+            Ok((
+                "",
+                AttributeValueType::Hex(AttributeHexValueType {
+                    minimum: 256,
+                    maximum: 320
+                })
+            ))
+        );
+    }
+
+    #[test]
+    fn test_parser_attribute_float_value_type_01() {
+        assert_eq!(
+            parser_attribute_float_value_type("FLOAT 0 50.5"),
+            Ok((
+                "",
+                AttributeValueType::Float(AttributeFloatValueType {
+                    minimum: 0.0,
+                    maximum: 50.5
+                })
+            ))
         );
     }
 }
