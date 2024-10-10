@@ -299,6 +299,33 @@ impl fmt::Display for NodeAttribute {
     }
 }
 
+pub fn parser_node_attribute(input: &str) -> IResult<&str, AttributeDefinition, DbcParseError> {
+    let res = map(
+        tuple((
+            multispacey(tag("BA_DEF_")),
+            multispacey(tag("BU_")),
+            multispacey(tuple((tag("\""), dbc_identifier, tag("\"")))),
+            multispacey(parser_attribute_value_type),
+            multispacey(tag(";")),
+        )),
+        |(_, _, (_, attribute_name, _), attribute_value_type, _)| NodeAttribute {
+            attribute_name: attribute_name.to_string(),
+            attribute_value_type,
+        },
+    )(input);
+
+    match res {
+        Ok((remain, value)) => {
+            log::info!("parse node attribute: {:?}", value);
+            Ok((remain, AttributeDefinition::Node(value)))
+        }
+        Err(e) => {
+            log::trace!("parse node attribute failed, e = {:?}", e);
+            Err(nom::Err::Error(DbcParseError::BadNodeAttribute))
+        }
+    }
+}
+
 /// example:
 ///
 /// ```text
@@ -728,6 +755,23 @@ mod tests {
                     attribute_value_type: AttributeValueType::Float(AttributeFloatValueType {
                         minimum: 0.0,
                         maximum: 50.5
+                    })
+                })
+            ))
+        );
+    }
+
+    #[test]
+    fn test_parser_node_attribute_01() {
+        assert_eq!(
+            parser_node_attribute(r#"BA_DEF_ BU_  "BUIntAttribute" INT 0 100;"#),
+            Ok((
+                "",
+                AttributeDefinition::Node(NodeAttribute {
+                    attribute_name: "BUIntAttribute".to_string(),
+                    attribute_value_type: AttributeValueType::Integer(AttributeIntegerValueType {
+                        minimum: 0,
+                        maximum: 100
                     })
                 })
             ))
