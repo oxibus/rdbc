@@ -299,3 +299,123 @@ impl fmt::Display for AttributeDefinition {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_attribute_definition_string_01() {
+        assert_eq!(
+            AttributeDefinition::Network(NetworkAttribute {
+                attribute_name: "attribute_name".to_string(),
+                attribute_value_type: AttributeValueType::Integer(AttributeIntegerValueType {
+                    minimum: 0,
+                    maximum: 100
+                })
+            })
+            .to_string(),
+            r#"BA_DEF_ "attribute_name" INT 0 100;"#
+        );
+    }
+
+    #[test]
+    fn test_attribute_definition_string_02() {
+        assert_eq!(
+            AttributeDefinition::Network(NetworkAttribute {
+                attribute_name: "FloatAttribute".to_string(),
+                attribute_value_type: AttributeValueType::Float(AttributeFloatValueType {
+                    minimum: 0.0,
+                    maximum: 50.5
+                })
+            })
+            .to_string(),
+            r#"BA_DEF_ "FloatAttribute" FLOAT 0 50.5;"#
+        );
+    }
+
+    #[test]
+    fn test_attribute_definition_string_03() {
+        assert_eq!(
+            AttributeDefinition::Node(NodeAttribute {
+                attribute_name: "BUIntAttribute".to_string(),
+                attribute_value_type: AttributeValueType::Integer(AttributeIntegerValueType {
+                    minimum: 0,
+                    maximum: 100
+                })
+            })
+            .to_string(),
+            r#"BA_DEF_ BU_ "BUIntAttribute" INT 0 100;"#
+        );
+    }
+
+    #[test]
+    fn test_attribute_definition_string_04() {
+        assert_eq!(
+            AttributeDefinition::Message(MessageAttribute {
+                attribute_name: "BOStringAttribute".to_string(),
+                attribute_value_type: AttributeValueType::String(AttributeStringValueType {})
+            })
+            .to_string(),
+            r#"BA_DEF_ BO_ "BOStringAttribute" STRING;"#
+        );
+    }
+
+    #[test]
+    fn test_attribute_definition_string_05() {
+        assert_eq!(
+            AttributeDefinition::Signal(SignalAttribute {
+                attribute_name: "SGEnumAttribute".to_string(),
+                attribute_value_type: AttributeValueType::Enum(AttributeEnumValueType {
+                    values: vec!["Val0".to_string(), "Val1".to_string(), "Val2".to_string()]
+                })
+            })
+            .to_string(),
+            r#"BA_DEF_ SG_ "SGEnumAttribute" ENUM "Val0","Val1","Val2";"#
+        );
+    }
+
+    #[test]
+    fn test_attribute_definition_string_06() {
+        assert_eq!(
+            AttributeDefinition::EnvironmentVariable(EnvironmentVariableAttribute {
+                attribute_name: "GlobalEnvVar_Val".to_string(),
+                attribute_value_type: AttributeValueType::Hex(AttributeHexValueType {
+                    minimum: 256,
+                    maximum: 320
+                })
+            })
+            .to_string(),
+            r#"BA_DEF_ EV_ "GlobalEnvVar_Val" HEX 256 320;"#
+        );
+    }
+
+    #[test]
+    fn test_attribute_definition_string_07() {
+        assert_eq!(
+            AttributeDefinition::EnvironmentVariable(EnvironmentVariableAttribute {
+                attribute_name: "RWEnvVar_wData_Val".to_string(),
+                attribute_value_type: AttributeValueType::Integer(AttributeIntegerValueType {
+                    minimum: 0,
+                    maximum: 10
+                })
+            })
+            .to_string(),
+            r#"BA_DEF_ EV_ "RWEnvVar_wData_Val" INT 0 10;"#
+        );
+    }
+
+    #[test]
+    fn test_attribute_definition_string_08() {
+        assert_eq!(
+            AttributeDefinition::ControlUnitEnvironmentVariable(
+                ControlUnitEnvironmentVariableAttribute {
+                    attribute_name: "ControlUnitEnvVarAttr".to_string(),
+                    attribute_value_type: AttributeValueType::String(AttributeStringValueType {})
+                }
+            )
+            .to_string(),
+            r#"BA_DEF_REL_ BU_EV_REL_ "ControlUnitEnvVarAttr" STRING;"#
+        );
+    }
+}
