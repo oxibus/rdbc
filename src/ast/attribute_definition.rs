@@ -1,7 +1,9 @@
 use super::common_parsers::*;
 use super::error::DbcParseError;
+use nom::branch::alt;
 use nom::bytes::complete::tag;
 use nom::combinator::map;
+use nom::multi::separated_list0;
 use nom::sequence::tuple;
 use nom::IResult;
 use std::fmt;
@@ -162,6 +164,29 @@ impl fmt::Display for AttributeEnumValueType {
     }
 }
 
+pub fn parser_attribute_enum_value_type(
+    input: &str,
+) -> IResult<&str, AttributeValueType, DbcParseError> {
+    let res = map(
+        tuple((
+            multispacey(tag("ENUM")),
+            multispacey(separated_list0(tag(","), spacey(char_string))),
+        )),
+        |(_, values)| AttributeEnumValueType { values },
+    )(input);
+
+    match res {
+        Ok((remain, value)) => {
+            log::info!("parse attribute enum value type: {:?}", value);
+            Ok((remain, AttributeValueType::Enum(value)))
+        }
+        Err(e) => {
+            log::trace!("parse attribute enum value type failed, e = {:?}", e);
+            Err(nom::Err::Error(DbcParseError::BadAttributeEnumValueType))
+        }
+    }
+}
+
 #[derive(PartialEq, Debug, Clone)]
 pub enum AttributeValueType {
     Integer(AttributeIntegerValueType),
@@ -179,6 +204,29 @@ impl fmt::Display for AttributeValueType {
             AttributeValueType::Float(v) => write!(f, "{}", v),
             AttributeValueType::String(v) => write!(f, "{}", v),
             AttributeValueType::Enum(v) => write!(f, "{}", v),
+        }
+    }
+}
+
+pub fn parser_attribute_value_type(
+    input: &str,
+) -> IResult<&str, AttributeValueType, DbcParseError> {
+    let res = alt((
+        parser_attribute_integer_value_type,
+        parser_attribute_hex_value_type,
+        parser_attribute_float_value_type,
+        parser_attribute_string_value_type,
+        parser_attribute_enum_value_type,
+    ))(input);
+
+    match res {
+        Ok((remain, value)) => {
+            log::info!("parse attribute value type: {:?}", value);
+            Ok((remain, value))
+        }
+        Err(e) => {
+            log::trace!("parse attribute value type failed, e = {:?}", e);
+            Err(e)
         }
     }
 }
@@ -564,6 +612,82 @@ mod tests {
         assert_eq!(
             parser_attribute_string_value_type("STRING"),
             Ok(("", AttributeValueType::String(AttributeStringValueType {})))
+        );
+    }
+
+    #[test]
+    fn test_parser_attribute_enum_value_type_01() {
+        assert_eq!(
+            parser_attribute_enum_value_type(r#"ENUM  "Val0","Val1","Val2""#),
+            Ok((
+                "",
+                AttributeValueType::Enum(AttributeEnumValueType {
+                    values: vec!["Val0".to_string(), "Val1".to_string(), "Val2".to_string()]
+                })
+            ))
+        );
+    }
+
+    #[test]
+    fn test_parser_attribute_value_type_01() {
+        assert_eq!(
+            parser_attribute_value_type("INT 0 100"),
+            Ok((
+                "",
+                AttributeValueType::Integer(AttributeIntegerValueType {
+                    minimum: 0,
+                    maximum: 100
+                })
+            ))
+        );
+    }
+
+    #[test]
+    fn test_parser_attribute_value_type_02() {
+        assert_eq!(
+            parser_attribute_value_type("HEX 256 320"),
+            Ok((
+                "",
+                AttributeValueType::Hex(AttributeHexValueType {
+                    minimum: 256,
+                    maximum: 320
+                })
+            ))
+        );
+    }
+
+    #[test]
+    fn test_parser_attribute_value_type_03() {
+        assert_eq!(
+            parser_attribute_value_type("FLOAT 0 50.5"),
+            Ok((
+                "",
+                AttributeValueType::Float(AttributeFloatValueType {
+                    minimum: 0.0,
+                    maximum: 50.5
+                })
+            ))
+        );
+    }
+
+    #[test]
+    fn test_parser_attribute_value_type_04() {
+        assert_eq!(
+            parser_attribute_value_type("STRING"),
+            Ok(("", AttributeValueType::String(AttributeStringValueType {})))
+        );
+    }
+
+    #[test]
+    fn test_parser_attribute_value_type_05() {
+        assert_eq!(
+            parser_attribute_value_type(r#"ENUM  "Val0","Val1","Val2""#),
+            Ok((
+                "",
+                AttributeValueType::Enum(AttributeEnumValueType {
+                    values: vec!["Val0".to_string(), "Val1".to_string(), "Val2".to_string()]
+                })
+            ))
         );
     }
 }
