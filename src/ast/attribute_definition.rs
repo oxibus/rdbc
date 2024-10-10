@@ -395,6 +395,33 @@ impl fmt::Display for SignalAttribute {
     }
 }
 
+pub fn parser_signal_attribute(input: &str) -> IResult<&str, AttributeDefinition, DbcParseError> {
+    let res = map(
+        tuple((
+            multispacey(tag("BA_DEF_")),
+            multispacey(tag("SG_")),
+            multispacey(tuple((tag("\""), dbc_identifier, tag("\"")))),
+            multispacey(parser_attribute_value_type),
+            multispacey(tag(";")),
+        )),
+        |(_, _, (_, attribute_name, _), attribute_value_type, _)| SignalAttribute {
+            attribute_name: attribute_name.to_string(),
+            attribute_value_type,
+        },
+    )(input);
+
+    match res {
+        Ok((remain, value)) => {
+            log::info!("parse signal attribute: {:?}", value);
+            Ok((remain, AttributeDefinition::Signal(value)))
+        }
+        Err(e) => {
+            log::trace!("parse signal attribute failed, e = {:?}", e);
+            Err(nom::Err::Error(DbcParseError::BadSignalAttribute))
+        }
+    }
+}
+
 /// example:
 ///
 /// ```text
@@ -814,6 +841,24 @@ mod tests {
                 AttributeDefinition::Message(MessageAttribute {
                     attribute_name: "BOStringAttribute".to_string(),
                     attribute_value_type: AttributeValueType::String(AttributeStringValueType {})
+                })
+            ))
+        );
+    }
+
+    #[test]
+    fn test_parser_signal_attribute_01() {
+        assert_eq!(
+            parser_signal_attribute(
+                r#"BA_DEF_ SG_  "SGEnumAttribute" ENUM  "Val0","Val1","Val2";"#
+            ),
+            Ok((
+                "",
+                AttributeDefinition::Signal(SignalAttribute {
+                    attribute_name: "SGEnumAttribute".to_string(),
+                    attribute_value_type: AttributeValueType::Enum(AttributeEnumValueType {
+                        values: vec!["Val0".to_string(), "Val1".to_string(), "Val2".to_string()]
+                    })
                 })
             ))
         );
