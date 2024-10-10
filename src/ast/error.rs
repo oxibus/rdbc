@@ -55,6 +55,8 @@ pub enum DbcParseError {
     BadNetworkAttribute,
     #[error("bad node attribute")]
     BadNodeAttribute,
+    #[error("bad message attribute")]
+    BadMessageAttribute,
 
     #[error("bad integer")]
     BadInt,

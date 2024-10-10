@@ -347,6 +347,33 @@ impl fmt::Display for MessageAttribute {
     }
 }
 
+pub fn parser_message_attribute(input: &str) -> IResult<&str, AttributeDefinition, DbcParseError> {
+    let res = map(
+        tuple((
+            multispacey(tag("BA_DEF_")),
+            multispacey(tag("BO_")),
+            multispacey(tuple((tag("\""), dbc_identifier, tag("\"")))),
+            multispacey(parser_attribute_value_type),
+            multispacey(tag(";")),
+        )),
+        |(_, _, (_, attribute_name, _), attribute_value_type, _)| MessageAttribute {
+            attribute_name: attribute_name.to_string(),
+            attribute_value_type,
+        },
+    )(input);
+
+    match res {
+        Ok((remain, value)) => {
+            log::info!("parse message attribute: {:?}", value);
+            Ok((remain, AttributeDefinition::Message(value)))
+        }
+        Err(e) => {
+            log::trace!("parse message attribute failed, e = {:?}", e);
+            Err(nom::Err::Error(DbcParseError::BadMessageAttribute))
+        }
+    }
+}
+
 /// example:
 ///
 /// ```text
@@ -773,6 +800,20 @@ mod tests {
                         minimum: 0,
                         maximum: 100
                     })
+                })
+            ))
+        );
+    }
+
+    #[test]
+    fn test_parser_message_attribute_01() {
+        assert_eq!(
+            parser_message_attribute(r#"BA_DEF_ BO_  "BOStringAttribute" STRING ;"#),
+            Ok((
+                "",
+                AttributeDefinition::Message(MessageAttribute {
+                    attribute_name: "BOStringAttribute".to_string(),
+                    attribute_value_type: AttributeValueType::String(AttributeStringValueType {})
                 })
             ))
         );
