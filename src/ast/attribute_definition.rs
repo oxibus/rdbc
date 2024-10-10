@@ -123,6 +123,26 @@ impl fmt::Display for AttributeStringValueType {
     }
 }
 
+pub fn parser_attribute_string_value_type(
+    input: &str,
+) -> IResult<&str, AttributeValueType, DbcParseError> {
+    let res: Result<(&str, &str), nom::Err<DbcParseError>> = tag("STRING")(input);
+
+    match res {
+        Ok((remain, value)) => {
+            log::info!("parse attribute string value type: {:?}", value);
+            Ok((
+                remain,
+                AttributeValueType::String(AttributeStringValueType {}),
+            ))
+        }
+        Err(e) => {
+            log::trace!("parse attribute string value type failed, e = {:?}", e);
+            Err(nom::Err::Error(DbcParseError::BadAttributeStringValueType))
+        }
+    }
+}
+
 #[derive(PartialEq, Debug, Clone)]
 pub struct AttributeEnumValueType {
     pub values: Vec<String>,
@@ -536,6 +556,14 @@ mod tests {
                     maximum: 50.5
                 })
             ))
+        );
+    }
+
+    #[test]
+    fn test_parser_attribute_string_value_type_01() {
+        assert_eq!(
+            parser_attribute_string_value_type("STRING"),
+            Ok(("", AttributeValueType::String(AttributeStringValueType {})))
         );
     }
 }
