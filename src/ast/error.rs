@@ -51,6 +51,9 @@ pub enum DbcParseError {
     #[error("bad attribute enum value type")]
     BadAttributeEnumValueType,
 
+    #[error("bad network attribute")]
+    BadNetworkAttribute,
+
     #[error("bad integer")]
     BadInt,
     #[error("bad float")]

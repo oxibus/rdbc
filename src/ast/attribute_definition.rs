@@ -252,6 +252,32 @@ impl fmt::Display for NetworkAttribute {
     }
 }
 
+pub fn parser_network_attribute(input: &str) -> IResult<&str, AttributeDefinition, DbcParseError> {
+    let res = map(
+        tuple((
+            multispacey(tag("BA_DEF_")),
+            multispacey(tuple((tag("\""), dbc_identifier, tag("\"")))),
+            multispacey(parser_attribute_value_type),
+            multispacey(tag(";")),
+        )),
+        |(_, (_, attribute_name, _), attribute_value_type, _)| NetworkAttribute {
+            attribute_name: attribute_name.to_string(),
+            attribute_value_type,
+        },
+    )(input);
+
+    match res {
+        Ok((remain, value)) => {
+            log::info!("parse network attribute: {:?}", value);
+            Ok((remain, AttributeDefinition::Network(value)))
+        }
+        Err(e) => {
+            log::trace!("parse network attribute failed, e = {:?}", e);
+            Err(nom::Err::Error(DbcParseError::BadNetworkAttribute))
+        }
+    }
+}
+
 /// example:
 ///
 /// ```text
@@ -686,6 +712,23 @@ mod tests {
                 "",
                 AttributeValueType::Enum(AttributeEnumValueType {
                     values: vec!["Val0".to_string(), "Val1".to_string(), "Val2".to_string()]
+                })
+            ))
+        );
+    }
+
+    #[test]
+    fn test_parser_network_attribute_01() {
+        assert_eq!(
+            parser_network_attribute(r#"BA_DEF_  "FloatAttribute" FLOAT 0 50.5;"#),
+            Ok((
+                "",
+                AttributeDefinition::Network(NetworkAttribute {
+                    attribute_name: "FloatAttribute".to_string(),
+                    attribute_value_type: AttributeValueType::Float(AttributeFloatValueType {
+                        minimum: 0.0,
+                        maximum: 50.5
+                    })
                 })
             ))
         );
