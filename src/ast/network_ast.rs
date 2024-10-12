@@ -1,3 +1,6 @@
+use super::attribute_definition::parser_attribute_definition;
+use super::attribute_definition::AttributeDefinition;
+
 use super::bit_timing::parser_bit_timing;
 use super::bit_timing::BitTiming;
 use super::comment::parser_comment;
@@ -56,6 +59,9 @@ pub struct NetworkAst {
     // CM_
     pub comments: Vec<Comment>,
 
+    // BA_DEF_
+    pub attribute_definitions: Vec<AttributeDefinition>,
+
     // VAL_ message_id signal_name [value_descriptions];
     pub signal_value_descriptions: Vec<SignalValueDescriptions>,
 
@@ -107,6 +113,13 @@ impl fmt::Display for NetworkAst {
             write!(f, "\n")?;
         }
 
+        for attribute_definition in &self.attribute_definitions {
+            writeln!(f, "{}", attribute_definition)?;
+        }
+        if !self.attribute_definitions.is_empty() {
+            write!(f, "\n")?;
+        }
+
         for signal_value_description in &self.signal_value_descriptions {
             writeln!(f, "{}", signal_value_description)?;
         }
@@ -133,6 +146,7 @@ pub fn dbc_value(input: &str) -> IResult<&str, NetworkAst, DbcParseError> {
             multispacey(many0(parser_env_var)),
             multispacey(many0(parser_env_var_data)),
             multispacey(many0(parser_comment)),
+            multispacey(many0(parser_attribute_definition)),
             multispacey(many0(parser_signal_value_descriptions)),
             multispacey(many0(parser_env_var_value_descriptions)),
         ))),
@@ -146,6 +160,7 @@ pub fn dbc_value(input: &str) -> IResult<&str, NetworkAst, DbcParseError> {
             env_vars,
             env_vars_data,
             comments,
+            attribute_definitions,
             signal_value_descriptions,
             env_var_value_descriptions,
         )| NetworkAst {
@@ -158,6 +173,7 @@ pub fn dbc_value(input: &str) -> IResult<&str, NetworkAst, DbcParseError> {
             env_vars,
             env_vars_data,
             comments,
+            attribute_definitions,
             signal_value_descriptions,
             env_var_value_descriptions,
         },
@@ -179,6 +195,18 @@ pub fn parse_dbc(input: &str) -> Result<NetworkAst, DbcParseError> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::ast::attribute_definition::AttributeEnumValueType;
+    use crate::ast::attribute_definition::AttributeFloatValueType;
+    use crate::ast::attribute_definition::AttributeHexValueType;
+    use crate::ast::attribute_definition::AttributeIntegerValueType;
+    use crate::ast::attribute_definition::AttributeStringValueType;
+    use crate::ast::attribute_definition::AttributeValueType;
+    use crate::ast::attribute_definition::ControlUnitEnvironmentVariableAttribute;
+    use crate::ast::attribute_definition::EnvironmentVariableAttribute;
+    use crate::ast::attribute_definition::MessageAttribute;
+    use crate::ast::attribute_definition::NetworkAttribute;
+    use crate::ast::attribute_definition::NodeAttribute;
+    use crate::ast::attribute_definition::SignalAttribute;
     use crate::ast::env_var::EnvVarType;
     use crate::ast::signal;
     use crate::ast::value_descriptions::ValueDescriptionItem;
@@ -264,6 +292,7 @@ BO_ 112 MM5_10_TX1: 8 DRS_MM5_10
                 env_vars: vec![],
                 env_vars_data: vec![],
                 comments: vec![],
+                attribute_definitions: vec![],
                 signal_value_descriptions: vec![],
                 env_var_value_descriptions: vec![],
             }),
@@ -300,6 +329,14 @@ EV_ WriteOnlyEnvVar: 1 [0|1234] "" 60 3 DUMMY_NODE_VECTOR2  Node2;
 EV_ ReadOnlyEnvVar: 0 [0|100] "MPH" 20 4 DUMMY_NODE_VECTOR1  Node2;
 
 ENVVAR_DATA_ RWEnvVar_wData: 10;
+
+BA_DEF_ EV_  "RWEnvVar_wData_Val" INT 0 10;
+BA_DEF_ EV_  "GlobalEnvVar_Val" HEX 256 320;
+BA_DEF_ SG_  "SGEnumAttribute" ENUM  "Val0","Val1","Val2";
+BA_DEF_ BU_  "BUIntAttribute" INT 0 100;
+BA_DEF_ BO_  "BOStringAttribute" STRING ;
+BA_DEF_  "FloatAttribute" FLOAT 0 50.5;
+BA_DEF_REL_ BU_EV_REL_  "ControlUnitEnvVarAttr" STRING ;
 
 VAL_ 2147487969 Value1 3 "Three" 2 "Two" 1 "One" 0 "Zero" ;
 VAL_ 2147487969 Value0 2 "Value2" 1 "Value1" 0 "Value0" ;
@@ -466,6 +503,64 @@ VAL_ ReadOnlyEnvVar 2 "Value2" 1 "Value1" 0 "Value0" ;
                     data_size: 10
                 },],
                 comments: vec![],
+                attribute_definitions: vec![
+                    AttributeDefinition::EnvironmentVariable(EnvironmentVariableAttribute {
+                        attribute_name: "RWEnvVar_wData_Val".to_string(),
+                        attribute_value_type: AttributeValueType::Integer(
+                            AttributeIntegerValueType {
+                                minimum: 0,
+                                maximum: 10
+                            }
+                        )
+                    }),
+                    AttributeDefinition::EnvironmentVariable(EnvironmentVariableAttribute {
+                        attribute_name: "GlobalEnvVar_Val".to_string(),
+                        attribute_value_type: AttributeValueType::Hex(AttributeHexValueType {
+                            minimum: 256,
+                            maximum: 320
+                        })
+                    }),
+                    AttributeDefinition::Signal(SignalAttribute {
+                        attribute_name: "SGEnumAttribute".to_string(),
+                        attribute_value_type: AttributeValueType::Enum(AttributeEnumValueType {
+                            values: vec![
+                                "Val0".to_string(),
+                                "Val1".to_string(),
+                                "Val2".to_string()
+                            ]
+                        })
+                    }),
+                    AttributeDefinition::Node(NodeAttribute {
+                        attribute_name: "BUIntAttribute".to_string(),
+                        attribute_value_type: AttributeValueType::Integer(
+                            AttributeIntegerValueType {
+                                minimum: 0,
+                                maximum: 100
+                            }
+                        )
+                    }),
+                    AttributeDefinition::Message(MessageAttribute {
+                        attribute_name: "BOStringAttribute".to_string(),
+                        attribute_value_type: AttributeValueType::String(
+                            AttributeStringValueType {}
+                        )
+                    }),
+                    AttributeDefinition::Network(NetworkAttribute {
+                        attribute_name: "FloatAttribute".to_string(),
+                        attribute_value_type: AttributeValueType::Float(AttributeFloatValueType {
+                            minimum: 0.0,
+                            maximum: 50.5
+                        })
+                    }),
+                    AttributeDefinition::ControlUnitEnvironmentVariable(
+                        ControlUnitEnvironmentVariableAttribute {
+                            attribute_name: "ControlUnitEnvVarAttr".to_string(),
+                            attribute_value_type: AttributeValueType::String(
+                                AttributeStringValueType {}
+                            )
+                        }
+                    )
+                ],
                 signal_value_descriptions: vec![
                     SignalValueDescriptions {
                         message_id: 2147487969,
