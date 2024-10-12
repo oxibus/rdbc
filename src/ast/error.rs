@@ -59,6 +59,14 @@ pub enum DbcParseError {
     BadMessageAttribute,
     #[error("bad signal attribute")]
     BadSignalAttribute,
+    #[error("bad environment variable attribute")]
+    BadEnvironmentVariableAttribute,
+    #[error("bad control unit environment variable attribute")]
+    BadControlUnitEnvironmentVariableAttribute,
+    #[error("bad node tx message attribute")]
+    BadNodeTxMessageAttribute,
+    #[error("bad node mapped rx signal attribute")]
+    BadNodeMappedRxSignalAttribute,
 
     #[error("bad integer")]
     BadInt,

@@ -444,6 +444,37 @@ impl fmt::Display for EnvironmentVariableAttribute {
     }
 }
 
+pub fn parser_environment_variable_attribute(
+    input: &str,
+) -> IResult<&str, AttributeDefinition, DbcParseError> {
+    let res = map(
+        tuple((
+            multispacey(tag("BA_DEF_")),
+            multispacey(tag("EV_")),
+            multispacey(tuple((tag("\""), dbc_identifier, tag("\"")))),
+            multispacey(parser_attribute_value_type),
+            multispacey(tag(";")),
+        )),
+        |(_, _, (_, attribute_name, _), attribute_value_type, _)| EnvironmentVariableAttribute {
+            attribute_name: attribute_name.to_string(),
+            attribute_value_type,
+        },
+    )(input);
+
+    match res {
+        Ok((remain, value)) => {
+            log::info!("parse environment variable attribute: {:?}", value);
+            Ok((remain, AttributeDefinition::EnvironmentVariable(value)))
+        }
+        Err(e) => {
+            log::trace!("parse environment variable attribute failed, e = {:?}", e);
+            Err(nom::Err::Error(
+                DbcParseError::BadEnvironmentVariableAttribute,
+            ))
+        }
+    }
+}
+
 /// Control Unit -- Environment Variable
 ///
 /// example:
@@ -464,6 +495,48 @@ impl fmt::Display for ControlUnitEnvironmentVariableAttribute {
             "BA_DEF_REL_ BU_EV_REL_ \"{}\" {};",
             self.attribute_name, self.attribute_value_type
         )
+    }
+}
+
+pub fn parser_control_unit_environment_variable_attribute(
+    input: &str,
+) -> IResult<&str, AttributeDefinition, DbcParseError> {
+    let res = map(
+        tuple((
+            multispacey(tag("BA_DEF_REL_")),
+            multispacey(tag("BU_EV_REL_")),
+            multispacey(tuple((tag("\""), dbc_identifier, tag("\"")))),
+            multispacey(parser_attribute_value_type),
+            multispacey(tag(";")),
+        )),
+        |(_, _, (_, attribute_name, _), attribute_value_type, _)| {
+            ControlUnitEnvironmentVariableAttribute {
+                attribute_name: attribute_name.to_string(),
+                attribute_value_type,
+            }
+        },
+    )(input);
+
+    match res {
+        Ok((remain, value)) => {
+            log::info!(
+                "parse control unit environment variable attribute: {:?}",
+                value
+            );
+            Ok((
+                remain,
+                AttributeDefinition::ControlUnitEnvironmentVariable(value),
+            ))
+        }
+        Err(e) => {
+            log::trace!(
+                "parse control unit environment variable attribute failed, e = {:?}",
+                e
+            );
+            Err(nom::Err::Error(
+                DbcParseError::BadControlUnitEnvironmentVariableAttribute,
+            ))
+        }
     }
 }
 
@@ -490,6 +563,35 @@ impl fmt::Display for NodeTxMessageAttribute {
     }
 }
 
+pub fn parser_node_tx_message_attribute(
+    input: &str,
+) -> IResult<&str, AttributeDefinition, DbcParseError> {
+    let res = map(
+        tuple((
+            multispacey(tag("BA_DEF_REL_")),
+            multispacey(tag("BU_BO_REL_")),
+            multispacey(tuple((tag("\""), dbc_identifier, tag("\"")))),
+            multispacey(parser_attribute_value_type),
+            multispacey(tag(";")),
+        )),
+        |(_, _, (_, attribute_name, _), attribute_value_type, _)| NodeTxMessageAttribute {
+            attribute_name: attribute_name.to_string(),
+            attribute_value_type,
+        },
+    )(input);
+
+    match res {
+        Ok((remain, value)) => {
+            log::info!("parse node tx message attribute: {:?}", value);
+            Ok((remain, AttributeDefinition::NodeTxMessage(value)))
+        }
+        Err(e) => {
+            log::trace!("parse node tx message attribute failed, e = {:?}", e);
+            Err(nom::Err::Error(DbcParseError::BadNodeTxMessageAttribute))
+        }
+    }
+}
+
 /// Node -- Mapped Rx Signal
 ///
 /// example:
@@ -510,6 +612,37 @@ impl fmt::Display for NodeMappedRxSignalAttribute {
             "BA_DEF_REL_ BU_SG_REL_ \"{}\" {};",
             self.attribute_name, self.attribute_value_type
         )
+    }
+}
+
+pub fn parser_node_mapped_rx_signal_attribute(
+    input: &str,
+) -> IResult<&str, AttributeDefinition, DbcParseError> {
+    let res = map(
+        tuple((
+            multispacey(tag("BA_DEF_REL_")),
+            multispacey(tag("BU_SG_REL_")),
+            multispacey(tuple((tag("\""), dbc_identifier, tag("\"")))),
+            multispacey(parser_attribute_value_type),
+            multispacey(tag(";")),
+        )),
+        |(_, _, (_, attribute_name, _), attribute_value_type, _)| NodeMappedRxSignalAttribute {
+            attribute_name: attribute_name.to_string(),
+            attribute_value_type,
+        },
+    )(input);
+
+    match res {
+        Ok((remain, value)) => {
+            log::info!("parse node mapped rx signal attribute: {:?}", value);
+            Ok((remain, AttributeDefinition::NodeMappedRxSignal(value)))
+        }
+        Err(e) => {
+            log::trace!("parse node mapped rx signal attribute failed, e = {:?}", e);
+            Err(nom::Err::Error(
+                DbcParseError::BadNodeMappedRxSignalAttribute,
+            ))
+        }
     }
 }
 
@@ -549,6 +682,32 @@ impl fmt::Display for AttributeDefinition {
             AttributeDefinition::ControlUnitEnvironmentVariable(v) => write!(f, "{}", v),
             AttributeDefinition::NodeTxMessage(v) => write!(f, "{}", v),
             AttributeDefinition::NodeMappedRxSignal(v) => write!(f, "{}", v),
+        }
+    }
+}
+
+pub fn parser_attribute_definition(
+    input: &str,
+) -> IResult<&str, AttributeDefinition, DbcParseError> {
+    let res = alt((
+        parser_network_attribute,
+        parser_node_attribute,
+        parser_message_attribute,
+        parser_signal_attribute,
+        parser_environment_variable_attribute,
+        parser_control_unit_environment_variable_attribute,
+        parser_node_tx_message_attribute,
+        parser_node_mapped_rx_signal_attribute,
+    ))(input);
+
+    match res {
+        Ok((remain, value)) => {
+            log::info!("parse attribute definition: {:?}", value);
+            Ok((remain, value))
+        }
+        Err(e) => {
+            log::trace!("parse attribute definition failed, e = {:?}", e);
+            Err(e)
         }
     }
 }
@@ -859,6 +1018,94 @@ mod tests {
                     attribute_value_type: AttributeValueType::Enum(AttributeEnumValueType {
                         values: vec!["Val0".to_string(), "Val1".to_string(), "Val2".to_string()]
                     })
+                })
+            ))
+        );
+    }
+
+    #[test]
+    fn test_parser_environment_variable_attribute_01() {
+        assert_eq!(
+            parser_environment_variable_attribute(r#"BA_DEF_ EV_  "RWEnvVar_wData_Val" INT 0 10;"#),
+            Ok((
+                "",
+                AttributeDefinition::EnvironmentVariable(EnvironmentVariableAttribute {
+                    attribute_name: "RWEnvVar_wData_Val".to_string(),
+                    attribute_value_type: AttributeValueType::Integer(AttributeIntegerValueType {
+                        minimum: 0,
+                        maximum: 10
+                    })
+                })
+            ))
+        );
+    }
+
+    #[test]
+    fn test_parser_environment_variable_attribute_02() {
+        assert_eq!(
+            parser_environment_variable_attribute(
+                r#"BA_DEF_ EV_  "GlobalEnvVar_Val" HEX 256 320;"#
+            ),
+            Ok((
+                "",
+                AttributeDefinition::EnvironmentVariable(EnvironmentVariableAttribute {
+                    attribute_name: "GlobalEnvVar_Val".to_string(),
+                    attribute_value_type: AttributeValueType::Hex(AttributeHexValueType {
+                        minimum: 256,
+                        maximum: 320
+                    })
+                })
+            ))
+        );
+    }
+
+    #[test]
+    fn test_parser_control_unit_environment_variable_attribute_01() {
+        assert_eq!(
+            parser_control_unit_environment_variable_attribute(
+                r#"BA_DEF_REL_ BU_EV_REL_  "ControlUnitEnvVarAttr" STRING ;"#
+            ),
+            Ok((
+                "",
+                AttributeDefinition::ControlUnitEnvironmentVariable(
+                    ControlUnitEnvironmentVariableAttribute {
+                        attribute_name: "ControlUnitEnvVarAttr".to_string(),
+                        attribute_value_type: AttributeValueType::String(
+                            AttributeStringValueType {}
+                        )
+                    }
+                )
+            ))
+        );
+    }
+
+    #[test]
+    fn test_parser_node_tx_message_attribute_01() {
+        assert_eq!(
+            parser_node_tx_message_attribute(
+                r#"BA_DEF_REL_ BU_BO_REL_  "attribute_name" STRING ;"#
+            ),
+            Ok((
+                "",
+                AttributeDefinition::NodeTxMessage(NodeTxMessageAttribute {
+                    attribute_name: "attribute_name".to_string(),
+                    attribute_value_type: AttributeValueType::String(AttributeStringValueType {})
+                })
+            ))
+        );
+    }
+
+    #[test]
+    fn test_parser_node_mapped_rx_signal_attribute_01() {
+        assert_eq!(
+            parser_node_mapped_rx_signal_attribute(
+                r#"BA_DEF_REL_ BU_SG_REL_  "attribute_name" STRING ;"#
+            ),
+            Ok((
+                "",
+                AttributeDefinition::NodeMappedRxSignal(NodeMappedRxSignalAttribute {
+                    attribute_name: "attribute_name".to_string(),
+                    attribute_value_type: AttributeValueType::String(AttributeStringValueType {})
                 })
             ))
         );
