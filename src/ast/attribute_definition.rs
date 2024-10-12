@@ -1110,4 +1110,152 @@ mod tests {
             ))
         );
     }
+
+    #[test]
+    fn test_parser_attribute_definition_01() {
+        assert_eq!(
+            parser_attribute_definition(r#"BA_DEF_  "FloatAttribute" FLOAT 0 50.5;"#),
+            Ok((
+                "",
+                AttributeDefinition::Network(NetworkAttribute {
+                    attribute_name: "FloatAttribute".to_string(),
+                    attribute_value_type: AttributeValueType::Float(AttributeFloatValueType {
+                        minimum: 0.0,
+                        maximum: 50.5
+                    })
+                })
+            ))
+        );
+    }
+
+    #[test]
+    fn test_parser_attribute_definition_02() {
+        assert_eq!(
+            parser_attribute_definition(r#"BA_DEF_ BU_  "BUIntAttribute" INT 0 100;"#),
+            Ok((
+                "",
+                AttributeDefinition::Node(NodeAttribute {
+                    attribute_name: "BUIntAttribute".to_string(),
+                    attribute_value_type: AttributeValueType::Integer(AttributeIntegerValueType {
+                        minimum: 0,
+                        maximum: 100
+                    })
+                })
+            ))
+        );
+    }
+
+    #[test]
+    fn test_parser_attribute_definition_03() {
+        assert_eq!(
+            parser_attribute_definition(r#"BA_DEF_ BO_  "BOStringAttribute" STRING ;"#),
+            Ok((
+                "",
+                AttributeDefinition::Message(MessageAttribute {
+                    attribute_name: "BOStringAttribute".to_string(),
+                    attribute_value_type: AttributeValueType::String(AttributeStringValueType {})
+                })
+            ))
+        );
+    }
+
+    #[test]
+    fn test_parser_attribute_definition_04() {
+        assert_eq!(
+            parser_attribute_definition(
+                r#"BA_DEF_ SG_  "SGEnumAttribute" ENUM  "Val0","Val1","Val2";"#
+            ),
+            Ok((
+                "",
+                AttributeDefinition::Signal(SignalAttribute {
+                    attribute_name: "SGEnumAttribute".to_string(),
+                    attribute_value_type: AttributeValueType::Enum(AttributeEnumValueType {
+                        values: vec!["Val0".to_string(), "Val1".to_string(), "Val2".to_string()]
+                    })
+                })
+            ))
+        );
+    }
+
+    #[test]
+    fn test_parser_attribute_definition_05() {
+        assert_eq!(
+            parser_attribute_definition(r#"BA_DEF_ EV_  "RWEnvVar_wData_Val" INT 0 10;"#),
+            Ok((
+                "",
+                AttributeDefinition::EnvironmentVariable(EnvironmentVariableAttribute {
+                    attribute_name: "RWEnvVar_wData_Val".to_string(),
+                    attribute_value_type: AttributeValueType::Integer(AttributeIntegerValueType {
+                        minimum: 0,
+                        maximum: 10
+                    })
+                })
+            ))
+        );
+    }
+
+    #[test]
+    fn test_parser_attribute_definition_06() {
+        assert_eq!(
+            parser_attribute_definition(r#"BA_DEF_ EV_  "GlobalEnvVar_Val" HEX 256 320;"#),
+            Ok((
+                "",
+                AttributeDefinition::EnvironmentVariable(EnvironmentVariableAttribute {
+                    attribute_name: "GlobalEnvVar_Val".to_string(),
+                    attribute_value_type: AttributeValueType::Hex(AttributeHexValueType {
+                        minimum: 256,
+                        maximum: 320
+                    })
+                })
+            ))
+        );
+    }
+
+    #[test]
+    fn test_parser_attribute_definition_07() {
+        assert_eq!(
+            parser_attribute_definition(
+                r#"BA_DEF_REL_ BU_EV_REL_  "ControlUnitEnvVarAttr" STRING ;"#
+            ),
+            Ok((
+                "",
+                AttributeDefinition::ControlUnitEnvironmentVariable(
+                    ControlUnitEnvironmentVariableAttribute {
+                        attribute_name: "ControlUnitEnvVarAttr".to_string(),
+                        attribute_value_type: AttributeValueType::String(
+                            AttributeStringValueType {}
+                        )
+                    }
+                )
+            ))
+        );
+    }
+
+    #[test]
+    fn test_parser_attribute_definition_08() {
+        assert_eq!(
+            parser_attribute_definition(r#"BA_DEF_REL_ BU_BO_REL_  "attribute_name" STRING ;"#),
+            Ok((
+                "",
+                AttributeDefinition::NodeTxMessage(NodeTxMessageAttribute {
+                    attribute_name: "attribute_name".to_string(),
+                    attribute_value_type: AttributeValueType::String(AttributeStringValueType {})
+                })
+            ))
+        );
+    }
+
+    #[test]
+    fn test_parser_attribute_definition_09() {
+        assert_eq!(
+            parser_attribute_definition(r#"BA_DEF_REL_ BU_SG_REL_  "attribute_name" STRING ;"#),
+            Ok((
+                "",
+                AttributeDefinition::NodeMappedRxSignal(NodeMappedRxSignalAttribute {
+                    attribute_name: "attribute_name".to_string(),
+                    attribute_value_type: AttributeValueType::String(AttributeStringValueType {})
+                })
+            ))
+        );
+    }
 }
