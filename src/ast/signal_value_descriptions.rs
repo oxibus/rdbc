@@ -22,11 +22,11 @@ pub struct SignalValueDescriptions {
 
 impl fmt::Display for SignalValueDescriptions {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "VAL_ {} {} {};",
-            self.message_id, self.signal_name, self.value_descriptions
-        )
+        write!(f, "VAL_ {} {}", self.message_id, self.signal_name)?;
+        if self.value_descriptions.values.len() > 0 {
+            write!(f, " {}", self.value_descriptions)?;
+        }
+        write!(f, ";")
     }
 }
 
@@ -124,6 +124,19 @@ mod tests {
             }
             .to_string(),
             r#"VAL_ 2147487969 Value0 2 "Value2" 1 "Value1" 0 "Value0";"#,
+        );
+    }
+
+    #[test]
+    fn test_signal_value_descriptions_string_02() {
+        assert_eq!(
+            SignalValueDescriptions {
+                message_id: 12345,
+                signal_name: "signal_name".to_string(),
+                value_descriptions: ValueDescriptions { values: vec![] }
+            }
+            .to_string(),
+            r#"VAL_ 12345 signal_name;"#,
         );
     }
 }
