@@ -6,6 +6,7 @@ use nom::combinator::map;
 use nom::multi::many0;
 use nom::sequence::tuple;
 use nom::IResult;
+use serde::{Deserialize, Serialize};
 use std::fmt;
 
 /// List of all CAN-Nodes, seperated by whitespaces.
@@ -23,7 +24,7 @@ use std::fmt;
 /// ```text
 /// BU_: ABS DRS_MM5_10
 /// ```
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct Nodes(pub Vec<String>);
 
 impl fmt::Display for Nodes {

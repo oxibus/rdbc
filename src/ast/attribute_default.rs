@@ -6,9 +6,10 @@ use nom::bytes::complete::tag;
 use nom::combinator::map;
 use nom::sequence::tuple;
 use nom::IResult;
+use serde::{Deserialize, Serialize};
 use std::fmt;
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub enum AttributeValue {
     Double(f64),
     String(String),
@@ -46,7 +47,7 @@ pub fn parser_attribute_value(input: &str) -> IResult<&str, AttributeValue, DbcP
     }
 }
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct AttributeDefinitionDefault {
     attribute_name: String,
     attribute_value: AttributeValue,
@@ -92,7 +93,7 @@ pub fn parser_attribute_definition_default(
     }
 }
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct RelationAttributeDefinitionDefault {
     attribute_name: String,
     attribute_value: AttributeValue,
@@ -138,7 +139,7 @@ pub fn parser_relation_attribute_definition_default(
     }
 }
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub enum AttributeDefault {
     Attribute(AttributeDefinitionDefault),
     RelationAttribute(RelationAttributeDefinitionDefault),

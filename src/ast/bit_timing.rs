@@ -8,9 +8,10 @@ use nom::combinator::opt;
 use nom::multi::many0;
 use nom::sequence::tuple;
 use nom::IResult;
+use serde::{Deserialize, Serialize};
 use std::fmt;
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct BitTimingValue {
     // Baudrate
     pub baudrate: u64,
@@ -31,7 +32,7 @@ impl fmt::Display for BitTimingValue {
 /// keyword 'BS_' must appear in the DBC file.
 ///
 /// Format:: `bit_timing = 'BS_:' [baudrate ':' BTR1 ',' BTR2 ] ;`
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct BitTiming {
     pub value: Option<BitTimingValue>,
 }

@@ -5,9 +5,10 @@ use nom::bytes::complete::tag;
 use nom::combinator::map;
 use nom::sequence::tuple;
 use nom::IResult;
+use serde::{Deserialize, Serialize};
 use std::fmt;
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct NetworkComment {
     pub comment: String,
 }
@@ -18,7 +19,7 @@ impl fmt::Display for NetworkComment {
     }
 }
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct NodeComment {
     pub node_name: String,
     pub comment: String,
@@ -30,7 +31,7 @@ impl fmt::Display for NodeComment {
     }
 }
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct MessageComment {
     pub message_id: u32,
     pub comment: String,
@@ -42,7 +43,7 @@ impl fmt::Display for MessageComment {
     }
 }
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct SignalComment {
     pub message_id: u32,
     pub signal_name: String,
@@ -59,7 +60,7 @@ impl fmt::Display for SignalComment {
     }
 }
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct EnvironmentVariableComment {
     pub environment_variable_name: String,
     pub comment: String,
@@ -87,7 +88,7 @@ impl fmt::Display for EnvironmentVariableComment {
 /// 'EV_' env_var_name char_string)
 /// ';' ;
 /// ```
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub enum Comment {
     Network(NetworkComment),
     Node(NodeComment),

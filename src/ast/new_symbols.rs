@@ -7,6 +7,7 @@ use nom::combinator::map;
 use nom::multi::many0;
 use nom::sequence::tuple;
 use nom::IResult;
+use serde::{Deserialize, Serialize};
 use std::fmt;
 
 /// New Symbols, Names used throughout the DBC file.
@@ -20,7 +21,7 @@ use std::fmt;
 ///     ...
 /// ```
 /// */
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct NewSymbols(pub Vec<String>);
 
 impl fmt::Display for NewSymbols {

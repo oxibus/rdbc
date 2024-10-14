@@ -5,6 +5,7 @@ use nom::combinator::map;
 use nom::multi::many0;
 use nom::sequence::tuple;
 use nom::IResult;
+use serde::{Deserialize, Serialize};
 use std::fmt;
 
 /// A value description defines a textual description for a single value. This value may
@@ -30,7 +31,7 @@ use std::fmt;
 /// VAL_ WriteOnlyEnvVar 2 "Value2" 1 "Value1" 0 "Value0" ;
 /// VAL_ ReadOnlyEnvVar 2 "Value2" 1 "Value1" 0 "Value0" ;
 /// ```
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct ValueDescriptionItem {
     pub num: u64,
     pub str: String,
@@ -42,7 +43,7 @@ impl fmt::Display for ValueDescriptionItem {
     }
 }
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct ValueDescriptions {
     pub values: Vec<ValueDescriptionItem>,
 }

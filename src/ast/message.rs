@@ -9,12 +9,13 @@ use nom::combinator::map;
 use nom::multi::many0;
 use nom::sequence::tuple;
 use nom::IResult;
+use serde::{Deserialize, Serialize};
 use std::fmt;
 
 /// Message definition.
 /// Format: `BO_ <CAN-ID> <MessageName>: <MessageSize> <SendingNode>`
 /// MessageSize in bytes.
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct MessageHeader {
     /// The message's CAN-ID. The CAN-ID has to be unique within the DBC file. If the
     /// most significant bit of the CAN-ID is set, the ID is an extended CAN ID. The ex-
@@ -46,7 +47,7 @@ pub struct MessageHeader {
 /// message_size = unsigned_integer ;
 /// transmitter = node_name | 'Vector__XXX' ;
 /// ```
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct Message {
     pub header: MessageHeader,
     pub signals: Vec<Signal>,

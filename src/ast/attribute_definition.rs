@@ -7,9 +7,10 @@ use nom::combinator::map;
 use nom::multi::separated_list0;
 use nom::sequence::tuple;
 use nom::IResult;
+use serde::{Deserialize, Serialize};
 use std::fmt;
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct AttributeIntegerValueType {
     pub minimum: i32,
     pub maximum: i32,
@@ -45,7 +46,7 @@ pub fn parser_attribute_integer_value_type(
     }
 }
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct AttributeHexValueType {
     pub minimum: i32,
     pub maximum: i32,
@@ -81,7 +82,7 @@ pub fn parser_attribute_hex_value_type(
     }
 }
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct AttributeFloatValueType {
     pub minimum: f64,
     pub maximum: f64,
@@ -117,7 +118,7 @@ pub fn parser_attribute_float_value_type(
     }
 }
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct AttributeStringValueType {}
 
 impl fmt::Display for AttributeStringValueType {
@@ -146,7 +147,7 @@ pub fn parser_attribute_string_value_type(
     }
 }
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct AttributeEnumValueType {
     pub values: Vec<String>,
 }
@@ -188,7 +189,7 @@ pub fn parser_attribute_enum_value_type(
     }
 }
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub enum AttributeValueType {
     Integer(AttributeIntegerValueType),
     Hex(AttributeHexValueType),
@@ -237,7 +238,7 @@ pub fn parser_attribute_value_type(
 /// ```text
 /// BA_DEF_  "FloatAttribute" FLOAT 0 50.5;
 /// ```
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct NetworkAttribute {
     pub attribute_name: String,
     pub attribute_value_type: AttributeValueType,
@@ -284,7 +285,7 @@ pub fn parser_network_attribute(input: &str) -> IResult<&str, AttributeDefinitio
 /// ```text
 /// BA_DEF_ BU_  "BUIntAttribute" INT 0 100;
 /// ```
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct NodeAttribute {
     pub attribute_name: String,
     pub attribute_value_type: AttributeValueType,
@@ -332,7 +333,7 @@ pub fn parser_node_attribute(input: &str) -> IResult<&str, AttributeDefinition, 
 /// ```text
 /// BA_DEF_ BO_  "BOStringAttribute" STRING ;
 /// ```
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct MessageAttribute {
     pub attribute_name: String,
     pub attribute_value_type: AttributeValueType,
@@ -380,7 +381,7 @@ pub fn parser_message_attribute(input: &str) -> IResult<&str, AttributeDefinitio
 /// ```text
 /// BA_DEF_ SG_  "SGEnumAttribute" ENUM  "Val0","Val1","Val2";
 /// ```
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct SignalAttribute {
     pub attribute_name: String,
     pub attribute_value_type: AttributeValueType,
@@ -429,7 +430,7 @@ pub fn parser_signal_attribute(input: &str) -> IResult<&str, AttributeDefinition
 /// BA_DEF_ EV_  "RWEnvVar_wData_Val" INT 0 10;
 /// BA_DEF_ EV_  "GlobalEnvVar_Val" HEX 256 320;
 /// ```
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct EnvironmentVariableAttribute {
     pub attribute_name: String,
     pub attribute_value_type: AttributeValueType,
@@ -483,7 +484,7 @@ pub fn parser_environment_variable_attribute(
 /// ```text
 /// BA_DEF_REL_ BU_EV_REL_  "ControlUnitEnvVarAttr" STRING ;
 /// ```
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct ControlUnitEnvironmentVariableAttribute {
     pub attribute_name: String,
     pub attribute_value_type: AttributeValueType,
@@ -546,7 +547,7 @@ pub fn parser_control_unit_environment_variable_attribute(
 /// ```text
 /// BA_DEF_REL_ BU_BO_REL_  "attribute_name" STRING ;
 /// ```
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct NodeTxMessageAttribute {
     pub attribute_name: String,
     pub attribute_value_type: AttributeValueType,
@@ -598,7 +599,7 @@ pub fn parser_node_tx_message_attribute(
 /// ```text
 /// BA_DEF_REL_ BU_SG_REL_  "attribute_name" STRING ;
 /// ```
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct NodeMappedRxSignalAttribute {
     pub attribute_name: String,
     pub attribute_value_type: AttributeValueType,
@@ -658,7 +659,7 @@ pub fn parser_node_mapped_rx_signal_attribute(
 /// BA_DEF_REL_ BU_BO_REL_  "attribute_name" STRING ;
 /// BA_DEF_REL_ BU_SG_REL_  "attribute_name" STRING ;
 /// ```
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub enum AttributeDefinition {
     Network(NetworkAttribute),
     Node(NodeAttribute),

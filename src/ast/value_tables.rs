@@ -9,6 +9,7 @@ use nom::combinator::opt;
 use nom::multi::many0;
 use nom::sequence::tuple;
 use nom::IResult;
+use serde::{Deserialize, Serialize};
 use std::fmt;
 
 /// The value table section defines the global value tables. The value descriptions in
@@ -25,7 +26,7 @@ use std::fmt;
 /// Format: `VAL_TABLE_ <value_table_name> <value_description>;`
 ///
 /// value_description: List of `IntValue "StringValue"` Pairs, seperated by whitespaces
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct ValueTable {
     pub name: String,
     pub value_descriptions: ValueDescriptions,

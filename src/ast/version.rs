@@ -4,12 +4,13 @@ use nom::bytes::complete::tag;
 use nom::combinator::map;
 use nom::sequence::preceded;
 use nom::IResult;
+use serde::{Deserialize, Serialize};
 use std::fmt;
 
 /// Version identifier of the DBC file.
 ///
 /// Format: `VERSION "<VersionIdentifier>"`
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct Version(pub String);
 
 impl fmt::Display for Version {

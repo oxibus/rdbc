@@ -11,6 +11,7 @@ use nom::sequence::delimited;
 use nom::sequence::separated_pair;
 use nom::sequence::tuple;
 use nom::IResult;
+use serde::{Deserialize, Serialize};
 use std::fmt;
 
 /*
@@ -20,7 +21,7 @@ use std::fmt;
  SG_ S3 m0 : 16|16@1- (1,0) [0|0] "" Vector__XXX
  SG_ S2 m0 : 8|8@1- (1,0) [0|0] "" Vector__XXX
 */
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub enum DbcSignalMultiplexer {
     M,
     MultiplexerIdentifier(i64),
@@ -36,7 +37,7 @@ impl fmt::Display for DbcSignalMultiplexer {
 }
 
 /// Endianness: 1 = little-endian, Intel; 0 = big-endian, Motorola
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub enum ByteOrder {
     LittleEndian,
     BigEndian,
@@ -52,7 +53,7 @@ impl fmt::Display for ByteOrder {
 }
 
 /// Signed: + = unsigned; - = signed
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub enum ValueType {
     Signed,
     Unsigned,
@@ -95,7 +96,7 @@ impl fmt::Display for ValueType {
 /// Endianness: 1 = little-endian, Intel; 0 = big-endian, Motorola
 /// M: If M than this signals contains a multiplexer identifier.
 /// MultiplexerIdentifier: Signal definition is only used if the value of the multiplexer signal equals to this value.
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct Signal {
     pub name: String,
     pub multiplexer: Option<DbcSignalMultiplexer>,

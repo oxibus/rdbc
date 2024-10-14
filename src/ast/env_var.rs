@@ -10,9 +10,10 @@ use nom::multi::separated_list0;
 use nom::sequence::pair;
 use nom::sequence::tuple;
 use nom::IResult;
+use serde::{Deserialize, Serialize};
 use std::fmt;
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub enum EnvVarType {
     Integer,
     Float,
@@ -86,7 +87,7 @@ pub enum EnvVarAccessType {
 /// EV_ RWEnvVar_wData: 0 [0|1234] "" 60 2 DUMMY_NODE_VECTOR3  Node2;
 /// EV_ WriteOnlyEnvVar: 1 [0|1234] "" 60 3 DUMMY_NODE_VECTOR2  Node2;
 /// ```
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct EnvironmentVariable {
     pub env_var_name: String,
     pub env_var_type: EnvVarType,

@@ -7,6 +7,7 @@ use nom::combinator::map;
 use nom::multi::many0;
 use nom::sequence::tuple;
 use nom::IResult;
+use serde::{Deserialize, Serialize};
 use std::fmt;
 
 /// Environment variables data section
@@ -22,7 +23,7 @@ use std::fmt;
 /// ```text
 /// ENVVAR_DATA_ RWEnvVar_wData: 10;
 /// ```
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct EnvironmentVariableData {
     pub env_var_name: String,
     pub data_size: u32,

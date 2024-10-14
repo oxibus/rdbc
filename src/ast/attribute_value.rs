@@ -8,9 +8,10 @@ use nom::bytes::complete::tag;
 use nom::combinator::map;
 use nom::sequence::tuple;
 use nom::IResult;
+use serde::{Deserialize, Serialize};
 use std::fmt;
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct NetworkAttributeValue {
     pub attribute_name: String,
     pub attribute_value: AttributeValue,
@@ -54,7 +55,7 @@ pub fn parser_network_attribute_value(
     }
 }
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct NodeAttributeValue {
     pub attribute_name: String,
     pub node_name: String,
@@ -102,7 +103,7 @@ pub fn parser_node_attribute_value(
     }
 }
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct MessageAttributeValue {
     pub attribute_name: String,
     pub message_id: u32,
@@ -150,7 +151,7 @@ pub fn parser_message_attribute_value(
     }
 }
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct SignalAttributeValue {
     pub attribute_name: String,
     pub message_id: u32,
@@ -203,7 +204,7 @@ pub fn parser_signal_attribute_value(
     }
 }
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct EnvironmentVariableAttributeValue {
     pub attribute_name: String,
     pub env_var_name: String,
@@ -258,7 +259,7 @@ pub fn parser_environment_variable_attribute_value(
     }
 }
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub enum ObjectAttributeValue {
     Network(NetworkAttributeValue),
     Node(NodeAttributeValue),
