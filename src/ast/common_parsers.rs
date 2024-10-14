@@ -80,7 +80,7 @@ pub fn string_literal(input: &str) -> IResult<&str, String, DbcParseError> {
 
     match res {
         Ok((remain, s)) => Ok((remain, s.to_string())),
-        Err(_) => Err(nom::Err::Failure(DbcParseError::BadEscape)),
+        Err(_) => Err(nom::Err::Error(DbcParseError::BadEscape)),
     }
 }
 
@@ -111,7 +111,7 @@ pub fn integer_value(input: &str) -> IResult<&str, i64, DbcParseError> {
     let (remain, raw_int) = integer_body(input)?;
     match raw_int.parse::<i64>() {
         Ok(i) => Ok((remain, i)),
-        Err(_) => Err(nom::Err::Failure(DbcParseError::BadInt)),
+        Err(_) => Err(nom::Err::Error(DbcParseError::BadInt)),
     }
 }
 
@@ -135,7 +135,7 @@ pub fn float_value(input: &str) -> IResult<&str, f64, DbcParseError> {
     let (remain, raw_float) = float_body(input)?;
     match raw_float.parse::<f64>() {
         Ok(f) => Ok((remain, f)),
-        Err(_) => Err(nom::Err::Failure(DbcParseError::BadFloat)),
+        Err(_) => Err(nom::Err::Error(DbcParseError::BadFloat)),
     }
 }
 

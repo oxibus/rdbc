@@ -68,6 +68,11 @@ pub enum DbcParseError {
     #[error("bad node mapped rx signal attribute")]
     BadNodeMappedRxSignalAttribute,
 
+    #[error("bad attribute definition default")]
+    BadAttributeDefinitionDefault,
+    #[error("bad relation attribute definition default")]
+    BadRelationAttributeDefinitionDefault,
+
     #[error("bad integer")]
     BadInt,
     #[error("bad float")]
