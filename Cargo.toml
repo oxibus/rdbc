@@ -1,5 +1,5 @@
 [package]
-name = "rdbc"
+name = "rrdbc"
 version = "0.1.0"
 authors = ["MDGSF"]
 edition = "2021"
@@ -10,7 +10,7 @@ license-file = "LICENSE"
 keywords = ["dbc", "parser", "format"]
 
 [lib]
-name = "rdbc"
+name = "rrdbc"
 path = "src/lib.rs"
 
 [[bin]]

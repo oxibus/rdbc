@@ -279,22 +279,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "rdbc"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "encoding_rs",
- "encoding_rs_io",
- "env_logger",
- "log",
- "nom",
- "serde",
- "serde_json",
- "structopt",
- "thiserror",
-]
-
-[[package]]
 name = "regex"
 version = "1.10.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -322,6 +306,22 @@ name = "regex-syntax"
 version = "0.8.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7a66a03ae7c801facd77a29370b4faec201768915ac14a721ba36f20bc9c209b"
+
+[[package]]
+name = "rrdbc"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "encoding_rs",
+ "encoding_rs_io",
+ "env_logger",
+ "log",
+ "nom",
+ "serde",
+ "serde_json",
+ "structopt",
+ "thiserror",
+]
 
 [[package]]
 name = "ryu"

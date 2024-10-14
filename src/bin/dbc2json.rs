@@ -1,6 +1,6 @@
 use anyhow::Result;
-use rdbc::ast::network_ast::*;
-use rdbc::file::read_file_content;
+use rrdbc::ast::network_ast::*;
+use rrdbc::file::read_file_content;
 use std::path::PathBuf;
 use structopt::StructOpt;
 
