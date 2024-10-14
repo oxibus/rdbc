@@ -2,6 +2,8 @@ use super::attribute_default::parser_attribute_default;
 use super::attribute_default::AttributeDefault;
 use super::attribute_definition::parser_attribute_definition;
 use super::attribute_definition::AttributeDefinition;
+use super::attribute_value::parser_object_attribute_value;
+use super::attribute_value::ObjectAttributeValue;
 use super::bit_timing::parser_bit_timing;
 use super::bit_timing::BitTiming;
 use super::comment::parser_comment;
@@ -65,6 +67,9 @@ pub struct NetworkAst {
 
     // BA_DEF_DEF_
     pub attribute_defaults: Vec<AttributeDefault>,
+
+    // BA_
+    pub attribute_values: Vec<ObjectAttributeValue>,
 
     // VAL_ message_id signal_name [value_descriptions];
     pub signal_value_descriptions: Vec<SignalValueDescriptions>,
@@ -131,6 +136,13 @@ impl fmt::Display for NetworkAst {
             write!(f, "\n")?;
         }
 
+        for attribute_value in &self.attribute_values {
+            writeln!(f, "{}", attribute_value)?;
+        }
+        if !self.attribute_values.is_empty() {
+            write!(f, "\n")?;
+        }
+
         for signal_value_description in &self.signal_value_descriptions {
             writeln!(f, "{}", signal_value_description)?;
         }
@@ -159,6 +171,7 @@ pub fn dbc_value(input: &str) -> IResult<&str, NetworkAst, DbcParseError> {
             multispacey(many0(parser_comment)),
             multispacey(many0(parser_attribute_definition)),
             multispacey(many0(parser_attribute_default)),
+            multispacey(many0(parser_object_attribute_value)),
             multispacey(many0(parser_signal_value_descriptions)),
             multispacey(many0(parser_env_var_value_descriptions)),
         ))),
@@ -174,6 +187,7 @@ pub fn dbc_value(input: &str) -> IResult<&str, NetworkAst, DbcParseError> {
             comments,
             attribute_definitions,
             attribute_defaults,
+            attribute_values,
             signal_value_descriptions,
             env_var_value_descriptions,
         )| NetworkAst {
@@ -188,6 +202,7 @@ pub fn dbc_value(input: &str) -> IResult<&str, NetworkAst, DbcParseError> {
             comments,
             attribute_definitions,
             attribute_defaults,
+            attribute_values,
             signal_value_descriptions,
             env_var_value_descriptions,
         },
@@ -308,6 +323,7 @@ BO_ 112 MM5_10_TX1: 8 DRS_MM5_10
                 comments: vec![],
                 attribute_definitions: vec![],
                 attribute_defaults: vec![],
+                attribute_values: vec![],
                 signal_value_descriptions: vec![],
                 env_var_value_descriptions: vec![],
             }),
@@ -577,6 +593,7 @@ VAL_ ReadOnlyEnvVar 2 "Value2" 1 "Value1" 0 "Value0" ;
                     )
                 ],
                 attribute_defaults: vec![],
+                attribute_values: vec![],
                 signal_value_descriptions: vec![
                     SignalValueDescriptions {
                         message_id: 2147487969,

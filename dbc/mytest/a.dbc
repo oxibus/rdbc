@@ -78,6 +78,11 @@ BA_DEF_DEF_  "BUIntAttribute" 50;
 BA_DEF_DEF_  "BOStringAttribute" "String";
 BA_DEF_DEF_  "FloatAttribute" 25.25;
 
+BA_ "FloatAttribute" 45.9;
+BA_ "BUIntAttribute" BU_ Node0 100;
+BA_ "BOStringAttribute" BO_ 1234 "MessageAttribute";
+BA_ "SGEnumAttribute" SG_ 1234 Signal0 2;
+BA_ "RWEnvVar_wData_Val" EV_ RWEnvVar_wData 3;
 
 VAL_ 2147487969 Value1 3 "Three" 2 "Two" 1 "One" 0 "Zero" ;
 VAL_ 2147487969 Value0 2 "Value2" 1 "Value1" 0 "Value0" ;
