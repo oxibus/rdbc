@@ -1,6 +1,7 @@
 use super::error::DbcParseError;
 use nom::branch::alt;
 use nom::bytes::complete::tag;
+use nom::bytes::complete::tag_no_case;
 use nom::bytes::complete::take_while1;
 use nom::character::complete::alphanumeric1;
 use nom::character::complete::digit0;
@@ -120,7 +121,11 @@ pub fn frac(input: &str) -> IResult<&str, &str, DbcParseError> {
 }
 
 pub fn exp(input: &str) -> IResult<&str, &str, DbcParseError> {
-    recognize(tuple((tag("e"), opt(alt((tag("-"), tag("+")))), digit1)))(input)
+    recognize(tuple((
+        tag_no_case("e"),
+        opt(alt((tag("-"), tag("+")))),
+        digit1,
+    )))(input)
 }
 
 pub fn float_body(input: &str) -> IResult<&str, &str, DbcParseError> {
@@ -235,6 +240,21 @@ pub fn parser_env_var_name(input: &str) -> IResult<&str, &str, DbcParseError> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_float_value_01() {
+        assert_eq!(float_value("0.0"), Ok(("", 0.0)));
+    }
+
+    #[test]
+    fn test_float_value_02() {
+        assert_eq!(float_value("1.52588e-05"), Ok(("", 1.52588e-05)));
+    }
+
+    #[test]
+    fn test_float_value_03() {
+        assert_eq!(float_value("1.52588E-05"), Ok(("", 1.52588e-05)));
+    }
 
     #[test]
     fn test_c_identifier_01() {
