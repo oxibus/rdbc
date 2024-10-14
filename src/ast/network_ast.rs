@@ -1,6 +1,7 @@
+use super::attribute_default::parser_attribute_default;
+use super::attribute_default::AttributeDefault;
 use super::attribute_definition::parser_attribute_definition;
 use super::attribute_definition::AttributeDefinition;
-
 use super::bit_timing::parser_bit_timing;
 use super::bit_timing::BitTiming;
 use super::comment::parser_comment;
@@ -62,6 +63,9 @@ pub struct NetworkAst {
     // BA_DEF_
     pub attribute_definitions: Vec<AttributeDefinition>,
 
+    // BA_DEF_DEF_
+    pub attribute_defaults: Vec<AttributeDefault>,
+
     // VAL_ message_id signal_name [value_descriptions];
     pub signal_value_descriptions: Vec<SignalValueDescriptions>,
 
@@ -120,6 +124,13 @@ impl fmt::Display for NetworkAst {
             write!(f, "\n")?;
         }
 
+        for attribute_default in &self.attribute_defaults {
+            writeln!(f, "{}", attribute_default)?;
+        }
+        if !self.attribute_defaults.is_empty() {
+            write!(f, "\n")?;
+        }
+
         for signal_value_description in &self.signal_value_descriptions {
             writeln!(f, "{}", signal_value_description)?;
         }
@@ -147,6 +158,7 @@ pub fn dbc_value(input: &str) -> IResult<&str, NetworkAst, DbcParseError> {
             multispacey(many0(parser_env_var_data)),
             multispacey(many0(parser_comment)),
             multispacey(many0(parser_attribute_definition)),
+            multispacey(many0(parser_attribute_default)),
             multispacey(many0(parser_signal_value_descriptions)),
             multispacey(many0(parser_env_var_value_descriptions)),
         ))),
@@ -161,6 +173,7 @@ pub fn dbc_value(input: &str) -> IResult<&str, NetworkAst, DbcParseError> {
             env_vars_data,
             comments,
             attribute_definitions,
+            attribute_defaults,
             signal_value_descriptions,
             env_var_value_descriptions,
         )| NetworkAst {
@@ -174,6 +187,7 @@ pub fn dbc_value(input: &str) -> IResult<&str, NetworkAst, DbcParseError> {
             env_vars_data,
             comments,
             attribute_definitions,
+            attribute_defaults,
             signal_value_descriptions,
             env_var_value_descriptions,
         },
@@ -293,6 +307,7 @@ BO_ 112 MM5_10_TX1: 8 DRS_MM5_10
                 env_vars_data: vec![],
                 comments: vec![],
                 attribute_definitions: vec![],
+                attribute_defaults: vec![],
                 signal_value_descriptions: vec![],
                 env_var_value_descriptions: vec![],
             }),
@@ -561,6 +576,7 @@ VAL_ ReadOnlyEnvVar 2 "Value2" 1 "Value1" 0 "Value0" ;
                         }
                     )
                 ],
+                attribute_defaults: vec![],
                 signal_value_descriptions: vec![
                     SignalValueDescriptions {
                         message_id: 2147487969,
