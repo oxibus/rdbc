@@ -122,7 +122,7 @@ impl fmt::Display for EnvironmentVariable {
         if self.access_nodes.is_empty() {
             write!(f, "Vector__XXX")?;
         } else {
-            write!(f, " {}", self.access_nodes.join(","))?;
+            write!(f, "{}", self.access_nodes.join(","))?;
         }
         write!(f, ";")
     }
@@ -312,7 +312,7 @@ mod tests {
                 access_nodes: vec!["Node2".to_string()],
             }
             .to_string(),
-            r#"EV_ RWEnvVar_wData: 0 [0|1234] "" 60 2 DUMMY_NODE_VECTOR3  Node2;"#
+            r#"EV_ RWEnvVar_wData: 0 [0|1234] "" 60 2 DUMMY_NODE_VECTOR3 Node2;"#
         );
     }
 
@@ -331,7 +331,7 @@ mod tests {
                 access_nodes: vec!["Node0".to_string()],
             }
             .to_string(),
-            r#"EV_ UnrestrictedEnvVar: 0 [0|0] "Nm" 0 1 DUMMY_NODE_VECTOR8000  Node0;"#
+            r#"EV_ UnrestrictedEnvVar: 0 [0|0] "Nm" 0 1 DUMMY_NODE_VECTOR8000 Node0;"#
         );
     }
 
@@ -350,7 +350,7 @@ mod tests {
                 access_nodes: vec!["Node2".to_string()],
             }
             .to_string(),
-            r#"EV_ WriteOnlyEnvVar: 1 [0|1234] "" 60 3 DUMMY_NODE_VECTOR2  Node2;"#
+            r#"EV_ WriteOnlyEnvVar: 1 [0|1234] "" 60 3 DUMMY_NODE_VECTOR2 Node2;"#
         );
     }
 
@@ -369,7 +369,7 @@ mod tests {
                 access_nodes: vec!["Node2".to_string(), "Node3".to_string()],
             }
             .to_string(),
-            r#"EV_ WriteOnlyEnvVar: 1 [0|1234] "" 60 3 DUMMY_NODE_VECTOR2  Node2,Node3;"#
+            r#"EV_ WriteOnlyEnvVar: 1 [0|1234] "" 60 3 DUMMY_NODE_VECTOR2 Node2,Node3;"#
         );
     }
 }
