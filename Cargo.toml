@@ -17,6 +17,8 @@ path = "src/bin/dbc2json.rs"
 
 [dependencies]
 anyhow = "1.0.88"
+encoding_rs = "0.8.34"
+encoding_rs_io = "0.1.7"
 env_logger = "0.11.5"
 log = "0.4.22"
 nom = "7.1.3"
