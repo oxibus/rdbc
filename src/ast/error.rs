@@ -73,6 +73,17 @@ pub enum DbcParseError {
     #[error("bad relation attribute definition default")]
     BadRelationAttributeDefinitionDefault,
 
+    #[error("bad network attribute value")]
+    BadNetworkAttributeValue,
+    #[error("bad node attribute value")]
+    BadNodeAttributeValue,
+    #[error("bad message attribute value")]
+    BadMessageAttributeValue,
+    #[error("bad signal attribute value")]
+    BadSignalAttributeValue,
+    #[error("bad environment variable attribute value")]
+    BadEnvironmentVariableAttributeValue,
+
     #[error("bad integer")]
     BadInt,
     #[error("bad float")]
