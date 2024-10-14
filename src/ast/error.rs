@@ -98,40 +98,43 @@ pub enum DbcParseError {
     UseKeywordAsIdentifier,
     #[error("debug message")]
     DebugMsg(String),
+    #[error("debug")]
+    Debug(ErrorKind),
 }
 
+// error handling document:
+// - <https://github.com/rust-bakery/nom/blob/main/doc/error_management.md>
 impl ParseError<&str> for DbcParseError {
     // on one line, we show the error code and the input that caused it
-    fn from_error_kind(input: &str, kind: ErrorKind) -> Self {
-        let message = format!("{:?}:\t{:?}\n", kind, input);
-        log::debug!("{}", message);
-        DbcParseError::DebugMsg(message)
+    fn from_error_kind(_input: &str, kind: ErrorKind) -> Self {
+        Self::Debug(kind)
+        // let message = format!("{:?}:\t{:?}\n", kind, input);
+        // log::debug!("{}", message);
+        // DbcParseError::DebugMsg(message)
     }
 
     // if combining multiple errors, we show them one after the other
-    fn append(input: &str, kind: ErrorKind, other: Self) -> Self {
-        let message = format!("{}{:?}:\t{:?}\n", other, kind, input);
-        log::debug!("{}", message);
-        DbcParseError::DebugMsg(message)
+    fn append(_input: &str, _kind: ErrorKind, other: Self) -> Self {
+        other
+        // let message = format!("{}{:?}:\t{:?}\n", other, kind, input);
+        // log::debug!("{}", message);
+        // DbcParseError::DebugMsg(message)
     }
 
-    fn from_char(input: &str, c: char) -> Self {
-        let message = format!("'{}':\t{:?}\n", c, input);
-        log::debug!("{}", message);
-        DbcParseError::DebugMsg(message)
+    fn from_char(input: &str, _c: char) -> Self {
+        Self::from_error_kind(input, ErrorKind::Char)
     }
 
     fn or(self, other: Self) -> Self {
-        let message = format!("{}\tOR\n{}\n", self, other);
-        log::debug!("{}", message);
-        DbcParseError::DebugMsg(message)
+        other
     }
 }
 
 impl ContextError<&str> for DbcParseError {
-    fn add_context(input: &str, ctx: &'static str, other: Self) -> Self {
-        let message = format!("{}\"{}\":\t{:?}\n", other, ctx, input);
-        log::debug!("{}", message);
-        DbcParseError::DebugMsg(message)
+    fn add_context(_input: &str, _ctx: &'static str, other: Self) -> Self {
+        other
+        // let message = format!("{}\"{}\":\t{:?}\n", other, ctx, input);
+        // log::debug!("{}", message);
+        // DbcParseError::DebugMsg(message)
     }
 }
