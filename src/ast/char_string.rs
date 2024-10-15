@@ -10,6 +10,38 @@ use nom::multi::many0;
 use nom::sequence::delimited;
 use nom::sequence::pair;
 use nom::IResult;
+use serde::{Deserialize, Serialize};
+use std::fmt;
+
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
+pub struct CharString(pub String);
+
+impl fmt::Display for CharString {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut chars = self.0.chars().peekable();
+        while let Some(c) = chars.next() {
+            if c == '\\' {
+                match chars.peek() {
+                    Some(&next_c) if next_c == '\\' => {
+                        f.write_str("\\")?;
+                        chars.next();
+                    }
+                    _ => {
+                        f.write_str("\\")?;
+                    }
+                }
+            } else {
+                write!(f, "{}", c)?;
+            }
+        }
+        Ok(())
+    }
+}
+
+pub fn parser_char_string(input: &str) -> IResult<&str, CharString, DbcParseError> {
+    let res = string_literal(input)?;
+    Ok((res.0, CharString(res.1)))
+}
 
 pub fn printable_character(input: &str) -> IResult<&str, &str, DbcParseError> {
     recognize(satisfy(|c| {
@@ -78,6 +110,31 @@ pub fn char_string(input: &str) -> IResult<&str, String, DbcParseError> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_char_string_to_string_01() {
+        assert_eq!(
+            CharString("hello".to_string()).to_string(),
+            "hello".to_string()
+        );
+    }
+
+    #[test]
+    fn test_char_string_to_string_02() {
+        assert_eq!(
+            CharString("hello\\Iworld".to_string()).to_string(),
+            r#"hello\Iworld"#
+        );
+    }
+
+    #[test]
+    fn test_char_string_to_string_03() {
+        assert_eq!(
+            CharString("hello\nworld".to_string()).to_string(),
+            r#"hello
+world"#
+        );
+    }
 
     #[test]
     fn test_char_string_01() {
