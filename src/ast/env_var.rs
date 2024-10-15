@@ -1,4 +1,5 @@
-use super::char_string::char_string;
+use super::char_string::parser_char_string;
+use super::char_string::CharString;
 use super::common_parsers::*;
 use super::error::DbcParseError;
 use nom::bytes::complete::tag;
@@ -94,7 +95,7 @@ pub struct EnvironmentVariable {
     pub env_var_type: EnvVarType,
     pub minimum: f64,
     pub maximum: f64,
-    pub unit: String,
+    pub unit: CharString,
     pub initial_value: f64,
     pub ev_id: u32,
     pub access_type: u16,
@@ -142,8 +143,8 @@ pub fn parser_maximum(input: &str) -> IResult<&str, f64, DbcParseError> {
     number_value(input)
 }
 
-pub fn parser_unit(input: &str) -> IResult<&str, String, DbcParseError> {
-    char_string(input)
+pub fn parser_unit(input: &str) -> IResult<&str, CharString, DbcParseError> {
+    parser_char_string(input)
 }
 
 pub fn parser_initial_value(input: &str) -> IResult<&str, f64, DbcParseError> {
@@ -212,7 +213,7 @@ pub fn parser_env_var(input: &str) -> IResult<&str, EnvironmentVariable, DbcPars
                 env_var_type,
                 minimum,
                 maximum,
-                unit: unit.to_string(),
+                unit,
                 initial_value,
                 ev_id,
                 access_type,
@@ -245,7 +246,7 @@ mod tests {
                     env_var_type: EnvVarType::Integer,
                     minimum: 0.0,
                     maximum: 1234.0,
-                    unit: "".to_string(),
+                    unit: CharString("".to_string()),
                     initial_value: 60.0,
                     ev_id: 2,
                     access_type: 3,
@@ -266,7 +267,7 @@ mod tests {
                     env_var_type: EnvVarType::Float,
                     minimum: 0.0,
                     maximum: 1234.0,
-                    unit: "".to_string(),
+                    unit: CharString("".to_string()),
                     initial_value: 60.0,
                     ev_id: 3,
                     access_type: 2,
@@ -289,7 +290,7 @@ mod tests {
                     env_var_type: EnvVarType::String,
                     minimum: 0.0,
                     maximum: 0.0,
-                    unit: "Nm".to_string(),
+                    unit: CharString("Nm".to_string()),
                     initial_value: 0.0,
                     ev_id: 1,
                     access_type: 0x8000,
@@ -307,7 +308,7 @@ mod tests {
                 env_var_type: EnvVarType::Integer,
                 minimum: 0.0,
                 maximum: 1234.0,
-                unit: "".to_string(),
+                unit: CharString("".to_string()),
                 initial_value: 60.0,
                 ev_id: 2,
                 access_type: 3,
@@ -326,7 +327,7 @@ mod tests {
                 env_var_type: EnvVarType::String,
                 minimum: 0.0,
                 maximum: 0.0,
-                unit: "Nm".to_string(),
+                unit: CharString("Nm".to_string()),
                 initial_value: 0.0,
                 ev_id: 1,
                 access_type: 0x8000,
@@ -345,7 +346,7 @@ mod tests {
                 env_var_type: EnvVarType::Float,
                 minimum: 0.0,
                 maximum: 1234.0,
-                unit: "".to_string(),
+                unit: CharString("".to_string()),
                 initial_value: 60.0,
                 ev_id: 3,
                 access_type: 2,
@@ -364,7 +365,7 @@ mod tests {
                 env_var_type: EnvVarType::Float,
                 minimum: 0.0,
                 maximum: 1234.0,
-                unit: "".to_string(),
+                unit: CharString("".to_string()),
                 initial_value: 60.0,
                 ev_id: 3,
                 access_type: 2,
