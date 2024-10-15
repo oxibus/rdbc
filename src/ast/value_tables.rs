@@ -78,6 +78,7 @@ pub fn parser_value_tables(input: &str) -> IResult<&str, Option<Vec<ValueTable>>
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::ast::char_string::CharString;
     use crate::ast::value_descriptions::ValueDescriptionItem;
 
     #[test]
@@ -94,15 +95,15 @@ mod tests {
                         values: vec![
                             ValueDescriptionItem {
                                 num: 2,
-                                str: "active faults stored".to_string()
+                                str: CharString("active faults stored".to_string())
                             },
                             ValueDescriptionItem {
                                 num: 1,
-                                str: "inactive faults stored".to_string()
+                                str: CharString("inactive faults stored".to_string())
                             },
                             ValueDescriptionItem {
                                 num: 0,
-                                str: "no faults stored".to_string()
+                                str: CharString("no faults stored".to_string())
                             }
                         ]
                     }
@@ -120,15 +121,15 @@ mod tests {
                     values: vec![
                         ValueDescriptionItem {
                             num: 2,
-                            str: "active faults stored".to_string()
+                            str: CharString("active faults stored".to_string())
                         },
                         ValueDescriptionItem {
                             num: 1,
-                            str: "inactive faults stored".to_string()
+                            str: CharString("inactive faults stored".to_string())
                         },
                         ValueDescriptionItem {
                             num: 0,
-                            str: "no faults stored".to_string()
+                            str: CharString("no faults stored".to_string())
                         }
                     ]
                 }

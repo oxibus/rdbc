@@ -62,6 +62,7 @@ pub fn parser_signal_value_descriptions(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::ast::char_string::CharString;
     use crate::ast::value_descriptions::ValueDescriptionItem;
 
     #[test]
@@ -79,19 +80,19 @@ mod tests {
                         values: vec![
                             ValueDescriptionItem {
                                 num: 3,
-                                str: "Three".to_string()
+                                str: CharString("Three".to_string())
                             },
                             ValueDescriptionItem {
                                 num: 2,
-                                str: "Two".to_string()
+                                str: CharString("Two".to_string())
                             },
                             ValueDescriptionItem {
                                 num: 1,
-                                str: "One".to_string()
+                                str: CharString("One".to_string())
                             },
                             ValueDescriptionItem {
                                 num: 0,
-                                str: "Zero".to_string()
+                                str: CharString("Zero".to_string())
                             }
                         ]
                     }
@@ -110,15 +111,15 @@ mod tests {
                     values: vec![
                         ValueDescriptionItem {
                             num: 2,
-                            str: "Value2".to_string()
+                            str: CharString("Value2".to_string())
                         },
                         ValueDescriptionItem {
                             num: 1,
-                            str: "Value1".to_string()
+                            str: CharString("Value1".to_string())
                         },
                         ValueDescriptionItem {
                             num: 0,
-                            str: "Value0".to_string()
+                            str: CharString("Value0".to_string())
                         }
                     ]
                 }

@@ -61,6 +61,7 @@ pub fn parser_env_var_value_descriptions(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::ast::char_string::CharString;
     use crate::ast::value_descriptions::ValueDescriptionItem;
 
     #[test]
@@ -77,15 +78,15 @@ mod tests {
                         values: vec![
                             ValueDescriptionItem {
                                 num: 2,
-                                str: "Value2".to_string()
+                                str: CharString("Value2".to_string())
                             },
                             ValueDescriptionItem {
                                 num: 1,
-                                str: "Value1".to_string()
+                                str: CharString("Value1".to_string())
                             },
                             ValueDescriptionItem {
                                 num: 0,
-                                str: "Value0".to_string()
+                                str: CharString("Value0".to_string())
                             }
                         ]
                     }
@@ -103,15 +104,15 @@ mod tests {
                     values: vec![
                         ValueDescriptionItem {
                             num: 2,
-                            str: "Value2".to_string()
+                            str: CharString("Value2".to_string())
                         },
                         ValueDescriptionItem {
                             num: 1,
-                            str: "Value1".to_string()
+                            str: CharString("Value1".to_string())
                         },
                         ValueDescriptionItem {
                             num: 0,
-                            str: "Value0".to_string()
+                            str: CharString("Value0".to_string())
                         }
                     ]
                 }

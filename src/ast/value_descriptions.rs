@@ -1,4 +1,5 @@
-use super::char_string::char_string;
+use super::char_string::parser_char_string;
+use super::char_string::CharString;
 use super::common_parsers::*;
 use super::error::DbcParseError;
 use nom::character::complete::i64;
@@ -35,7 +36,7 @@ use std::fmt;
 #[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct ValueDescriptionItem {
     pub num: i64,
-    pub str: String,
+    pub str: CharString,
 }
 
 impl fmt::Display for ValueDescriptionItem {
@@ -66,9 +67,10 @@ impl fmt::Display for ValueDescriptions {
 pub fn parser_value_description_item(
     input: &str,
 ) -> IResult<&str, ValueDescriptionItem, DbcParseError> {
-    map(tuple((spacey(i64), spacey(char_string))), |(num, str)| {
-        ValueDescriptionItem { num, str }
-    })(input)
+    map(
+        tuple((spacey(i64), spacey(parser_char_string))),
+        |(num, str)| ValueDescriptionItem { num, str },
+    )(input)
 }
 
 pub fn parser_value_descriptions(input: &str) -> IResult<&str, ValueDescriptions, DbcParseError> {
@@ -89,7 +91,7 @@ mod tests {
                 "",
                 ValueDescriptionItem {
                     num: 2,
-                    str: "active faults stored".to_string()
+                    str: CharString("active faults stored".to_string())
                 }
             )),
         );
@@ -104,7 +106,7 @@ mod tests {
                 ValueDescriptions {
                     values: vec![ValueDescriptionItem {
                         num: 2,
-                        str: "active faults stored".to_string()
+                        str: CharString("active faults stored".to_string())
                     }]
                 }
             )),
@@ -123,15 +125,15 @@ mod tests {
                     values: vec![
                         ValueDescriptionItem {
                             num: 2,
-                            str: "active faults stored".to_string()
+                            str: CharString("active faults stored".to_string())
                         },
                         ValueDescriptionItem {
                             num: 1,
-                            str: "inactive faults stored".to_string()
+                            str: CharString("inactive faults stored".to_string())
                         },
                         ValueDescriptionItem {
                             num: 0,
-                            str: "no faults stored".to_string()
+                            str: CharString("no faults stored".to_string())
                         }
                     ]
                 }
@@ -144,7 +146,7 @@ mod tests {
         assert_eq!(
             ValueDescriptionItem {
                 num: 2,
-                str: "active faults stored".to_string()
+                str: CharString("active faults stored".to_string())
             }
             .to_string(),
             r#"2 "active faults stored""#
@@ -158,15 +160,15 @@ mod tests {
                 values: vec![
                     ValueDescriptionItem {
                         num: 2,
-                        str: "active faults stored".to_string()
+                        str: CharString("active faults stored".to_string())
                     },
                     ValueDescriptionItem {
                         num: 1,
-                        str: "inactive faults stored".to_string()
+                        str: CharString("inactive faults stored".to_string())
                     },
                     ValueDescriptionItem {
                         num: 0,
-                        str: "no faults stored".to_string()
+                        str: CharString("no faults stored".to_string())
                     }
                 ]
             }

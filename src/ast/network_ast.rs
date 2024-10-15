@@ -391,15 +391,15 @@ VAL_ ReadOnlyEnvVar 2 "Value2" 1 "Value1" 0 "Value0" ;
                             values: vec![
                                 ValueDescriptionItem {
                                     num: 2,
-                                    str: "active faults stored".to_string()
+                                    str: CharString("active faults stored".to_string())
                                 },
                                 ValueDescriptionItem {
                                     num: 1,
-                                    str: "inactive faults stored".to_string()
+                                    str: CharString("inactive faults stored".to_string())
                                 },
                                 ValueDescriptionItem {
                                     num: 0,
-                                    str: "no faults stored".to_string()
+                                    str: CharString("no faults stored".to_string())
                                 }
                             ]
                         }
@@ -410,27 +410,27 @@ VAL_ ReadOnlyEnvVar 2 "Value2" 1 "Value1" 0 "Value0" ;
                             values: vec![
                                 ValueDescriptionItem {
                                     num: 5,
-                                    str: "InvalidUnderVoltage".to_string()
+                                    str: CharString("InvalidUnderVoltage".to_string())
                                 },
                                 ValueDescriptionItem {
                                     num: 4,
-                                    str: "NotCalculated".to_string()
+                                    str: CharString("NotCalculated".to_string())
                                 },
                                 ValueDescriptionItem {
                                     num: 3,
-                                    str: "ReducedMonitored".to_string()
+                                    str: CharString("ReducedMonitored".to_string())
                                 },
                                 ValueDescriptionItem {
                                     num: 2,
-                                    str: "Faulty".to_string()
+                                    str: CharString("Faulty".to_string())
                                 },
                                 ValueDescriptionItem {
                                     num: 1,
-                                    str: "Normal".to_string()
+                                    str: CharString("Normal".to_string())
                                 },
                                 ValueDescriptionItem {
                                     num: 0,
-                                    str: "NotInitialized".to_string()
+                                    str: CharString("NotInitialized".to_string())
                                 }
                             ]
                         }
@@ -604,19 +604,19 @@ VAL_ ReadOnlyEnvVar 2 "Value2" 1 "Value1" 0 "Value0" ;
                             values: vec![
                                 ValueDescriptionItem {
                                     num: 3,
-                                    str: "Three".to_string()
+                                    str: CharString("Three".to_string())
                                 },
                                 ValueDescriptionItem {
                                     num: 2,
-                                    str: "Two".to_string()
+                                    str: CharString("Two".to_string())
                                 },
                                 ValueDescriptionItem {
                                     num: 1,
-                                    str: "One".to_string()
+                                    str: CharString("One".to_string())
                                 },
                                 ValueDescriptionItem {
                                     num: 0,
-                                    str: "Zero".to_string()
+                                    str: CharString("Zero".to_string())
                                 }
                             ]
                         }
@@ -628,15 +628,15 @@ VAL_ ReadOnlyEnvVar 2 "Value2" 1 "Value1" 0 "Value0" ;
                             values: vec![
                                 ValueDescriptionItem {
                                     num: 2,
-                                    str: "Value2".to_string()
+                                    str: CharString("Value2".to_string())
                                 },
                                 ValueDescriptionItem {
                                     num: 1,
-                                    str: "Value1".to_string()
+                                    str: CharString("Value1".to_string())
                                 },
                                 ValueDescriptionItem {
                                     num: 0,
-                                    str: "Value0".to_string()
+                                    str: CharString("Value0".to_string())
                                 }
                             ]
                         }
@@ -649,15 +649,15 @@ VAL_ ReadOnlyEnvVar 2 "Value2" 1 "Value1" 0 "Value0" ;
                             values: vec![
                                 ValueDescriptionItem {
                                     num: 2,
-                                    str: "Value2".to_string()
+                                    str: CharString("Value2".to_string())
                                 },
                                 ValueDescriptionItem {
                                     num: 1,
-                                    str: "Value1".to_string()
+                                    str: CharString("Value1".to_string())
                                 },
                                 ValueDescriptionItem {
                                     num: 0,
-                                    str: "Value0".to_string()
+                                    str: CharString("Value0".to_string())
                                 }
                             ]
                         }
@@ -668,15 +668,15 @@ VAL_ ReadOnlyEnvVar 2 "Value2" 1 "Value1" 0 "Value0" ;
                             values: vec![
                                 ValueDescriptionItem {
                                     num: 2,
-                                    str: "Value2".to_string()
+                                    str: CharString("Value2".to_string())
                                 },
                                 ValueDescriptionItem {
                                     num: 1,
-                                    str: "Value1".to_string()
+                                    str: CharString("Value1".to_string())
                                 },
                                 ValueDescriptionItem {
                                     num: 0,
-                                    str: "Value0".to_string()
+                                    str: CharString("Value0".to_string())
                                 }
                             ]
                         }
@@ -687,15 +687,15 @@ VAL_ ReadOnlyEnvVar 2 "Value2" 1 "Value1" 0 "Value0" ;
                             values: vec![
                                 ValueDescriptionItem {
                                     num: 2,
-                                    str: "Value2".to_string()
+                                    str: CharString("Value2".to_string())
                                 },
                                 ValueDescriptionItem {
                                     num: 1,
-                                    str: "Value1".to_string()
+                                    str: CharString("Value1".to_string())
                                 },
                                 ValueDescriptionItem {
                                     num: 0,
-                                    str: "Value0".to_string()
+                                    str: CharString("Value0".to_string())
                                 }
                             ]
                         }
