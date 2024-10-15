@@ -21,6 +21,10 @@ path = "src/bin/demo.rs"
 name = "dbc2json"
 path = "src/bin/dbc2json.rs"
 
+[[bin]]
+name = "toutf8"
+path = "src/bin/toutf8.rs"
+
 [dependencies]
 anyhow = "1.0.88"
 encoding_rs = "0.8.34"

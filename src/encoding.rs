@@ -1,18 +1,36 @@
 // https://github.com/hsivonen/recode_rs
 
+use crate::error::DbcError;
 use encoding_rs::*;
 use std::io::Read;
 use std::io::Write;
 
-pub fn get_encoding(opt: Option<String>) -> &'static Encoding {
+pub fn to_utf8(src_encoding_label: &str, src_data: &[u8]) -> Result<String, DbcError> {
+    let src_encoding = get_encoding(Some(src_encoding_label.to_string()))?;
+    let dst_encoding = get_encoding(Some("UTF-8".to_string()))?;
+
+    let mut decoder = src_encoding.new_decoder();
+    let mut encoder = dst_encoding.new_encoder();
+
+    let mut buf = std::io::Cursor::new(Vec::new());
+
+    convert_via_utf8(
+        &mut decoder,
+        &mut encoder,
+        &mut std::io::Cursor::new(src_data),
+        &mut buf,
+        true,
+    )?;
+
+    Ok(String::from_utf8(buf.into_inner()).unwrap())
+}
+
+pub fn get_encoding(opt: Option<String>) -> Result<&'static Encoding, DbcError> {
     match opt {
-        None => UTF_8,
+        None => Ok(UTF_8),
         Some(label) => match Encoding::for_label((&label).as_bytes()) {
-            None => {
-                print!("{} is not a known encoding label; exiting.", label);
-                std::process::exit(-2);
-            }
-            Some(encoding) => encoding,
+            None => Err(DbcError::InvalidEncodingLabel(label)),
+            Some(encoding) => Ok(encoding),
         },
     }
 }
@@ -23,7 +41,7 @@ pub fn convert_via_utf8(
     read: &mut dyn Read,
     write: &mut dyn Write,
     last: bool,
-) {
+) -> Result<(), DbcError> {
     let mut input_buffer = [0u8; 2048];
     let mut intermediate_buffer_bytes = [0u8; 4096];
     // Is there a safe way to create a stack-allocated &mut str?
@@ -33,9 +51,9 @@ pub fn convert_via_utf8(
     let mut current_input_ended = false;
     while !current_input_ended {
         match read.read(&mut input_buffer) {
-            Err(_) => {
-                print!("Error reading input.");
-                std::process::exit(-5);
+            Err(e) => {
+                log::error!("Error reading input, error = {}", e);
+                return Err(DbcError::EncodingReadInputError);
             }
             Ok(decoder_input_end) => {
                 current_input_ended = decoder_input_end == 0;
@@ -65,9 +83,9 @@ pub fn convert_via_utf8(
                     if encoder.encoding() == UTF_8 {
                         // If the target is UTF-8, optimize out the encoder.
                         match write.write_all(&intermediate_buffer.as_bytes()[..decoder_written]) {
-                            Err(_) => {
-                                print!("Error writing output.");
-                                std::process::exit(-7);
+                            Err(e) => {
+                                log::error!("Error writing output, error = {}", e);
+                                return Err(DbcError::EncodingWriteOutputError);
                             }
                             Ok(_) => {}
                         }
@@ -82,9 +100,9 @@ pub fn convert_via_utf8(
                                 );
                             encoder_input_start += encoder_read;
                             match write.write_all(&output_buffer[..encoder_written]) {
-                                Err(_) => {
-                                    print!("Error writing output.");
-                                    std::process::exit(-6);
+                                Err(e) => {
+                                    log::error!("Error writing output, error = {}", e);
+                                    return Err(DbcError::EncodingWriteOutputError);
                                 }
                                 Ok(_) => {}
                             }
@@ -113,4 +131,6 @@ pub fn convert_via_utf8(
             }
         }
     }
+
+    Ok(())
 }
