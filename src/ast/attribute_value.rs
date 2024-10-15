@@ -306,6 +306,7 @@ pub fn parser_object_attribute_value(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::ast::char_string::CharString;
 
     #[test]
     fn test_object_attribute_value_string_01() {
@@ -338,7 +339,7 @@ mod tests {
             ObjectAttributeValue::Message(MessageAttributeValue {
                 attribute_name: "BOStringAttribute".to_string(),
                 message_id: 1234,
-                attribute_value: AttributeValue::String("MessageAttribute".to_string())
+                attribute_value: AttributeValue::String(CharString("MessageAttribute".to_string()))
             })
             .to_string(),
             r#"BA_ "BOStringAttribute" BO_ 1234 "MessageAttribute";"#
@@ -412,7 +413,9 @@ mod tests {
                 ObjectAttributeValue::Message(MessageAttributeValue {
                     attribute_name: "BOStringAttribute".to_string(),
                     message_id: 1234,
-                    attribute_value: AttributeValue::String("MessageAttribute".to_string())
+                    attribute_value: AttributeValue::String(CharString(
+                        "MessageAttribute".to_string()
+                    ))
                 })
             ))
         );
@@ -491,7 +494,9 @@ mod tests {
                 ObjectAttributeValue::Message(MessageAttributeValue {
                     attribute_name: "BOStringAttribute".to_string(),
                     message_id: 1234,
-                    attribute_value: AttributeValue::String("MessageAttribute".to_string())
+                    attribute_value: AttributeValue::String(CharString(
+                        "MessageAttribute".to_string()
+                    ))
                 })
             ))
         );

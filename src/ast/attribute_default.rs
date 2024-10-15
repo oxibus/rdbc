@@ -1,5 +1,6 @@
 use super::attribute::parser_attribute_name;
-use super::char_string::char_string;
+use super::char_string::parser_char_string;
+use super::char_string::CharString;
 use super::common_parsers::*;
 use super::error::DbcParseError;
 use nom::branch::alt;
@@ -13,7 +14,7 @@ use std::fmt;
 #[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub enum AttributeValue {
     Double(f64),
-    String(String),
+    String(CharString),
 }
 
 impl fmt::Display for AttributeValue {
@@ -30,7 +31,7 @@ pub fn parser_attribute_value_double(input: &str) -> IResult<&str, AttributeValu
 }
 
 pub fn parser_attribute_value_string(input: &str) -> IResult<&str, AttributeValue, DbcParseError> {
-    map(char_string, AttributeValue::String)(input)
+    map(parser_char_string, AttributeValue::String)(input)
 }
 
 pub fn parser_attribute_value(input: &str) -> IResult<&str, AttributeValue, DbcParseError> {
@@ -194,7 +195,7 @@ mod tests {
         assert_eq!(
             AttributeDefault::Attribute(AttributeDefinitionDefault {
                 attribute_name: "SGEnumAttribute".to_string(),
-                attribute_value: AttributeValue::String("Val0".to_string())
+                attribute_value: AttributeValue::String(CharString("Val0".to_string()))
             })
             .to_string(),
             r#"BA_DEF_DEF_ "SGEnumAttribute" "Val0";"#
@@ -230,7 +231,7 @@ mod tests {
         assert_eq!(
             AttributeDefault::RelationAttribute(RelationAttributeDefinitionDefault {
                 attribute_name: "ControlUnitEnvVarAttr".to_string(),
-                attribute_value: AttributeValue::String("MyVar".to_string())
+                attribute_value: AttributeValue::String(CharString("MyVar".to_string()))
             })
             .to_string(),
             r#"BA_DEF_DEF_REL_ "ControlUnitEnvVarAttr" "MyVar";"#
@@ -273,7 +274,7 @@ mod tests {
                 "",
                 AttributeDefault::RelationAttribute(RelationAttributeDefinitionDefault {
                     attribute_name: "ControlUnitEnvVarAttr".to_string(),
-                    attribute_value: AttributeValue::String("MyVar".to_string())
+                    attribute_value: AttributeValue::String(CharString("MyVar".to_string()))
                 })
             ))
         );
@@ -315,7 +316,7 @@ mod tests {
                 "",
                 AttributeDefault::Attribute(AttributeDefinitionDefault {
                     attribute_name: "SGEnumAttribute".to_string(),
-                    attribute_value: AttributeValue::String("Val0".to_string())
+                    attribute_value: AttributeValue::String(CharString("Val0".to_string()))
                 })
             ))
         );
