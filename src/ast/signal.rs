@@ -10,31 +10,51 @@ use nom::combinator::opt;
 use nom::multi::many0;
 use nom::multi::separated_list0;
 use nom::sequence::delimited;
+use nom::sequence::pair;
 use nom::sequence::separated_pair;
 use nom::sequence::tuple;
 use nom::IResult;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
-/*
- SG_ S7 m1 : 40|24@1- (1,0) [0|0] "" Vector__XXX
- SG_ S8 m2 : 40|8@1- (1,0) [0|0] "" Vector__XXX
- SG_ S6 M : 32|8@1- (1,0) [0|0] "" Vector__XXX
- SG_ S3 m0 : 16|16@1- (1,0) [0|0] "" Vector__XXX
- SG_ S2 m0 : 8|8@1- (1,0) [0|0] "" Vector__XXX
-*/
+/// example:
+///
+/// ```text
+/// SG_ S7 m1 : 40|24@1- (1,0) [0|0] "" Vector__XXX
+/// SG_ S8 m2 : 40|8@1- (1,0) [0|0] "" Vector__XXX
+/// SG_ S6 M : 32|8@1- (1,0) [0|0] "" Vector__XXX
+/// SG_ S3 m0 : 16|16@1- (1,0) [0|0] "" Vector__XXX
+/// SG_ S2 m0 : 8|8@1- (1,0) [0|0] "" Vector__XXX
+///
+/// BO_ 100 MuxMsg: 1 Vector__XXX
+///  SG_ Mux_4 m2 : 6|2@1+ (1,0) [0|0] "" Vector__XXX
+///  SG_ Mux_3 m3M : 4|2@1+ (1,0) [0|0] "" Vector__XXX
+///  SG_ Mux_2 m3M : 2|2@1+ (1,0) [0|0] "" Vector__XXX
+///  SG_ Mux_1 M : 0|2@1+ (1,0) [0|0] "" Vector__XXX
+///
+///
+/// SG_MUL_VAL_ 100 Mux_2 Mux_1 3-3, 5-10;
+/// SG_MUL_VAL_ 100 Mux_3 Mux_2 3-3;
+/// SG_MUL_VAL_ 100 Mux_4 Mux_3 2-2;
+/// ```
 #[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
-pub enum DbcSignalMultiplexer {
-    M,
-    MultiplexerIdentifier(i64),
+pub struct MultiplexerIndicator {
+    // A 'm' (lowercase) character followed by an unsigned integer defines the
+    // signal as being multiplexed by the multiplexer switch.
+    pub multiplexer_signal: Option<u32>,
+    // A 'M' (uppercase) character defines the signal as the multiplexer switch
+    pub multiplexer_switch: Option<()>,
 }
 
-impl fmt::Display for DbcSignalMultiplexer {
+impl fmt::Display for MultiplexerIndicator {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            DbcSignalMultiplexer::M => write!(f, "M"),
-            DbcSignalMultiplexer::MultiplexerIdentifier(id) => write!(f, "m{id}"),
+        if let Some(multiplexer_signal) = self.multiplexer_signal {
+            write!(f, "m{multiplexer_signal}")?;
         }
+        if let Some(()) = self.multiplexer_switch {
+            write!(f, "M")?;
+        }
+        Ok(())
     }
 }
 
@@ -101,7 +121,7 @@ impl fmt::Display for ValueType {
 #[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct Signal {
     pub name: String,
-    pub multiplexer: Option<DbcSignalMultiplexer>,
+    pub multiplexer: Option<MultiplexerIndicator>,
     pub start_bit: u32,
     pub size: u32,
     pub byte_order: ByteOrder,
@@ -156,13 +176,24 @@ impl fmt::Display for Signal {
     }
 }
 
-fn parser_signal_multiplexer(input: &str) -> IResult<&str, DbcSignalMultiplexer, DbcParseError> {
-    alt((
-        map(tag("M"), |_| DbcSignalMultiplexer::M),
-        map(tuple((tag("m"), integer_value)), |(_, num)| {
-            DbcSignalMultiplexer::MultiplexerIdentifier(num)
-        }),
-    ))(input)
+fn parser_signal_multiplexer(input: &str) -> IResult<&str, MultiplexerIndicator, DbcParseError> {
+    map(
+        tuple((opt(pair(tag("m"), unsigned_integer)), opt(tag("M")))),
+        |(multiplexer_signal, multiplexer_switch)| MultiplexerIndicator {
+            multiplexer_signal: multiplexer_signal.map(|(_, num)| num),
+            multiplexer_switch: multiplexer_switch.map(|_| ()),
+        },
+    )(input)
+}
+
+fn parser_signal_multiplexer_option(
+    input: &str,
+) -> IResult<&str, Option<MultiplexerIndicator>, DbcParseError> {
+    let res = parser_signal_multiplexer(input)?;
+    if res.1.multiplexer_signal.is_none() && res.1.multiplexer_switch.is_none() {
+        return Ok((res.0, None));
+    }
+    Ok((res.0, Some(res.1)))
 }
 
 fn parser_signal_start_bit(input: &str) -> IResult<&str, u32, DbcParseError> {
@@ -221,7 +252,7 @@ pub fn parser_signal(input: &str) -> IResult<&str, Signal, DbcParseError> {
         tuple((
             multispacey(tag("SG_")),
             spacey(parser_signal_name),
-            spacey(opt(parser_signal_multiplexer)),
+            spacey(parser_signal_multiplexer_option),
             spacey(tag(":")),
             spacey(parser_signal_start_bit),
             spacey(tag("|")),
@@ -287,7 +318,13 @@ mod tests {
     fn test_dbc_signal_multiplexer_01() {
         assert_eq!(
             parser_signal_multiplexer(r#"M"#),
-            Ok(("", DbcSignalMultiplexer::M)),
+            Ok((
+                "",
+                MultiplexerIndicator {
+                    multiplexer_signal: None,
+                    multiplexer_switch: Some(())
+                }
+            )),
         );
     }
 
@@ -295,7 +332,13 @@ mod tests {
     fn test_dbc_signal_multiplexer_02() {
         assert_eq!(
             parser_signal_multiplexer(r#"m0"#),
-            Ok(("", DbcSignalMultiplexer::MultiplexerIdentifier(0))),
+            Ok((
+                "",
+                MultiplexerIndicator {
+                    multiplexer_signal: Some(0),
+                    multiplexer_switch: None
+                }
+            )),
         );
     }
 
@@ -303,7 +346,27 @@ mod tests {
     fn test_dbc_signal_multiplexer_03() {
         assert_eq!(
             parser_signal_multiplexer(r#"m123"#),
-            Ok(("", DbcSignalMultiplexer::MultiplexerIdentifier(123))),
+            Ok((
+                "",
+                MultiplexerIndicator {
+                    multiplexer_signal: Some(123),
+                    multiplexer_switch: None
+                }
+            )),
+        );
+    }
+
+    #[test]
+    fn test_dbc_signal_multiplexer_04() {
+        assert_eq!(
+            parser_signal_multiplexer(r#"m3M"#),
+            Ok((
+                "",
+                MultiplexerIndicator {
+                    multiplexer_signal: Some(3),
+                    multiplexer_switch: Some(())
+                }
+            )),
         );
     }
 
@@ -352,7 +415,10 @@ mod tests {
                     signal,
                     Signal {
                         name: "S2".into(),
-                        multiplexer: Some(DbcSignalMultiplexer::MultiplexerIdentifier(0)),
+                        multiplexer: Some(MultiplexerIndicator {
+                            multiplexer_signal: Some(0),
+                            multiplexer_switch: None
+                        }),
                         start_bit: 8,
                         size: 8,
                         byte_order: ByteOrder::LittleEndian,
@@ -384,7 +450,10 @@ mod tests {
                     signal,
                     Signal {
                         name: "S2".into(),
-                        multiplexer: Some(DbcSignalMultiplexer::MultiplexerIdentifier(0)),
+                        multiplexer: Some(MultiplexerIndicator {
+                            multiplexer_signal: Some(0),
+                            multiplexer_switch: None
+                        }),
                         start_bit: 8,
                         size: 8,
                         byte_order: ByteOrder::LittleEndian,
