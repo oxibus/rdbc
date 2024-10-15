@@ -18,6 +18,10 @@ name = "demo"
 path = "src/bin/demo.rs"
 
 [[bin]]
+name = "dbcfmt"
+path = "src/bin/dbcfmt.rs"
+
+[[bin]]
 name = "dbc2json"
 path = "src/bin/dbc2json.rs"
 
