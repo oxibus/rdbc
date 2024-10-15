@@ -1,0 +1,116 @@
+// https://github.com/hsivonen/recode_rs
+
+use encoding_rs::*;
+use std::io::Read;
+use std::io::Write;
+
+pub fn get_encoding(opt: Option<String>) -> &'static Encoding {
+    match opt {
+        None => UTF_8,
+        Some(label) => match Encoding::for_label((&label).as_bytes()) {
+            None => {
+                print!("{} is not a known encoding label; exiting.", label);
+                std::process::exit(-2);
+            }
+            Some(encoding) => encoding,
+        },
+    }
+}
+
+pub fn convert_via_utf8(
+    decoder: &mut Decoder,
+    encoder: &mut Encoder,
+    read: &mut dyn Read,
+    write: &mut dyn Write,
+    last: bool,
+) {
+    let mut input_buffer = [0u8; 2048];
+    let mut intermediate_buffer_bytes = [0u8; 4096];
+    // Is there a safe way to create a stack-allocated &mut str?
+    let mut intermediate_buffer: &mut str =
+        unsafe { std::mem::transmute(&mut intermediate_buffer_bytes[..]) };
+    let mut output_buffer = [0u8; 4096];
+    let mut current_input_ended = false;
+    while !current_input_ended {
+        match read.read(&mut input_buffer) {
+            Err(_) => {
+                print!("Error reading input.");
+                std::process::exit(-5);
+            }
+            Ok(decoder_input_end) => {
+                current_input_ended = decoder_input_end == 0;
+                let input_ended = last && current_input_ended;
+                let mut decoder_input_start = 0usize;
+                loop {
+                    let (decoder_result, decoder_read, decoder_written, _) = decoder.decode_to_str(
+                        &input_buffer[decoder_input_start..decoder_input_end],
+                        &mut intermediate_buffer,
+                        input_ended,
+                    );
+                    decoder_input_start += decoder_read;
+
+                    let last_output = if input_ended {
+                        match decoder_result {
+                            CoderResult::InputEmpty => true,
+                            CoderResult::OutputFull => false,
+                        }
+                    } else {
+                        false
+                    };
+
+                    // Regardless of whether the intermediate buffer got full
+                    // or the input buffer was exhausted, let's process what's
+                    // in the intermediate buffer.
+
+                    if encoder.encoding() == UTF_8 {
+                        // If the target is UTF-8, optimize out the encoder.
+                        match write.write_all(&intermediate_buffer.as_bytes()[..decoder_written]) {
+                            Err(_) => {
+                                print!("Error writing output.");
+                                std::process::exit(-7);
+                            }
+                            Ok(_) => {}
+                        }
+                    } else {
+                        let mut encoder_input_start = 0usize;
+                        loop {
+                            let (encoder_result, encoder_read, encoder_written, _) = encoder
+                                .encode_from_utf8(
+                                    &intermediate_buffer[encoder_input_start..decoder_written],
+                                    &mut output_buffer,
+                                    last_output,
+                                );
+                            encoder_input_start += encoder_read;
+                            match write.write_all(&output_buffer[..encoder_written]) {
+                                Err(_) => {
+                                    print!("Error writing output.");
+                                    std::process::exit(-6);
+                                }
+                                Ok(_) => {}
+                            }
+                            match encoder_result {
+                                CoderResult::InputEmpty => {
+                                    break;
+                                }
+                                CoderResult::OutputFull => {
+                                    continue;
+                                }
+                            }
+                        }
+                    }
+
+                    // Now let's see if we should read again or process the
+                    // rest of the current input buffer.
+                    match decoder_result {
+                        CoderResult::InputEmpty => {
+                            break;
+                        }
+                        CoderResult::OutputFull => {
+                            continue;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
