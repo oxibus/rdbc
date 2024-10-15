@@ -1,4 +1,5 @@
-use super::char_string::char_string;
+use super::char_string::parser_char_string;
+use super::char_string::CharString;
 use super::common_parsers::*;
 use super::error::DbcParseError;
 use nom::branch::alt;
@@ -109,7 +110,7 @@ pub struct Signal {
     pub offset: f64,
     pub min: Option<f64>,
     pub max: Option<f64>,
-    pub unit: Option<String>,
+    pub unit: Option<CharString>,
     pub receivers: Option<Vec<String>>,
 }
 
@@ -206,8 +207,8 @@ fn parser_signal_min_max(input: &str) -> IResult<&str, (f64, f64), DbcParseError
     Ok((remain, (min_value, max_value)))
 }
 
-fn parser_signal_unit(input: &str) -> IResult<&str, String, DbcParseError> {
-    char_string(input)
+fn parser_signal_unit(input: &str) -> IResult<&str, CharString, DbcParseError> {
+    parser_char_string(input)
 }
 
 fn parser_signal_receivers(input: &str) -> IResult<&str, Vec<String>, DbcParseError> {
@@ -328,7 +329,7 @@ mod tests {
                         offset: -4.1768,
                         min: Some(-4.1768),
                         max: Some(4.1765),
-                        unit: Some("g".into()),
+                        unit: Some(CharString("g".into())),
                         receivers: Some(vec!["ABS".into()]),
                     }
                 );
@@ -360,7 +361,7 @@ mod tests {
                         offset: 0.0,
                         min: Some(0.0),
                         max: Some(0.0),
-                        unit: Some("".into()),
+                        unit: Some(CharString("".into())),
                         receivers: Some(vec!["Vector__XXX".into()]),
                     }
                 );
@@ -392,7 +393,7 @@ mod tests {
                         offset: 0.0,
                         min: Some(0.0),
                         max: Some(0.0),
-                        unit: Some("".into()),
+                        unit: Some(CharString("".into())),
                         receivers: Some(vec!["Vector__XXX".into()]),
                     }
                 );
@@ -424,7 +425,7 @@ mod tests {
                         offset: 0.0,
                         min: Some(0.0),
                         max: Some(100.0),
-                        unit: Some("%".into()),
+                        unit: Some(CharString("%".into())),
                         receivers: Some(vec!["Node1".into(), "Node2".into()]),
                     }
                 );

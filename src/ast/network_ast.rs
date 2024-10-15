@@ -300,7 +300,7 @@ BO_ 112 MM5_10_TX1: 8 DRS_MM5_10
                                 offset: -163.84,
                                 min: Some(-163.84),
                                 max: Some(163.83),
-                                unit: Some("°/s".into()),
+                                unit: Some(CharString("°/s".into())),
                                 receivers: Some(vec!["ABS".into()]),
                             },
                             signal::Signal {
@@ -314,7 +314,7 @@ BO_ 112 MM5_10_TX1: 8 DRS_MM5_10
                                 offset: -4.1768,
                                 min: Some(-4.1768),
                                 max: Some(4.1765),
-                                unit: Some("g".into()),
+                                unit: Some(CharString("g".into())),
                                 receivers: Some(vec!["ABS".into()]),
                             }
                         ],
@@ -465,7 +465,7 @@ VAL_ ReadOnlyEnvVar 2 "Value2" 1 "Value1" 0 "Value0" ;
                                 offset: -163.84,
                                 min: Some(-163.84),
                                 max: Some(163.83),
-                                unit: Some("°/s".into()),
+                                unit: Some(CharString("°/s".into())),
                                 receivers: Some(vec!["ABS".into()]),
                             },
                             signal::Signal {
@@ -479,7 +479,7 @@ VAL_ ReadOnlyEnvVar 2 "Value2" 1 "Value1" 0 "Value0" ;
                                 offset: -4.1768,
                                 min: Some(-4.1768),
                                 max: Some(4.1765),
-                                unit: Some("g".into()),
+                                unit: Some(CharString("g".into())),
                                 receivers: Some(vec!["ABS".into()]),
                             }
                         ],
