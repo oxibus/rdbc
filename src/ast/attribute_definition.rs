@@ -1,4 +1,5 @@
 use super::attribute::parser_attribute_name;
+use super::char_string::char_string;
 use super::common_parsers::*;
 use super::error::DbcParseError;
 use nom::branch::alt;
