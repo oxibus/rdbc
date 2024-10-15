@@ -266,7 +266,7 @@ BO_ 112 MM5_10_TX1: 8 DRS_MM5_10
 "#
             ),
             Ok(NetworkAst {
-                version: Version("1.0".into()),
+                version: Version(CharString("1.0".into())),
                 new_symbols: NewSymbols(vec!["BS_".into(), "CM_".into()]),
                 bit_timing: Some(BitTiming { value: None }),
                 nodes: Nodes(vec!["ABS".into(), "DRS_MM5_10".into()]),
@@ -380,7 +380,7 @@ VAL_ ReadOnlyEnvVar 2 "Value2" 1 "Value1" 0 "Value0" ;
 "#
             ),
             Ok(NetworkAst {
-                version: Version("1.0".into()),
+                version: Version(CharString("1.0".into())),
                 new_symbols: NewSymbols(vec!["BS_".into(), "CM_".into()]),
                 bit_timing: Some(BitTiming { value: None }),
                 nodes: Nodes(vec!["ABS".into(), "DRS_MM5_10".into()]),

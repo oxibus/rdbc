@@ -1,4 +1,5 @@
-use super::char_string::char_string;
+use super::char_string::parser_char_string;
+use super::char_string::CharString;
 use super::common_parsers::*;
 use super::error::DbcParseError;
 use nom::bytes::complete::tag;
@@ -12,7 +13,7 @@ use std::fmt;
 ///
 /// Format: `VERSION "<VersionIdentifier>"`
 #[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
-pub struct Version(pub String);
+pub struct Version(pub CharString);
 
 impl fmt::Display for Version {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -21,7 +22,7 @@ impl fmt::Display for Version {
 }
 
 pub fn parser_version(input: &str) -> IResult<&str, Version, DbcParseError> {
-    let res = map(preceded(spacey(tag("VERSION")), char_string), |s| {
+    let res = map(preceded(spacey(tag("VERSION")), parser_char_string), |s| {
         Version(s)
     })(input);
     match res {
@@ -44,7 +45,7 @@ mod tests {
     fn test_dbc_version_01() {
         assert_eq!(
             parser_version("VERSION \"1.0.0\""),
-            Ok(("", Version("1.0.0".into())))
+            Ok(("", Version(CharString("1.0.0".into()))))
         );
     }
 
@@ -52,7 +53,7 @@ mod tests {
     fn test_dbc_version_02() {
         assert_eq!(
             parser_version("VERSION  \"3.0.1\""),
-            Ok(("", Version("3.0.1".into())))
+            Ok(("", Version(CharString("3.0.1".into()))))
         );
     }
 
@@ -60,19 +61,19 @@ mod tests {
     fn test_dbc_version_03() {
         assert_eq!(
             parser_version("VERSION        \"9\""),
-            Ok(("", Version("9".into())))
+            Ok(("", Version(CharString("9".into()))))
         );
     }
 
     #[test]
     fn test_version_string_01() {
-        let version = Version("9".into());
+        let version = Version(CharString("9".into()));
         assert_eq!(version.to_string(), "VERSION \"9\"");
     }
 
     #[test]
     fn test_version_string_02() {
-        let version = Version("0.0.1".into());
+        let version = Version(CharString("0.0.1".into()));
         assert_eq!(version.to_string(), "VERSION \"0.0.1\"");
     }
 }
