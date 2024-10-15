@@ -4,6 +4,7 @@ use nom::bytes::complete::tag;
 use nom::bytes::complete::tag_no_case;
 use nom::bytes::complete::take_while1;
 use nom::character::complete::alphanumeric1;
+use nom::character::complete::anychar;
 use nom::character::complete::digit0;
 use nom::character::complete::digit1;
 use nom::character::complete::i32;
@@ -51,12 +52,13 @@ pub fn printable_character(input: &str) -> IResult<&str, &str, DbcParseError> {
     }))(input)
 }
 
-pub fn nonescaped_string(input: &str) -> IResult<&str, &str, DbcParseError> {
-    recognize(none_of("\"\\"))(input)
+pub fn nonescaped_string(input: &str) -> IResult<&str, String, DbcParseError> {
+    let parsred = recognize(none_of("\"\\"))(input)?;
+    Ok((parsred.0, parsred.1.to_string()))
 }
 
-pub fn escape_code(input: &str) -> IResult<&str, &str, DbcParseError> {
-    recognize(pair(
+pub fn escape_code(input: &str) -> IResult<&str, String, DbcParseError> {
+    let parsred = recognize(pair(
         tag("\\"),
         alt((
             tag("\""),
@@ -69,11 +71,29 @@ pub fn escape_code(input: &str) -> IResult<&str, &str, DbcParseError> {
             tag("t"),
             tag("u"),
         )),
-    ))(input)
+    ))(input)?;
+
+    Ok((parsred.0, parsred.1.to_string()))
+}
+
+fn parse_backslash(input: &str) -> IResult<&str, String, DbcParseError> {
+    let parsed = tag("\\")(input)?;
+    Ok((parsed.0, parsed.1.to_string()))
+}
+
+fn parse_char(input: &str) -> IResult<&str, String, DbcParseError> {
+    let parsed = anychar(input)?;
+    Ok((parsed.0, parsed.1.to_string()))
+}
+
+pub fn escape_code_02(input: &str) -> IResult<&str, String, DbcParseError> {
+    map(pair(parse_backslash, parse_char), |(_, c)| {
+        format!("\\\\{c}")
+    })(input)
 }
 
 pub fn string_body(input: &str) -> IResult<&str, &str, DbcParseError> {
-    recognize(many0(alt((nonescaped_string, escape_code))))(input)
+    recognize(many0(alt((nonescaped_string, escape_code, escape_code_02))))(input)
 }
 
 pub fn string_literal(input: &str) -> IResult<&str, String, DbcParseError> {
@@ -213,10 +233,17 @@ pub fn dbc_object_name(input: &str) -> IResult<&str, &str, DbcParseError> {
     take_while1(|c: char| c.is_alphanumeric() || c == '_')(input)
 }
 
+pub fn dbc_identifier_01(input: &str) -> IResult<&str, &str, DbcParseError> {
+    recognize(tuple((
+        alt((tag("_"), recognize(satisfy(|c| c.is_alpha())))),
+        opt(recognize(many0(alt((tag("_"), tag("-"), alphanumeric1))))),
+    )))(input)
+}
+
 pub fn dbc_identifier(input: &str) -> IResult<&str, &str, DbcParseError> {
     let res = not(dbc_key_word)(input);
     match res {
-        Ok((remain, _)) => c_identifier(remain),
+        Ok((remain, _)) => dbc_identifier_01(remain),
         Err(_) => Err(nom::Err::Error(DbcParseError::UseKeywordAsIdentifier)),
     }
 }
@@ -330,6 +357,14 @@ mod tests {
 world""#
             ),
             Ok(("", "hello\nworld".to_string()))
+        );
+    }
+
+    #[test]
+    fn test_char_string_03() {
+        assert_eq!(
+            char_string(r#""hello \I world""#),
+            Ok(("", "hello \\I world".to_string()))
         );
     }
 }

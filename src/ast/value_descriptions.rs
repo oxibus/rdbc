@@ -1,6 +1,6 @@
 use super::common_parsers::*;
 use super::error::DbcParseError;
-use nom::character::complete::u64;
+use nom::character::complete::i64;
 use nom::combinator::map;
 use nom::multi::many0;
 use nom::sequence::tuple;
@@ -33,7 +33,7 @@ use std::fmt;
 /// ```
 #[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct ValueDescriptionItem {
-    pub num: u64,
+    pub num: i64,
     pub str: String,
 }
 
@@ -65,7 +65,7 @@ impl fmt::Display for ValueDescriptions {
 pub fn parser_value_description_item(
     input: &str,
 ) -> IResult<&str, ValueDescriptionItem, DbcParseError> {
-    map(tuple((spacey(u64), spacey(char_string))), |(num, str)| {
+    map(tuple((spacey(i64), spacey(char_string))), |(num, str)| {
         ValueDescriptionItem { num, str }
     })(input)
 }
