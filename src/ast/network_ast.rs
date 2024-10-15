@@ -237,6 +237,7 @@ mod tests {
     use crate::ast::attribute_definition::NetworkAttribute;
     use crate::ast::attribute_definition::NodeAttribute;
     use crate::ast::attribute_definition::SignalAttribute;
+    use crate::ast::char_string::CharString;
     use crate::ast::env_var::EnvVarType;
     use crate::ast::signal;
     use crate::ast::value_descriptions::ValueDescriptionItem;
@@ -556,9 +557,9 @@ VAL_ ReadOnlyEnvVar 2 "Value2" 1 "Value1" 0 "Value0" ;
                         attribute_name: "SGEnumAttribute".to_string(),
                         attribute_value_type: AttributeValueType::Enum(AttributeEnumValueType {
                             values: vec![
-                                "Val0".to_string(),
-                                "Val1".to_string(),
-                                "Val2".to_string()
+                                CharString("Val0".to_string()),
+                                CharString("Val1".to_string()),
+                                CharString("Val2".to_string())
                             ]
                         })
                     }),

@@ -1,5 +1,6 @@
 use super::attribute::parser_attribute_name;
-use super::char_string::char_string;
+use super::char_string::parser_char_string;
+use super::char_string::CharString;
 use super::common_parsers::*;
 use super::error::DbcParseError;
 use nom::branch::alt;
@@ -150,7 +151,7 @@ pub fn parser_attribute_string_value_type(
 
 #[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct AttributeEnumValueType {
-    pub values: Vec<String>,
+    pub values: Vec<CharString>,
 }
 
 impl fmt::Display for AttributeEnumValueType {
@@ -173,7 +174,7 @@ pub fn parser_attribute_enum_value_type(
     let res = map(
         tuple((
             multispacey(tag("ENUM")),
-            multispacey(separated_list0(tag(","), spacey(char_string))),
+            multispacey(separated_list0(tag(","), spacey(parser_char_string))),
         )),
         |(_, values)| AttributeEnumValueType { values },
     )(input);
@@ -780,7 +781,11 @@ mod tests {
             AttributeDefinition::Signal(SignalAttribute {
                 attribute_name: "SGEnumAttribute".to_string(),
                 attribute_value_type: AttributeValueType::Enum(AttributeEnumValueType {
-                    values: vec!["Val0".to_string(), "Val1".to_string(), "Val2".to_string()]
+                    values: vec![
+                        CharString("Val0".to_string()),
+                        CharString("Val1".to_string()),
+                        CharString("Val2".to_string())
+                    ]
                 })
             })
             .to_string(),
@@ -889,7 +894,11 @@ mod tests {
             Ok((
                 "",
                 AttributeValueType::Enum(AttributeEnumValueType {
-                    values: vec!["Val0".to_string(), "Val1".to_string(), "Val2".to_string()]
+                    values: vec![
+                        CharString("Val0".to_string()),
+                        CharString("Val1".to_string()),
+                        CharString("Val2".to_string())
+                    ]
                 })
             ))
         );
@@ -952,7 +961,11 @@ mod tests {
             Ok((
                 "",
                 AttributeValueType::Enum(AttributeEnumValueType {
-                    values: vec!["Val0".to_string(), "Val1".to_string(), "Val2".to_string()]
+                    values: vec![
+                        CharString("Val0".to_string()),
+                        CharString("Val1".to_string()),
+                        CharString("Val2".to_string())
+                    ]
                 })
             ))
         );
@@ -1017,7 +1030,11 @@ mod tests {
                 AttributeDefinition::Signal(SignalAttribute {
                     attribute_name: "SGEnumAttribute".to_string(),
                     attribute_value_type: AttributeValueType::Enum(AttributeEnumValueType {
-                        values: vec!["Val0".to_string(), "Val1".to_string(), "Val2".to_string()]
+                        values: vec![
+                            CharString("Val0".to_string()),
+                            CharString("Val1".to_string()),
+                            CharString("Val2".to_string())
+                        ]
                     })
                 })
             ))
@@ -1171,7 +1188,11 @@ mod tests {
                 AttributeDefinition::Signal(SignalAttribute {
                     attribute_name: "SGEnumAttribute".to_string(),
                     attribute_value_type: AttributeValueType::Enum(AttributeEnumValueType {
-                        values: vec!["Val0".to_string(), "Val1".to_string(), "Val2".to_string()]
+                        values: vec![
+                            CharString("Val0".to_string()),
+                            CharString("Val1".to_string()),
+                            CharString("Val2".to_string())
+                        ]
                     })
                 })
             ))
