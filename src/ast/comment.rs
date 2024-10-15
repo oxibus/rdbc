@@ -1,4 +1,5 @@
-use super::char_string::char_string;
+use super::char_string::parser_char_string;
+use super::char_string::CharString;
 use super::common_parsers::*;
 use super::error::DbcParseError;
 use nom::branch::alt;
@@ -11,7 +12,7 @@ use std::fmt;
 
 #[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct NetworkComment {
-    pub comment: String,
+    pub comment: CharString,
 }
 
 impl fmt::Display for NetworkComment {
@@ -23,7 +24,7 @@ impl fmt::Display for NetworkComment {
 #[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct NodeComment {
     pub node_name: String,
-    pub comment: String,
+    pub comment: CharString,
 }
 
 impl fmt::Display for NodeComment {
@@ -35,7 +36,7 @@ impl fmt::Display for NodeComment {
 #[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct MessageComment {
     pub message_id: u32,
-    pub comment: String,
+    pub comment: CharString,
 }
 
 impl fmt::Display for MessageComment {
@@ -48,7 +49,7 @@ impl fmt::Display for MessageComment {
 pub struct SignalComment {
     pub message_id: u32,
     pub signal_name: String,
-    pub comment: String,
+    pub comment: CharString,
 }
 
 impl fmt::Display for SignalComment {
@@ -64,7 +65,7 @@ impl fmt::Display for SignalComment {
 #[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct EnvironmentVariableComment {
     pub environment_variable_name: String,
-    pub comment: String,
+    pub comment: CharString,
 }
 
 impl fmt::Display for EnvironmentVariableComment {
@@ -135,7 +136,7 @@ pub fn parser_network_comment(input: &str) -> IResult<&str, Comment, DbcParseErr
     let res = map(
         tuple((
             multispacey(tag("CM_")),
-            multispacey(char_string),
+            multispacey(parser_char_string),
             multispacey(tag(";")),
         )),
         |(_, comment, _)| NetworkComment { comment },
@@ -159,7 +160,7 @@ pub fn parser_node_comment(input: &str) -> IResult<&str, Comment, DbcParseError>
             multispacey(tag("CM_")),
             multispacey(tag("BU_")),
             multispacey(parser_node_name),
-            multispacey(char_string),
+            multispacey(parser_char_string),
             multispacey(tag(";")),
         )),
         |(_, _, node_name, comment, _)| NodeComment {
@@ -186,7 +187,7 @@ pub fn parser_message_comment(input: &str) -> IResult<&str, Comment, DbcParseErr
             multispacey(tag("CM_")),
             multispacey(tag("BO_")),
             multispacey(parser_message_id),
-            multispacey(char_string),
+            multispacey(parser_char_string),
             multispacey(tag(";")),
         )),
         |(_, _, message_id, comment, _)| MessageComment {
@@ -214,7 +215,7 @@ pub fn parser_signal_comment(input: &str) -> IResult<&str, Comment, DbcParseErro
             multispacey(tag("SG_")),
             multispacey(parser_message_id),
             multispacey(parser_signal_name),
-            multispacey(char_string),
+            multispacey(parser_char_string),
             multispacey(tag(";")),
         )),
         |(_, _, message_id, signal_name, comment, _)| SignalComment {
@@ -242,7 +243,7 @@ pub fn parser_environment_variable_comment(input: &str) -> IResult<&str, Comment
             multispacey(tag("CM_")),
             multispacey(tag("EV_")),
             multispacey(parser_env_var_name),
-            multispacey(char_string),
+            multispacey(parser_char_string),
             multispacey(tag(";")),
         )),
         |(_, _, environment_variable_name, comment, _)| EnvironmentVariableComment {
@@ -276,7 +277,7 @@ mod tests {
             Ok((
                 "",
                 Comment::Network(NetworkComment {
-                    comment: "comment".into()
+                    comment: CharString("comment".into())
                 })
             )),
         );
@@ -290,7 +291,7 @@ mod tests {
                 "",
                 Comment::Node(NodeComment {
                     node_name: "Node0".into(),
-                    comment: "The 0th Node".into()
+                    comment: CharString("The 0th Node".into())
                 })
             )),
         );
@@ -303,7 +304,7 @@ mod tests {
             Ok((
                 "",
                 Comment::Network(NetworkComment {
-                    comment: "comment".into()
+                    comment: CharString("comment".into())
                 })
             )),
         );
@@ -316,7 +317,7 @@ mod tests {
             Ok((
                 "",
                 Comment::Network(NetworkComment {
-                    comment: "DBC Template with single line description".into()
+                    comment: CharString("DBC Template with single line description".into())
                 })
             )),
         );
@@ -330,7 +331,7 @@ mod tests {
                 "",
                 Comment::Node(NodeComment {
                     node_name: "Node0".into(),
-                    comment: "The 0th Node".into()
+                    comment: CharString("The 0th Node".into())
                 })
             )),
         );
@@ -344,7 +345,7 @@ mod tests {
                 "",
                 Comment::Node(NodeComment {
                     node_name: "TestNode".into(),
-                    comment: "".into()
+                    comment: CharString("".into())
                 })
             )),
         );
@@ -358,7 +359,7 @@ mod tests {
                 "",
                 Comment::Node(NodeComment {
                     node_name: "BAR".into(),
-                    comment: r#"fam \"1\""#.into()
+                    comment: CharString(r#"fam \"1\""#.into())
                 })
             )),
         );
@@ -372,7 +373,7 @@ mod tests {
                 "",
                 Comment::Node(NodeComment {
                     node_name: "DRIVER".into(),
-                    comment: "// The driver controller driving the car //".into()
+                    comment: CharString("// The driver controller driving the car //".into())
                 })
             )),
         );
@@ -388,7 +389,9 @@ mod tests {
                 "",
                 Comment::Message(MessageComment {
                     message_id: 496,
-                    comment: "Example message used as template in MotoHawk models.".into()
+                    comment: CharString(
+                        "Example message used as template in MotoHawk models.".into()
+                    )
                 })
             )),
         );
@@ -402,7 +405,7 @@ mod tests {
                 "",
                 Comment::Message(MessageComment {
                     message_id: 472,
-                    comment: "No sender message.".into()
+                    comment: CharString("No sender message.".into())
                 })
             )),
         );
@@ -418,7 +421,7 @@ mod tests {
                 "",
                 Comment::Message(MessageComment {
                     message_id: 2303364386,
-                    comment: "This cumulative distance calculation is updated when the trigger is active.".into()
+                    comment: CharString("This cumulative distance calculation is updated when the trigger is active.".into())
                 })
             )),
         );
@@ -435,7 +438,7 @@ mod tests {
                 Comment::Signal(SignalComment {
                     message_id: 586,
                     signal_name: "whlspeed_RL_Bremse2".into(),
-                    comment: "Radgeschwindigkeit / wheel speed direct RL".into()
+                    comment: CharString("Radgeschwindigkeit / wheel speed direct RL".into())
                 })
             )),
         );
@@ -460,7 +463,8 @@ Bit7 (128) Invalid Individual";"#
                 Comment::Signal(SignalComment {
                     message_id: 834,
                     signal_name: "WheelQuality_FL".into(),
-                    comment: r#"Bit matrix
+                    comment: CharString(
+                        r#"Bit matrix
 Bit0 ( 1) Signal Reduced Monitored
 Bit1 ( 2) Reduced Accuracy
 Bit2 ( 4) Interfered
@@ -469,7 +473,8 @@ Bit4 (16) Suspicious Lost
 Bit5 (32) Not Initialized
 Bit6 (64) Invalid Generic
 Bit7 (128) Invalid Individual"#
-                        .into()
+                            .into()
+                    )
                 })
             )),
         );
@@ -483,7 +488,7 @@ Bit7 (128) Invalid Individual"#
                 "",
                 Comment::EnvironmentVariable(EnvironmentVariableComment {
                     environment_variable_name: "EMC_Azimuth".into(),
-                    comment: "Elevation Head".into()
+                    comment: CharString("Elevation Head".into())
                 })
             )),
         );
@@ -499,7 +504,7 @@ Bit7 (128) Invalid Individual"#
                 "",
                 Comment::EnvironmentVariable(EnvironmentVariableComment {
                     environment_variable_name: "RWEnvVar_wData".into(),
-                    comment: "This a comment for an environment variable".into()
+                    comment: CharString("This a comment for an environment variable".into())
                 })
             )),
         );
