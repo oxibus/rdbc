@@ -22,6 +22,10 @@ name = "dbc2json"
 path = "src/bin/dbc2json.rs"
 
 [[bin]]
+name = "json2dbc"
+path = "src/bin/json2dbc.rs"
+
+[[bin]]
 name = "toutf8"
 path = "src/bin/toutf8.rs"
 
