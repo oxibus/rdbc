@@ -12,7 +12,8 @@ pub fn read_file_content(filename: &str, encoding: &str) -> Result<String> {
         let mut file = File::open(filename)?;
         let mut buffer = Vec::new();
         file.read_to_end(&mut buffer)?;
-        to_utf8(encoding, &buffer)?
+        let data = to_utf8(encoding, &buffer)?;
+        String::from_utf8(data)?
     };
 
     Ok(data)

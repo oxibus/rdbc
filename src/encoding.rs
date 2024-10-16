@@ -5,9 +5,25 @@ use encoding_rs::*;
 use std::io::Read;
 use std::io::Write;
 
-pub fn to_utf8(src_encoding_label: &str, src_data: &[u8]) -> Result<String, DbcError> {
+pub fn utf8_to_gbk(src_data: &[u8]) -> Result<Vec<u8>, DbcError> {
+    recode(src_data, "UTF-8", "GBK")
+}
+
+pub fn gbk_to_utf8(src_data: &[u8]) -> Result<Vec<u8>, DbcError> {
+    recode(src_data, "GBK", "UTF-8")
+}
+
+pub fn to_utf8(src_encoding_label: &str, src_data: &[u8]) -> Result<Vec<u8>, DbcError> {
+    recode(src_data, src_encoding_label, "UTF-8")
+}
+
+pub fn recode(
+    src_data: &[u8],
+    src_encoding_label: &str,
+    dst_encoding_label: &str,
+) -> Result<Vec<u8>, DbcError> {
     let src_encoding = get_encoding(Some(src_encoding_label.to_string()))?;
-    let dst_encoding = get_encoding(Some("UTF-8".to_string()))?;
+    let dst_encoding = get_encoding(Some(dst_encoding_label.to_string()))?;
 
     let mut decoder = src_encoding.new_decoder();
     let mut encoder = dst_encoding.new_encoder();
@@ -22,7 +38,7 @@ pub fn to_utf8(src_encoding_label: &str, src_data: &[u8]) -> Result<String, DbcE
         true,
     )?;
 
-    Ok(String::from_utf8(buf.into_inner()).unwrap())
+    Ok(buf.into_inner())
 }
 
 pub fn get_encoding(opt: Option<String>) -> Result<&'static Encoding, DbcError> {
