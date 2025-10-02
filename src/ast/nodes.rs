@@ -4,8 +4,8 @@ use nom::bytes::complete::tag;
 use nom::character::complete::line_ending;
 use nom::combinator::map;
 use nom::multi::many0;
-use nom::sequence::tuple;
 use nom::IResult;
+use nom::Parser;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
@@ -40,14 +40,15 @@ impl fmt::Display for Nodes {
 
 pub fn parser_nodes(input: &str) -> IResult<&str, Nodes, DbcParseError> {
     let res = map(
-        tuple((
+        (
             multispacey(tag("BU_")),
             spacey(tag(":")),
             many0(spacey(parser_node_name)),
             many0(line_ending),
-        )),
+        ),
         |(_, _, names, _)| Nodes(names.into_iter().map(String::from).collect()),
-    )(input);
+    )
+    .parse(input);
     match res {
         Ok((remain, can_nodes)) => {
             log::info!("parse nodes: {:?}", can_nodes.0);

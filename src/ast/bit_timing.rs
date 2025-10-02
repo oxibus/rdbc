@@ -6,8 +6,8 @@ use nom::character::complete::u64;
 use nom::combinator::map;
 use nom::combinator::opt;
 use nom::multi::many0;
-use nom::sequence::tuple;
 use nom::IResult;
+use nom::Parser;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
@@ -48,19 +48,20 @@ impl fmt::Display for BitTiming {
 
 pub fn parser_bit_timing_value(input: &str) -> IResult<&str, BitTimingValue, DbcParseError> {
     let res: Result<(&str, BitTimingValue), nom::Err<DbcParseError>> = map(
-        tuple((
+        (
             spacey(u64),
             spacey(tag(":")),
             spacey(u64),
             spacey(tag(":")),
             spacey(u64),
-        )),
+        ),
         |(baudrate, _, btr1, _, btr2)| BitTimingValue {
             baudrate,
             btr1,
             btr2,
         },
-    )(input);
+    )
+    .parse(input);
     match res {
         Ok((remain, bit_timing)) => {
             log::info!("parse bit timing value: {:?}", bit_timing);
@@ -75,18 +76,19 @@ pub fn parser_bit_timing_value(input: &str) -> IResult<&str, BitTimingValue, Dbc
 
 pub fn parser_bit_timing(input: &str) -> IResult<&str, Option<BitTiming>, DbcParseError> {
     let res = map(
-        tuple((
+        (
             multispacey(tag("BS_")),
             spacey(tag(":")),
             spacey(opt(parser_bit_timing_value)),
             spacey(opt(tag(";"))),
             many0(line_ending),
-        )),
+        ),
         |(_, _, value, _, _)| match value {
             None => Some(BitTiming { value: None }),
             Some(value) => Some(BitTiming { value: Some(value) }),
         },
-    )(input);
+    )
+    .parse(input);
     match res {
         Ok((remain, bit_timing)) => {
             log::info!("parse bit timing: {:?}", bit_timing);

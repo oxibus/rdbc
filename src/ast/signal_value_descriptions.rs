@@ -6,8 +6,8 @@ use nom::bytes::complete::tag;
 use nom::character::complete::line_ending;
 use nom::combinator::map;
 use nom::multi::many0;
-use nom::sequence::tuple;
 use nom::IResult;
+use nom::Parser;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
@@ -35,20 +35,21 @@ pub fn parser_signal_value_descriptions(
     input: &str,
 ) -> IResult<&str, SignalValueDescriptions, DbcParseError> {
     let res = map(
-        tuple((
+        (
             multispacey(tag("VAL_")),
             spacey(parser_message_id),
             spacey(parser_signal_name),
             spacey(parser_value_descriptions),
             spacey(tag(";")),
             many0(line_ending),
-        )),
+        ),
         |(_, message_id, signal_name, value_descriptions, _, _)| SignalValueDescriptions {
             message_id,
             signal_name: signal_name.to_string(),
             value_descriptions,
         },
-    )(input);
+    )
+    .parse(input);
 
     match res {
         Ok((remain, val)) => Ok((remain, val)),

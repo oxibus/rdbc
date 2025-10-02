@@ -6,6 +6,7 @@ use nom::bytes::complete::tag;
 use nom::combinator::map;
 use nom::sequence::preceded;
 use nom::IResult;
+use nom::Parser;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
@@ -24,7 +25,8 @@ impl fmt::Display for Version {
 pub fn parser_version(input: &str) -> IResult<&str, Version, DbcParseError> {
     let res = map(preceded(spacey(tag("VERSION")), parser_char_string), |s| {
         Version(s)
-    })(input);
+    })
+    .parse(input);
     match res {
         Ok((remain, version)) => {
             log::info!("parse version: {}", version.0);

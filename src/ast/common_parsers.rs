@@ -19,47 +19,50 @@ use nom::combinator::recognize;
 use nom::multi::many0;
 use nom::sequence::delimited;
 use nom::sequence::pair;
-use nom::sequence::tuple;
 use nom::AsChar;
 use nom::IResult;
+use nom::Parser;
 
-pub fn spacey<F, I, O, E>(f: F) -> impl FnMut(I) -> IResult<I, O, E>
+pub fn spacey<I, O, E>(
+    f: impl Parser<I, Output = O, Error = E>,
+) -> impl Parser<I, Output = O, Error = E>
 where
-    F: FnMut(I) -> IResult<I, O, E>,
-    I: nom::InputTakeAtPosition,
-    <I as nom::InputTakeAtPosition>::Item: nom::AsChar + Clone,
+    I: nom::Input,
+    <I as nom::Input>::Item: nom::AsChar + Clone,
     E: nom::error::ParseError<I>,
 {
     delimited(space0, f, space0)
 }
 
-pub fn multispacey<F, I, O, E>(f: F) -> impl FnMut(I) -> IResult<I, O, E>
+pub fn multispacey<I, O, E>(
+    f: impl Parser<I, Output = O, Error = E>,
+) -> impl Parser<I, Output = O, Error = E>
 where
-    F: FnMut(I) -> IResult<I, O, E>,
-    I: nom::InputTakeAtPosition,
-    <I as nom::InputTakeAtPosition>::Item: nom::AsChar + Clone,
+    I: nom::Input,
+    <I as nom::Input>::Item: nom::AsChar + Clone,
     E: nom::error::ParseError<I>,
 {
     delimited(multispace0, f, multispace0)
 }
 
 pub fn c_identifier(input: &str) -> IResult<&str, &str, DbcParseError> {
-    recognize(tuple((
+    recognize((
         alt((tag("_"), recognize(satisfy(|c| c.is_alpha())))),
         opt(recognize(many0(alt((tag("_"), alphanumeric1))))),
-    )))(input)
+    ))
+    .parse(input)
 }
 
 pub fn digit1to9(input: &str) -> IResult<&str, char, DbcParseError> {
-    one_of("123456789")(input)
+    one_of("123456789").parse(input)
 }
 
 pub fn uint(input: &str) -> IResult<&str, &str, DbcParseError> {
-    alt((tag("0"), recognize(pair(digit1to9, digit0))))(input)
+    alt((tag("0"), recognize(pair(digit1to9, digit0)))).parse(input)
 }
 
 pub fn integer_body(input: &str) -> IResult<&str, &str, DbcParseError> {
-    recognize(pair(opt(tag("-")), uint))(input)
+    recognize(pair(opt(tag("-")), uint)).parse(input)
 }
 
 pub fn integer_value(input: &str) -> IResult<&str, i64, DbcParseError> {
@@ -71,23 +74,20 @@ pub fn integer_value(input: &str) -> IResult<&str, i64, DbcParseError> {
 }
 
 pub fn frac(input: &str) -> IResult<&str, &str, DbcParseError> {
-    recognize(pair(tag("."), digit1))(input)
+    recognize(pair(tag("."), digit1)).parse(input)
 }
 
 pub fn exp(input: &str) -> IResult<&str, &str, DbcParseError> {
-    recognize(tuple((
-        tag_no_case("e"),
-        opt(alt((tag("-"), tag("+")))),
-        digit1,
-    )))(input)
+    recognize((tag_no_case("e"), opt(alt((tag("-"), tag("+")))), digit1)).parse(input)
 }
 
 pub fn float_body(input: &str) -> IResult<&str, &str, DbcParseError> {
-    recognize(tuple((
+    recognize((
         opt(tag("-")),
         uint,
         alt((recognize(pair(frac, opt(exp))), exp)),
-    )))(input)
+    ))
+    .parse(input)
 }
 
 pub fn float_value(input: &str) -> IResult<&str, f64, DbcParseError> {
@@ -102,15 +102,16 @@ pub fn number_value(input: &str) -> IResult<&str, f64, DbcParseError> {
     alt((
         map(float_value, |f| f.into()),
         map(integer_value, |i| i as f64),
-    ))(input)
+    ))
+    .parse(input)
 }
 
 pub fn unsigned_integer(input: &str) -> IResult<&str, u32, DbcParseError> {
-    u32(input)
+    u32.parse(input)
 }
 
 pub fn signed_integer(input: &str) -> IResult<&str, i32, DbcParseError> {
-    i32(input)
+    i32.parse(input)
 }
 
 pub fn dbc_key_word(input: &str) -> IResult<&str, &str, DbcParseError> {
@@ -160,22 +161,24 @@ pub fn dbc_key_word(input: &str) -> IResult<&str, &str, DbcParseError> {
             tag("VECTOR__INDEPENDENT_SIG_MSG"),
             tag("VECTOR__XXX"),
         )),
-    ))(input)
+    ))
+    .parse(input)
 }
 
 pub fn dbc_object_name(input: &str) -> IResult<&str, &str, DbcParseError> {
-    take_while1(|c: char| c.is_alphanumeric() || c == '_')(input)
+    take_while1(|c: char| c.is_alphanumeric() || c == '_').parse(input)
 }
 
 pub fn dbc_identifier_01(input: &str) -> IResult<&str, &str, DbcParseError> {
-    recognize(tuple((
+    recognize((
         alt((tag("_"), recognize(satisfy(|c| c.is_alpha())))),
         opt(recognize(many0(alt((tag("_"), tag("-"), alphanumeric1))))),
-    )))(input)
+    ))
+    .parse(input)
 }
 
 pub fn dbc_identifier(input: &str) -> IResult<&str, &str, DbcParseError> {
-    let res = not(dbc_key_word)(input);
+    let res = not(dbc_key_word).parse(input);
     match res {
         Ok((remain, _)) => dbc_identifier_01(remain),
         Err(_) => Err(nom::Err::Error(DbcParseError::UseKeywordAsIdentifier)),

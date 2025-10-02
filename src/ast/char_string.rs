@@ -10,6 +10,7 @@ use nom::multi::many0;
 use nom::sequence::delimited;
 use nom::sequence::pair;
 use nom::IResult;
+use nom::Parser;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
@@ -47,11 +48,12 @@ pub fn printable_character(input: &str) -> IResult<&str, &str, DbcParseError> {
     recognize(satisfy(|c| {
         let c = c as u32;
         c >= 0x20 && c <= 0x74
-    }))(input)
+    }))
+    .parse(input)
 }
 
 pub fn nonescaped_string(input: &str) -> IResult<&str, String, DbcParseError> {
-    let parsred = recognize(none_of("\"\\"))(input)?;
+    let parsred = recognize(none_of("\"\\")).parse(input)?;
     Ok((parsred.0, parsred.1.to_string()))
 }
 
@@ -69,13 +71,14 @@ pub fn escape_code(input: &str) -> IResult<&str, String, DbcParseError> {
             tag("t"),
             tag("u"),
         )),
-    ))(input)?;
+    ))
+    .parse(input)?;
 
     Ok((parsred.0, parsred.1.to_string()))
 }
 
 fn parse_backslash(input: &str) -> IResult<&str, String, DbcParseError> {
-    let parsed = tag("\\")(input)?;
+    let parsed = tag("\\").parse(input)?;
     Ok((parsed.0, parsed.1.to_string()))
 }
 
@@ -87,15 +90,16 @@ fn parse_char(input: &str) -> IResult<&str, String, DbcParseError> {
 pub fn escape_code_02(input: &str) -> IResult<&str, String, DbcParseError> {
     map(pair(parse_backslash, parse_char), |(_, c)| {
         format!("\\\\{c}")
-    })(input)
+    })
+    .parse(input)
 }
 
 pub fn string_body(input: &str) -> IResult<&str, &str, DbcParseError> {
-    recognize(many0(alt((nonescaped_string, escape_code, escape_code_02))))(input)
+    recognize(many0(alt((nonescaped_string, escape_code, escape_code_02)))).parse(input)
 }
 
 pub fn string_literal(input: &str) -> IResult<&str, String, DbcParseError> {
-    let res = delimited(tag("\""), string_body, tag("\""))(input);
+    let res = delimited(tag("\""), string_body, tag("\"")).parse(input);
 
     match res {
         Ok((remain, s)) => Ok((remain, s.to_string())),

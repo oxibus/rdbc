@@ -7,8 +7,8 @@ use nom::branch::alt;
 use nom::bytes::complete::tag;
 use nom::combinator::map;
 use nom::multi::separated_list0;
-use nom::sequence::tuple;
 use nom::IResult;
+use nom::Parser;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
@@ -28,13 +28,14 @@ pub fn parser_attribute_integer_value_type(
     input: &str,
 ) -> IResult<&str, AttributeValueType, DbcParseError> {
     let res = map(
-        tuple((
+        (
             multispacey(tag("INT")),
             multispacey(signed_integer),
             multispacey(signed_integer),
-        )),
+        ),
         |(_, minimum, maximum)| AttributeIntegerValueType { minimum, maximum },
-    )(input);
+    )
+    .parse(input);
 
     match res {
         Ok((remain, value)) => {
@@ -64,13 +65,14 @@ pub fn parser_attribute_hex_value_type(
     input: &str,
 ) -> IResult<&str, AttributeValueType, DbcParseError> {
     let res = map(
-        tuple((
+        (
             multispacey(tag("HEX")),
             multispacey(signed_integer),
             multispacey(signed_integer),
-        )),
+        ),
         |(_, minimum, maximum)| AttributeHexValueType { minimum, maximum },
-    )(input);
+    )
+    .parse(input);
 
     match res {
         Ok((remain, value)) => {
@@ -100,13 +102,14 @@ pub fn parser_attribute_float_value_type(
     input: &str,
 ) -> IResult<&str, AttributeValueType, DbcParseError> {
     let res = map(
-        tuple((
+        (
             multispacey(tag("FLOAT")),
             multispacey(number_value),
             multispacey(number_value),
-        )),
+        ),
         |(_, minimum, maximum)| AttributeFloatValueType { minimum, maximum },
-    )(input);
+    )
+    .parse(input);
 
     match res {
         Ok((remain, value)) => {
@@ -132,7 +135,7 @@ impl fmt::Display for AttributeStringValueType {
 pub fn parser_attribute_string_value_type(
     input: &str,
 ) -> IResult<&str, AttributeValueType, DbcParseError> {
-    let res: Result<(&str, &str), nom::Err<DbcParseError>> = tag("STRING")(input);
+    let res: Result<(&str, &str), nom::Err<DbcParseError>> = tag("STRING").parse(input);
 
     match res {
         Ok((remain, value)) => {
@@ -172,12 +175,13 @@ pub fn parser_attribute_enum_value_type(
     input: &str,
 ) -> IResult<&str, AttributeValueType, DbcParseError> {
     let res = map(
-        tuple((
+        (
             multispacey(tag("ENUM")),
             multispacey(separated_list0(tag(","), spacey(parser_char_string))),
-        )),
+        ),
         |(_, values)| AttributeEnumValueType { values },
-    )(input);
+    )
+    .parse(input);
 
     match res {
         Ok((remain, value)) => {
@@ -221,7 +225,8 @@ pub fn parser_attribute_value_type(
         parser_attribute_float_value_type,
         parser_attribute_string_value_type,
         parser_attribute_enum_value_type,
-    ))(input);
+    ))
+    .parse(input);
 
     match res {
         Ok((remain, value)) => {
@@ -258,17 +263,18 @@ impl fmt::Display for NetworkAttribute {
 
 pub fn parser_network_attribute(input: &str) -> IResult<&str, AttributeDefinition, DbcParseError> {
     let res = map(
-        tuple((
+        (
             multispacey(tag("BA_DEF_")),
             multispacey(parser_attribute_name),
             multispacey(parser_attribute_value_type),
             multispacey(tag(";")),
-        )),
+        ),
         |(_, attribute_name, attribute_value_type, _)| NetworkAttribute {
             attribute_name: attribute_name.to_string(),
             attribute_value_type,
         },
-    )(input);
+    )
+    .parse(input);
 
     match res {
         Ok((remain, value)) => {
@@ -305,18 +311,19 @@ impl fmt::Display for NodeAttribute {
 
 pub fn parser_node_attribute(input: &str) -> IResult<&str, AttributeDefinition, DbcParseError> {
     let res = map(
-        tuple((
+        (
             multispacey(tag("BA_DEF_")),
             multispacey(tag("BU_")),
             multispacey(parser_attribute_name),
             multispacey(parser_attribute_value_type),
             multispacey(tag(";")),
-        )),
+        ),
         |(_, _, attribute_name, attribute_value_type, _)| NodeAttribute {
             attribute_name: attribute_name.to_string(),
             attribute_value_type,
         },
-    )(input);
+    )
+    .parse(input);
 
     match res {
         Ok((remain, value)) => {
@@ -353,18 +360,19 @@ impl fmt::Display for MessageAttribute {
 
 pub fn parser_message_attribute(input: &str) -> IResult<&str, AttributeDefinition, DbcParseError> {
     let res = map(
-        tuple((
+        (
             multispacey(tag("BA_DEF_")),
             multispacey(tag("BO_")),
             multispacey(parser_attribute_name),
             multispacey(parser_attribute_value_type),
             multispacey(tag(";")),
-        )),
+        ),
         |(_, _, attribute_name, attribute_value_type, _)| MessageAttribute {
             attribute_name: attribute_name.to_string(),
             attribute_value_type,
         },
-    )(input);
+    )
+    .parse(input);
 
     match res {
         Ok((remain, value)) => {
@@ -401,18 +409,19 @@ impl fmt::Display for SignalAttribute {
 
 pub fn parser_signal_attribute(input: &str) -> IResult<&str, AttributeDefinition, DbcParseError> {
     let res = map(
-        tuple((
+        (
             multispacey(tag("BA_DEF_")),
             multispacey(tag("SG_")),
             multispacey(parser_attribute_name),
             multispacey(parser_attribute_value_type),
             multispacey(tag(";")),
-        )),
+        ),
         |(_, _, attribute_name, attribute_value_type, _)| SignalAttribute {
             attribute_name: attribute_name.to_string(),
             attribute_value_type,
         },
-    )(input);
+    )
+    .parse(input);
 
     match res {
         Ok((remain, value)) => {
@@ -452,18 +461,19 @@ pub fn parser_environment_variable_attribute(
     input: &str,
 ) -> IResult<&str, AttributeDefinition, DbcParseError> {
     let res = map(
-        tuple((
+        (
             multispacey(tag("BA_DEF_")),
             multispacey(tag("EV_")),
             multispacey(parser_attribute_name),
             multispacey(parser_attribute_value_type),
             multispacey(tag(";")),
-        )),
+        ),
         |(_, _, attribute_name, attribute_value_type, _)| EnvironmentVariableAttribute {
             attribute_name: attribute_name.to_string(),
             attribute_value_type,
         },
-    )(input);
+    )
+    .parse(input);
 
     match res {
         Ok((remain, value)) => {
@@ -506,18 +516,19 @@ pub fn parser_control_unit_environment_variable_attribute(
     input: &str,
 ) -> IResult<&str, AttributeDefinition, DbcParseError> {
     let res = map(
-        tuple((
+        (
             multispacey(tag("BA_DEF_REL_")),
             multispacey(tag("BU_EV_REL_")),
             multispacey(parser_attribute_name),
             multispacey(parser_attribute_value_type),
             multispacey(tag(";")),
-        )),
+        ),
         |(_, _, attribute_name, attribute_value_type, _)| ControlUnitEnvironmentVariableAttribute {
             attribute_name: attribute_name.to_string(),
             attribute_value_type,
         },
-    )(input);
+    )
+    .parse(input);
 
     match res {
         Ok((remain, value)) => {
@@ -569,18 +580,19 @@ pub fn parser_node_tx_message_attribute(
     input: &str,
 ) -> IResult<&str, AttributeDefinition, DbcParseError> {
     let res = map(
-        tuple((
+        (
             multispacey(tag("BA_DEF_REL_")),
             multispacey(tag("BU_BO_REL_")),
             multispacey(parser_attribute_name),
             multispacey(parser_attribute_value_type),
             multispacey(tag(";")),
-        )),
+        ),
         |(_, _, attribute_name, attribute_value_type, _)| NodeTxMessageAttribute {
             attribute_name: attribute_name.to_string(),
             attribute_value_type,
         },
-    )(input);
+    )
+    .parse(input);
 
     match res {
         Ok((remain, value)) => {
@@ -621,18 +633,19 @@ pub fn parser_node_mapped_rx_signal_attribute(
     input: &str,
 ) -> IResult<&str, AttributeDefinition, DbcParseError> {
     let res = map(
-        tuple((
+        (
             multispacey(tag("BA_DEF_REL_")),
             multispacey(tag("BU_SG_REL_")),
             multispacey(parser_attribute_name),
             multispacey(parser_attribute_value_type),
             multispacey(tag(";")),
-        )),
+        ),
         |(_, _, attribute_name, attribute_value_type, _)| NodeMappedRxSignalAttribute {
             attribute_name: attribute_name.to_string(),
             attribute_value_type,
         },
-    )(input);
+    )
+    .parse(input);
 
     match res {
         Ok((remain, value)) => {
@@ -700,7 +713,8 @@ pub fn parser_attribute_definition(
         parser_control_unit_environment_variable_attribute,
         parser_node_tx_message_attribute,
         parser_node_mapped_rx_signal_attribute,
-    ))(input);
+    ))
+    .parse(input);
 
     match res {
         Ok((remain, value)) => {
