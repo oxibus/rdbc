@@ -6,7 +6,6 @@ use nom::combinator::map;
 use nom::multi::{many0, separated_list0};
 use nom::sequence::pair;
 use nom::{IResult, Parser};
-use serde::{Deserialize, Serialize};
 
 use super::char_string::{parser_char_string, CharString};
 use super::common_parsers::{
@@ -14,7 +13,8 @@ use super::common_parsers::{
 };
 use super::error::DbcParseError;
 
-#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum EnvVarType {
     Integer,
     Float,
@@ -88,7 +88,8 @@ pub enum EnvVarAccessType {
 /// EV_ RWEnvVar_wData: 0 [0|1234] "" 60 2 DUMMY_NODE_VECTOR3  Node2;
 /// EV_ WriteOnlyEnvVar: 1 [0|1234] "" 60 3 DUMMY_NODE_VECTOR2  Node2;
 /// ```
-#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct EnvironmentVariable {
     pub env_var_name: String,
     pub env_var_type: EnvVarType,

@@ -7,7 +7,6 @@ use nom::combinator::{map, opt};
 use nom::multi::{many0, separated_list0};
 use nom::sequence::{delimited, pair, separated_pair};
 use nom::{IResult, Parser};
-use serde::{Deserialize, Serialize};
 
 use super::char_string::{parser_char_string, CharString};
 use super::common_parsers::{
@@ -35,7 +34,8 @@ use super::error::DbcParseError;
 /// SG_MUL_VAL_ 100 Mux_3 Mux_2 3-3;
 /// SG_MUL_VAL_ 100 Mux_4 Mux_3 2-2;
 /// ```
-#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct MultiplexerIndicator {
     // A 'm' (lowercase) character followed by an unsigned integer defines the
     // signal as being multiplexed by the multiplexer switch.
@@ -57,7 +57,8 @@ impl fmt::Display for MultiplexerIndicator {
 }
 
 /// Endianness: 1 = little-endian, Intel; 0 = big-endian, Motorola
-#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum ByteOrder {
     LittleEndian,
     BigEndian,
@@ -73,7 +74,8 @@ impl fmt::Display for ByteOrder {
 }
 
 /// Signed: + = unsigned; - = signed
-#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum ValueType {
     Signed,
     Unsigned,
@@ -116,7 +118,8 @@ impl fmt::Display for ValueType {
 /// Endianness: 1 = little-endian, Intel; 0 = big-endian, Motorola
 /// M: If M than this signals contains a multiplexer identifier.
 /// `MultiplexerIdentifier`: Signal definition is only used if the value of the multiplexer signal equals this value.
-#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Signal {
     pub name: String,
     pub multiplexer: Option<MultiplexerIndicator>,

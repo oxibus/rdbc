@@ -3,28 +3,26 @@ use std::io::Read;
 use std::path::PathBuf;
 
 use anyhow::Result;
+use clap::Parser;
 use rrdbc::encoding::to_utf8;
-use structopt::StructOpt;
 
-#[derive(Debug, StructOpt)]
-#[structopt(name = "toutf8", about = "Recode file to UTF-8")]
+#[derive(Debug, Parser)]
+#[command(name = "toutf8", about = "Recode file to UTF-8", version)]
 struct Opt {
     /// Input file encoding
-    #[structopt(short, long)]
+    #[arg(short, long)]
     encoding: String,
 
     /// Input file
-    #[structopt(short, long, parse(from_os_str))]
     input: PathBuf,
 
     /// Output file
-    #[structopt(short, long, parse(from_os_str))]
     output: PathBuf,
 }
 
 fn main() -> Result<()> {
     env_logger::init();
-    let opt = Opt::from_args();
+    let opt = Opt::parse();
 
     let mut file = File::open(opt.input)?;
 

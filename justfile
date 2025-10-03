@@ -30,6 +30,9 @@ build:
 # Quick compile without building a binary
 check:
     cargo check {{packages}} {{features}} {{targets}}
+    cargo check --lib --no-default-features
+    cargo check --lib --no-default-features --features serde
+    cargo check --lib --no-default-features --features encoding
 
 # Generate code coverage report to upload to codecov.io
 ci-coverage: env-info && \
@@ -41,7 +44,7 @@ ci-coverage: env-info && \
 ci-test: env-info test-fmt clippy test test-doc && assert-git-is-clean
 
 # Run minimal subset of tests to ensure compatibility with MSRV
-ci-test-msrv: env-info test
+ci-test-msrv: env-info check test
 
 # Clean all build artifacts
 clean:
@@ -51,6 +54,9 @@ clean:
 # Run cargo clippy to lint the code
 clippy *args:
     cargo clippy {{packages}} {{features}} {{targets}} {{args}}
+    cargo clippy --lib --no-default-features
+    cargo clippy --lib --no-default-features --features serde
+    cargo clippy --lib --no-default-features --features encoding
 
 # Generate code coverage report. Will install `cargo llvm-cov` if missing.
 coverage *args='--no-clean --open':  (cargo-install 'cargo-llvm-cov')
@@ -98,6 +104,24 @@ get-msrv package=main_crate:  (get-crate-field 'rust_version' package)
 # Find the minimum supported Rust version (MSRV) using cargo-msrv extension, and update Cargo.toml
 msrv:  (cargo-install 'cargo-msrv')
     cargo msrv find --write-msrv --ignore-lockfile {{features}}
+
+_run_bin name *ARGS:
+    cargo run --bin {{name}} -- {{ARGS}}
+
+# Run dbc2json
+r-dbc2json *args: (_run_bin 'dbc2json' args)
+# Run dbcfmt
+r-dbcfmt *args: (_run_bin 'dbcfmt' args)
+# Run demo
+r-demo *args: (_run_bin 'demo' args)
+# Run gbk2utf8
+r-gbk2utf8 *args: (_run_bin 'gbk2utf8' args)
+# Run json2dbc
+r-json2dbc *args: (_run_bin 'json2dbc' args)
+# Run toutf8
+r-toutf8 *args: (_run_bin 'toutf8' args)
+# Run utf82gbk
+r-utf82gbk *args: (_run_bin 'utf82gbk' args)
 
 # Run cargo-release
 release *args='':  (cargo-install 'release-plz')

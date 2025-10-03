@@ -5,7 +5,6 @@ use nom::character::complete::line_ending;
 use nom::combinator::map;
 use nom::multi::many0;
 use nom::{IResult, Parser};
-use serde::{Deserialize, Serialize};
 
 use super::common_parsers::{multispacey, parser_node_name, spacey};
 use super::error::DbcParseError;
@@ -25,7 +24,8 @@ use super::error::DbcParseError;
 /// ```text
 /// BU_: ABS DRS_MM5_10
 /// ```
-#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Nodes(pub Vec<String>);
 
 impl fmt::Display for Nodes {

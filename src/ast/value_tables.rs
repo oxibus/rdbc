@@ -5,7 +5,6 @@ use nom::character::complete::line_ending;
 use nom::combinator::{map, opt};
 use nom::multi::many0;
 use nom::{IResult, Parser};
-use serde::{Deserialize, Serialize};
 
 use super::common_parsers::{dbc_object_name, multispacey, spacey};
 use super::error::DbcParseError;
@@ -25,7 +24,8 @@ use super::value_descriptions::{parser_value_descriptions, ValueDescriptions};
 /// Format: `VAL_TABLE_ <value_table_name> <value_description>;`
 ///
 /// `value_description`: List of `IntValue "StringValue"` Pairs, separated by whitespaces
-#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ValueTable {
     pub name: String,
     pub value_descriptions: ValueDescriptions,

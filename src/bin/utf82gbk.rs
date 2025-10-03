@@ -3,24 +3,22 @@ use std::io::Read;
 use std::path::PathBuf;
 
 use anyhow::Result;
+use clap::Parser;
 use rrdbc::encoding::utf8_to_gbk;
-use structopt::StructOpt;
 
-#[derive(Debug, StructOpt)]
-#[structopt(name = "utf82gbk", about = "Recode file from UTF-8 to GBK")]
+#[derive(Debug, Parser)]
+#[command(name = "utf82gbk", about = "Recode file from UTF-8 to GBK", version)]
 struct Opt {
     /// Input file
-    #[structopt(short, long, parse(from_os_str))]
     input: PathBuf,
 
     /// Output file
-    #[structopt(short, long, parse(from_os_str))]
     output: PathBuf,
 }
 
 fn main() -> Result<()> {
     env_logger::init();
-    let opt = Opt::from_args();
+    let opt = Opt::parse();
 
     let mut file = File::open(opt.input)?;
 

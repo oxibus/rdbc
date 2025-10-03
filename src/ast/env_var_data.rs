@@ -5,7 +5,6 @@ use nom::character::complete::{line_ending, u32};
 use nom::combinator::map;
 use nom::multi::many0;
 use nom::{IResult, Parser};
-use serde::{Deserialize, Serialize};
 
 use super::common_parsers::{multispacey, parser_env_var_name, spacey};
 use super::error::DbcParseError;
@@ -23,7 +22,8 @@ use super::error::DbcParseError;
 /// ```text
 /// ENVVAR_DATA_ RWEnvVar_wData: 10;
 /// ```
-#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct EnvironmentVariableData {
     pub env_var_name: String,
     pub data_size: u32,

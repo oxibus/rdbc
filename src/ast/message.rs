@@ -6,7 +6,6 @@ use nom::character::complete::line_ending;
 use nom::combinator::map;
 use nom::multi::many0;
 use nom::{IResult, Parser};
-use serde::{Deserialize, Serialize};
 
 use super::common_parsers::{
     dbc_identifier, multispacey, parser_message_id, parser_node_name, spacey, unsigned_integer,
@@ -17,7 +16,8 @@ use super::signal::{parser_signal, Signal};
 /// Message definition.
 /// Format: `BO_ <CAN-ID> <MessageName>: <MessageSize> <SendingNode>`
 /// `MessageSize` in bytes.
-#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct MessageHeader {
     /// The message's CAN-ID. The CAN-ID has to be unique within the DBC file. If the
     /// most significant bit of the CAN-ID is set, the ID is an extended CAN ID.
@@ -49,7 +49,8 @@ pub struct MessageHeader {
 /// message_size = unsigned_integer ;
 /// transmitter = node_name | 'Vector__XXX' ;
 /// ```
-#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Message {
     pub header: MessageHeader,
     pub signals: Vec<Signal>,
