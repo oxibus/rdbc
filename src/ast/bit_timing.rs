@@ -12,7 +12,7 @@ use super::error::DbcParseError;
 
 #[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct BitTimingValue {
-    // Baudrate
+    // Baud rate
     pub baudrate: u64,
     // bit timing register 1
     pub btr1: u64,
@@ -27,7 +27,7 @@ impl fmt::Display for BitTimingValue {
 }
 
 /// The bit timing section defines the baudrate and the settings of the BTR registers of
-/// the network. This section is obsolete and not used any more. Nevertheless, the
+/// the network. This section is obsolete and not used anymore. Nevertheless, the
 /// keyword `BS_` must appear in the DBC file.
 ///
 /// Format: `bit_timing = BS_: [baudrate : BTR1 , BTR2 ] ;`

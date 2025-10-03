@@ -20,9 +20,9 @@ use super::signal::{parser_signal, Signal};
 #[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct MessageHeader {
     /// The message's CAN-ID. The CAN-ID has to be unique within the DBC file. If the
-    /// most significant bit of the CAN-ID is set, the ID is an extended CAN ID. The ex-
-    /// tended CAN ID can be determined by masking out the most significant bit with the
-    /// mask 0x7FFFFFFF.
+    /// most significant bit of the CAN-ID is set, the ID is an extended CAN ID.
+    /// The extended CAN ID can be determined by masking out the most significant bit
+    /// with the mask 0x7FFFFFFF.
     pub id: u32,
 
     /// The names defined in this section have to be unique within the set of messages.

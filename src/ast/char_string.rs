@@ -50,12 +50,12 @@ pub fn printable_character(input: &str) -> IResult<&str, &str, DbcParseError> {
 }
 
 pub fn nonescaped_string(input: &str) -> IResult<&str, String, DbcParseError> {
-    let parsred = recognize(none_of("\"\\")).parse(input)?;
-    Ok((parsred.0, parsred.1.to_string()))
+    let parsed = recognize(none_of("\"\\")).parse(input)?;
+    Ok((parsed.0, parsed.1.to_string()))
 }
 
 pub fn escape_code(input: &str) -> IResult<&str, String, DbcParseError> {
-    let parsred = recognize(pair(
+    let parsed = recognize(pair(
         tag("\\"),
         alt((
             tag("\""),
@@ -71,7 +71,7 @@ pub fn escape_code(input: &str) -> IResult<&str, String, DbcParseError> {
     ))
     .parse(input)?;
 
-    Ok((parsred.0, parsred.1.to_string()))
+    Ok((parsed.0, parsed.1.to_string()))
 }
 
 fn parse_backslash(input: &str) -> IResult<&str, String, DbcParseError> {

@@ -1,12 +1,12 @@
 # Scope
 
-This document doesn't claim to specifiy the complete [Vector DBC standard](http://vector.com/vi_candb_en.html)
+This document doesn't claim to specify the complete [Vector DBC standard](http://vector.com/vi_candb_en.html)
 
 # Format description
 
 `<...>`: Required field
 `[...]`: Optional field
-`|`: Or (eg. <A|B>)
+`|`: Or (e.g. <A|B>)
 
 # Supported Keywords
 
@@ -63,12 +63,12 @@ Format: `CM_ [<BU_|BO_|SG_> [CAN-ID] [SignalName]] "<DescriptionText>";`
 Attribute definition.
 Format: `BA_DEF_ [BU_|BO_|SG_] "<AttributeName>" <DataType> [Config];`
 
-DataType | Description         | Config format
----------|---------------------|----------------
-INT      | integer             | `<min> <max>`
-FLOAT    | floating point      | `<min> <max>`
-STRING   | string              |
-ENUM     | enumeration         | `"<Value0>","<Value1>"...`
+| DataType | Description    | Config format              |
+|----------|----------------|----------------------------|
+| INT      | integer        | `<min> <max>`              |
+| FLOAT    | floating point | `<min> <max>`              |
+| STRING   | string         |                            |
+| ENUM     | enumeration    | `"<Value0>","<Value1>"...` |
 
 ## BA_DEF_DEF_
 
@@ -103,13 +103,13 @@ Format: `SIG_GROUP_ <CAN-ID> <IntValue> : [Signal];`
 
 # Attributes
 
-In this sections are standard attributes used by [CANpy](https://github.com/stefanhoelzl/CANpy) defined. The attributes can be overwritten within a DBC file.
+These sections define standard attributes used by [CANpy](https://github.com/stefanhoelzl/CANpy). The attributes can be overwritten within a DBC file.
 
 ## Message Attributes
 
 ### GenMsgSendType
 
-Defines the send type of a message.
+Defines the send type of message.
 Supported types:
 
 * cyclic
@@ -131,7 +131,7 @@ Definition: `BA_DEF_DEF "GenMsgCycleTime" 0`
 
 ### GenMsgStartDelayTime
 
-Defines the allowed delay after startup this message must occure the first time in ms.
+Defines the allowed delay after startup this message must occur the first time in ms.
 Definition: `BA_DEF BO_ "GenMsgStartDelayTime" INT 0 0`
 Default: 0 (=GenMsgCycleTime)
 Definition: `BA_DEF_DEF "GenMsgStartDelayTime" 0`
