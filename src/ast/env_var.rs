@@ -105,10 +105,8 @@ impl fmt::Display for EnvironmentVariable {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "EV_ {}: ", self.env_var_name)?;
         match self.env_var_type {
-            EnvVarType::Integer => write!(f, "0")?,
             EnvVarType::Float => write!(f, "1")?,
-            EnvVarType::String => write!(f, "0")?,
-            EnvVarType::Data => write!(f, "0")?,
+            EnvVarType::Integer | EnvVarType::String | EnvVarType::Data => write!(f, "0")?,
         }
         write!(f, " [{}|{}]", self.minimum, self.maximum)?;
         write!(f, r#" "{}" "#, self.unit)?;
