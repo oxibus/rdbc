@@ -1,8 +1,9 @@
-use anyhow::Result;
-use rrdbc::encoding::gbk_to_utf8;
 use std::fs::File;
 use std::io::Read;
 use std::path::PathBuf;
+
+use anyhow::Result;
+use rrdbc::encoding::gbk_to_utf8;
 use structopt::StructOpt;
 
 #[derive(Debug, StructOpt)]

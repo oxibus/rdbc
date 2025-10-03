@@ -1,5 +1,6 @@
-use super::node::Node;
 use std::collections::HashMap;
+
+use super::node::Node;
 
 pub struct Network {
     /// nodes (BU)

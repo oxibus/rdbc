@@ -1,16 +1,16 @@
-use super::common_parsers::*;
-use super::error::DbcParseError;
-use super::signal::parser_signal;
-use super::signal::Signal;
+use std::fmt;
+
 use nom::branch::alt;
 use nom::bytes::complete::tag;
 use nom::character::complete::line_ending;
 use nom::combinator::map;
 use nom::multi::many0;
-use nom::IResult;
-use nom::Parser;
+use nom::{IResult, Parser};
 use serde::{Deserialize, Serialize};
-use std::fmt;
+
+use super::common_parsers::*;
+use super::error::DbcParseError;
+use super::signal::{parser_signal, Signal};
 
 /// Message definition.
 /// Format: `BO_ <CAN-ID> <MessageName>: <MessageSize> <SendingNode>`

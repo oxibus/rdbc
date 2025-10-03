@@ -1,38 +1,28 @@
-use super::attribute_default::parser_attribute_default;
-use super::attribute_default::AttributeDefault;
-use super::attribute_definition::parser_attribute_definition;
-use super::attribute_definition::AttributeDefinition;
-use super::attribute_value::parser_object_attribute_value;
-use super::attribute_value::ObjectAttributeValue;
-use super::bit_timing::parser_bit_timing;
-use super::bit_timing::BitTiming;
-use super::comment::parser_comment;
-use super::comment::Comment;
+use std::fmt;
+
+use nom::combinator::{all_consuming, map};
+use nom::multi::many0;
+use nom::{IResult, Parser};
+use serde::{Deserialize, Serialize};
+
+use super::attribute_default::{parser_attribute_default, AttributeDefault};
+use super::attribute_definition::{parser_attribute_definition, AttributeDefinition};
+use super::attribute_value::{parser_object_attribute_value, ObjectAttributeValue};
+use super::bit_timing::{parser_bit_timing, BitTiming};
+use super::comment::{parser_comment, Comment};
 use super::common_parsers::*;
-use super::env_var::parser_env_var;
-use super::env_var::EnvironmentVariable;
-use super::env_var_data::parser_env_var_data;
-use super::env_var_data::EnvironmentVariableData;
-use super::env_var_value_descriptions::parser_env_var_value_descriptions;
-use super::env_var_value_descriptions::EnvironmentVariableValueDescriptions;
+use super::env_var::{parser_env_var, EnvironmentVariable};
+use super::env_var_data::{parser_env_var_data, EnvironmentVariableData};
+use super::env_var_value_descriptions::{
+    parser_env_var_value_descriptions, EnvironmentVariableValueDescriptions,
+};
 use super::error::DbcParseError;
 use super::message::*;
-use super::new_symbols::parser_new_symbols;
-use super::new_symbols::NewSymbols;
-use super::nodes::parser_nodes;
-use super::nodes::Nodes;
-use super::signal_value_descriptions::parser_signal_value_descriptions;
-use super::signal_value_descriptions::SignalValueDescriptions;
+use super::new_symbols::{parser_new_symbols, NewSymbols};
+use super::nodes::{parser_nodes, Nodes};
+use super::signal_value_descriptions::{parser_signal_value_descriptions, SignalValueDescriptions};
 use super::value_tables::*;
-use super::version::parser_version;
-use super::version::Version;
-use nom::combinator::all_consuming;
-use nom::combinator::map;
-use nom::multi::many0;
-use nom::IResult;
-use nom::Parser;
-use serde::{Deserialize, Serialize};
-use std::fmt;
+use super::version::{parser_version, Version};
 
 #[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct NetworkAst {
@@ -226,23 +216,16 @@ pub fn parse_dbc(input: &str) -> Result<NetworkAst, DbcParseError> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::ast::attribute_definition::AttributeEnumValueType;
-    use crate::ast::attribute_definition::AttributeFloatValueType;
-    use crate::ast::attribute_definition::AttributeHexValueType;
-    use crate::ast::attribute_definition::AttributeIntegerValueType;
-    use crate::ast::attribute_definition::AttributeStringValueType;
-    use crate::ast::attribute_definition::AttributeValueType;
-    use crate::ast::attribute_definition::ControlUnitEnvironmentVariableAttribute;
-    use crate::ast::attribute_definition::EnvironmentVariableAttribute;
-    use crate::ast::attribute_definition::MessageAttribute;
-    use crate::ast::attribute_definition::NetworkAttribute;
-    use crate::ast::attribute_definition::NodeAttribute;
-    use crate::ast::attribute_definition::SignalAttribute;
+    use crate::ast::attribute_definition::{
+        AttributeEnumValueType, AttributeFloatValueType, AttributeHexValueType,
+        AttributeIntegerValueType, AttributeStringValueType, AttributeValueType,
+        ControlUnitEnvironmentVariableAttribute, EnvironmentVariableAttribute, MessageAttribute,
+        NetworkAttribute, NodeAttribute, SignalAttribute,
+    };
     use crate::ast::char_string::CharString;
     use crate::ast::env_var::EnvVarType;
     use crate::ast::signal;
-    use crate::ast::value_descriptions::ValueDescriptionItem;
-    use crate::ast::value_descriptions::ValueDescriptions;
+    use crate::ast::value_descriptions::{ValueDescriptionItem, ValueDescriptions};
 
     #[test]
     fn test_dbc_01() {

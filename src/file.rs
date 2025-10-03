@@ -1,9 +1,10 @@
-use crate::ast::network_ast::parse_dbc;
-use crate::ast::network_ast::NetworkAst;
-use crate::encoding::to_utf8;
-use anyhow::Result;
 use std::fs::File;
 use std::io::Read;
+
+use anyhow::Result;
+
+use crate::ast::network_ast::{parse_dbc, NetworkAst};
+use crate::encoding::to_utf8;
 
 pub fn read_file_content(filename: &str, encoding: &str) -> Result<String> {
     let data = if encoding.to_lowercase() == "utf-8" {

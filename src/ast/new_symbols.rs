@@ -1,14 +1,14 @@
-use super::common_parsers::*;
-use super::error::DbcParseError;
+use std::fmt;
+
 use nom::bytes::complete::tag;
-use nom::character::complete::line_ending;
-use nom::character::complete::space0;
+use nom::character::complete::{line_ending, space0};
 use nom::combinator::map;
 use nom::multi::many0;
-use nom::IResult;
-use nom::Parser;
+use nom::{IResult, Parser};
 use serde::{Deserialize, Serialize};
-use std::fmt;
+
+use super::common_parsers::*;
+use super::error::DbcParseError;
 
 /// New Symbols, Names used throughout the DBC file.
 ///

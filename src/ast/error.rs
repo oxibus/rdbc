@@ -1,5 +1,4 @@
-use nom::error::ContextError;
-use nom::error::{ErrorKind, ParseError};
+use nom::error::{ContextError, ErrorKind, ParseError};
 
 #[derive(thiserror::Error, Debug, PartialEq)]
 pub enum DbcParseError {

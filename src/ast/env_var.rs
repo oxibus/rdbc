@@ -1,19 +1,16 @@
-use super::char_string::parser_char_string;
-use super::char_string::CharString;
+use std::fmt;
+
+use nom::bytes::complete::tag;
+use nom::character::complete::{hex_digit1, line_ending, u32};
+use nom::combinator::map;
+use nom::multi::{many0, separated_list0};
+use nom::sequence::pair;
+use nom::{IResult, Parser};
+use serde::{Deserialize, Serialize};
+
+use super::char_string::{parser_char_string, CharString};
 use super::common_parsers::*;
 use super::error::DbcParseError;
-use nom::bytes::complete::tag;
-use nom::character::complete::hex_digit1;
-use nom::character::complete::line_ending;
-use nom::character::complete::u32;
-use nom::combinator::map;
-use nom::multi::many0;
-use nom::multi::separated_list0;
-use nom::sequence::pair;
-use nom::IResult;
-use nom::Parser;
-use serde::{Deserialize, Serialize};
-use std::fmt;
 
 #[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub enum EnvVarType {

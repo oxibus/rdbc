@@ -1,15 +1,15 @@
-use super::attribute::parser_attribute_name;
-use super::char_string::parser_char_string;
-use super::char_string::CharString;
-use super::common_parsers::*;
-use super::error::DbcParseError;
+use std::fmt;
+
 use nom::branch::alt;
 use nom::bytes::complete::tag;
 use nom::combinator::map;
-use nom::IResult;
-use nom::Parser;
+use nom::{IResult, Parser};
 use serde::{Deserialize, Serialize};
-use std::fmt;
+
+use super::attribute::parser_attribute_name;
+use super::char_string::{parser_char_string, CharString};
+use super::common_parsers::*;
+use super::error::DbcParseError;
 
 #[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub enum AttributeValue {
