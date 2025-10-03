@@ -30,7 +30,7 @@ impl fmt::Display for BitTimingValue {
 /// the network. This section is obsolete and not used any more. Nevertheless, the
 /// keyword `BS_` must appear in the DBC file.
 ///
-/// Format: `bit_timing = 'BS_:' [baudrate ':' BTR1 ',' BTR2 ] ;`
+/// Format: `bit_timing = BS_: [baudrate : BTR1 , BTR2 ] ;`
 #[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct BitTiming {
     pub value: Option<BitTimingValue>,
