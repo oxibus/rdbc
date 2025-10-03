@@ -24,7 +24,7 @@ use super::value_descriptions::{parser_value_descriptions, ValueDescriptions};
 ///
 /// Format: `VAL_TABLE_ <value_table_name> <value_description>;`
 ///
-/// `value_description`: List of `IntValue "StringValue"` Pairs, seperated by whitespaces
+/// `value_description`: List of `IntValue "StringValue"` Pairs, separated by whitespaces
 #[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct ValueTable {
     pub name: String,
