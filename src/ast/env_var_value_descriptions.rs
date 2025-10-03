@@ -11,10 +11,12 @@ use nom::Parser;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
+/// ```text
 /// VAL_ env_var_name [value_descriptions];
 /// VAL_ RWEnvVar_wData 2 "Value2" 1 "Value1" 0 "Value0" ;
 /// VAL_ WriteOnlyEnvVar 2 "Value2" 1 "Value1" 0 "Value0" ;
 /// VAL_ ReadOnlyEnvVar 2 "Value2" 1 "Value1" 0 "Value0" ;
+/// ```
 #[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct EnvironmentVariableValueDescriptions {
     pub env_var_name: String,

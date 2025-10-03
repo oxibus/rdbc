@@ -117,9 +117,9 @@ impl fmt::Display for EnvironmentVariable {
         write!(f, "{} ", self.ev_id)?;
         write!(f, "DUMMY_NODE_VECTOR")?;
         if self.env_var_type == EnvVarType::String {
-            write!(f, "{:X}", self.access_type.clone() as u16 | 0x8000)?;
+            write!(f, "{:X}", self.access_type | 0x8000)?;
         } else {
-            write!(f, "{:X}", self.access_type.clone() as u16)?;
+            write!(f, "{:X}", self.access_type)?;
         }
         write!(f, " ")?;
         if self.access_nodes.is_empty() {

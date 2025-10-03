@@ -95,7 +95,7 @@ impl fmt::Display for NetworkAst {
             for table in vt {
                 writeln!(f, "{}", table)?;
             }
-            write!(f, "\n")?;
+            writeln!(f)?;
         }
 
         for message in &self.messages {
@@ -106,49 +106,49 @@ impl fmt::Display for NetworkAst {
             writeln!(f, "{}", env_var)?;
         }
         if !self.env_vars.is_empty() {
-            write!(f, "\n")?;
+            writeln!(f)?;
         }
 
         for env_var_data in &self.env_vars_data {
             writeln!(f, "{}", env_var_data)?;
         }
         if !self.env_vars_data.is_empty() {
-            write!(f, "\n")?;
+            writeln!(f)?;
         }
 
         for comment in &self.comments {
             writeln!(f, "{}", comment)?;
         }
         if !self.comments.is_empty() {
-            write!(f, "\n")?;
+            writeln!(f)?;
         }
 
         for attribute_definition in &self.attribute_definitions {
             writeln!(f, "{}", attribute_definition)?;
         }
         if !self.attribute_definitions.is_empty() {
-            write!(f, "\n")?;
+            writeln!(f)?;
         }
 
         for attribute_default in &self.attribute_defaults {
             writeln!(f, "{}", attribute_default)?;
         }
         if !self.attribute_defaults.is_empty() {
-            write!(f, "\n")?;
+            writeln!(f)?;
         }
 
         for attribute_value in &self.attribute_values {
             writeln!(f, "{}", attribute_value)?;
         }
         if !self.attribute_values.is_empty() {
-            write!(f, "\n")?;
+            writeln!(f)?;
         }
 
         for signal_value_description in &self.signal_value_descriptions {
             writeln!(f, "{}", signal_value_description)?;
         }
         if !self.signal_value_descriptions.is_empty() {
-            write!(f, "\n")?;
+            writeln!(f)?;
         }
 
         for env_var_value_description in &self.env_var_value_descriptions {

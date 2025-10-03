@@ -33,7 +33,7 @@ impl fmt::Display for Nodes {
         for node in &self.0 {
             write!(f, " {node}")?;
         }
-        write!(f, "\n")?;
+        writeln!(f)?;
         Ok(())
     }
 }

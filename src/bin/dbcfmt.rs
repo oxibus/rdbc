@@ -18,7 +18,7 @@ struct Opt {
 fn main() -> Result<()> {
     env_logger::init();
     let opt = Opt::from_args();
-    let network_ast = parser_dbc_file(&opt.input.to_str().unwrap(), &opt.encoding)?;
+    let network_ast = parser_dbc_file(opt.input.to_str().unwrap(), &opt.encoding)?;
     let output_data = format!("{}", network_ast);
     std::fs::write(opt.input, output_data)?;
     Ok(())

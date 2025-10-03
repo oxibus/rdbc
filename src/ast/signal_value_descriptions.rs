@@ -11,9 +11,11 @@ use nom::Parser;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
+/// ```text
 /// VAL_ message_id signal_name [value_descriptions];
 /// VAL_ 2147487969 Value1 3 "Three" 2 "Two" 1 "One" 0 "Zero" ;
 /// VAL_ 2147487969 Value0 2 "Value2" 1 "Value1" 0 "Value0" ;
+/// ```
 #[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct SignalValueDescriptions {
     pub message_id: u32,
@@ -24,7 +26,7 @@ pub struct SignalValueDescriptions {
 impl fmt::Display for SignalValueDescriptions {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "VAL_ {} {}", self.message_id, self.signal_name)?;
-        if self.value_descriptions.values.len() > 0 {
+        if !self.value_descriptions.values.is_empty() {
             write!(f, " {}", self.value_descriptions)?;
         }
         write!(f, ";")

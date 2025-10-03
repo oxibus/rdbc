@@ -28,8 +28,8 @@ impl fmt::Display for BitTimingValue {
 }
 
 /// The bit timing section defines the baudrate and the settings of the BTR registers of
-/// the network. This section is obsolete and not used any more. Nevertheless he
-/// keyword 'BS_' must appear in the DBC file.
+/// the network. This section is obsolete and not used any more. Nevertheless, the
+/// keyword `BS_` must appear in the DBC file.
 ///
 /// Format:: `bit_timing = 'BS_:' [baudrate ':' BTR1 ',' BTR2 ] ;`
 #[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
@@ -40,8 +40,8 @@ pub struct BitTiming {
 impl fmt::Display for BitTiming {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match &self.value {
-            Some(value) => write!(f, "BS_: {}\n", value),
-            None => write!(f, "BS_:\n"),
+            Some(value) => writeln!(f, "BS_: {}", value),
+            None => writeln!(f, "BS_:"),
         }
     }
 }
