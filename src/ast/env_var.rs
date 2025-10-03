@@ -9,7 +9,9 @@ use nom::{IResult, Parser};
 use serde::{Deserialize, Serialize};
 
 use super::char_string::{parser_char_string, CharString};
-use super::common_parsers::*;
+use super::common_parsers::{
+    multispacey, number_value, parser_env_var_name, parser_node_name, spacey,
+};
 use super::error::DbcParseError;
 
 #[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
@@ -109,7 +111,7 @@ impl fmt::Display for EnvironmentVariable {
             EnvVarType::Data => write!(f, "0")?,
         }
         write!(f, " [{}|{}]", self.minimum, self.maximum)?;
-        write!(f, " \"{}\" ", self.unit)?;
+        write!(f, r#" "{}" "#, self.unit)?;
         write!(f, "{} ", self.initial_value)?;
         write!(f, "{} ", self.ev_id)?;
         write!(f, "DUMMY_NODE_VECTOR")?;
@@ -214,7 +216,7 @@ pub fn parser_env_var(input: &str) -> IResult<&str, EnvironmentVariable, DbcPars
                 initial_value,
                 ev_id,
                 access_type,
-                access_nodes: access_nodes.iter().map(|s| s.to_string()).collect(),
+                access_nodes: access_nodes.into_iter().map(String::from).collect(),
             }
         },
     )
@@ -223,7 +225,7 @@ pub fn parser_env_var(input: &str) -> IResult<&str, EnvironmentVariable, DbcPars
     match res {
         Ok((remain, val)) => Ok((remain, val)),
         Err(e) => {
-            log::trace!("parse environment variable failed, e = {:?}", e);
+            log::trace!("parse environment variable failed, e = {e:?}");
             Err(nom::Err::Error(DbcParseError::BadEnvironmentVariable))
         }
     }
@@ -244,14 +246,14 @@ mod tests {
                     env_var_type: EnvVarType::Integer,
                     minimum: 0.0,
                     maximum: 1234.0,
-                    unit: CharString("".to_string()),
+                    unit: CharString(String::new()),
                     initial_value: 60.0,
                     ev_id: 2,
                     access_type: 3,
                     access_nodes: vec!["Node2".to_string()],
                 }
             ))
-        )
+        );
     }
 
     #[test]
@@ -265,14 +267,14 @@ mod tests {
                     env_var_type: EnvVarType::Float,
                     minimum: 0.0,
                     maximum: 1234.0,
-                    unit: CharString("".to_string()),
+                    unit: CharString(String::new()),
                     initial_value: 60.0,
                     ev_id: 3,
                     access_type: 2,
                     access_nodes: vec!["Node2".to_string()],
                 }
             ))
-        )
+        );
     }
 
     #[test]
@@ -295,7 +297,7 @@ mod tests {
                     access_nodes: vec!["Node0".to_string()],
                 }
             ))
-        )
+        );
     }
 
     #[test]
@@ -306,7 +308,7 @@ mod tests {
                 env_var_type: EnvVarType::Integer,
                 minimum: 0.0,
                 maximum: 1234.0,
-                unit: CharString("".to_string()),
+                unit: CharString(String::new()),
                 initial_value: 60.0,
                 ev_id: 2,
                 access_type: 3,
@@ -344,7 +346,7 @@ mod tests {
                 env_var_type: EnvVarType::Float,
                 minimum: 0.0,
                 maximum: 1234.0,
-                unit: CharString("".to_string()),
+                unit: CharString(String::new()),
                 initial_value: 60.0,
                 ev_id: 3,
                 access_type: 2,
@@ -363,7 +365,7 @@ mod tests {
                 env_var_type: EnvVarType::Float,
                 minimum: 0.0,
                 maximum: 1234.0,
-                unit: CharString("".to_string()),
+                unit: CharString(String::new()),
                 initial_value: 60.0,
                 ev_id: 3,
                 access_type: 2,

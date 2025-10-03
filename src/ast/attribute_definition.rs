@@ -9,7 +9,7 @@ use serde::{Deserialize, Serialize};
 
 use super::attribute::parser_attribute_name;
 use super::char_string::{parser_char_string, CharString};
-use super::common_parsers::*;
+use super::common_parsers::{multispacey, number_value, signed_integer, spacey};
 use super::error::DbcParseError;
 
 #[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
@@ -39,11 +39,11 @@ pub fn parser_attribute_integer_value_type(
 
     match res {
         Ok((remain, value)) => {
-            log::info!("parse attribute integer value type: {:?}", value);
+            log::info!("parse attribute integer value type: {value:?}");
             Ok((remain, AttributeValueType::Integer(value)))
         }
         Err(e) => {
-            log::trace!("parse attribute integer value type failed, e = {:?}", e);
+            log::trace!("parse attribute integer value type failed, e = {e:?}");
             Err(nom::Err::Error(DbcParseError::BadAttributeIntegerValueType))
         }
     }
@@ -76,11 +76,11 @@ pub fn parser_attribute_hex_value_type(
 
     match res {
         Ok((remain, value)) => {
-            log::info!("parse attribute hex value type: {:?}", value);
+            log::info!("parse attribute hex value type: {value:?}");
             Ok((remain, AttributeValueType::Hex(value)))
         }
         Err(e) => {
-            log::trace!("parse attribute hex value type failed, e = {:?}", e);
+            log::trace!("parse attribute hex value type failed, e = {e:?}");
             Err(nom::Err::Error(DbcParseError::BadAttributeHexValueType))
         }
     }
@@ -113,11 +113,11 @@ pub fn parser_attribute_float_value_type(
 
     match res {
         Ok((remain, value)) => {
-            log::info!("parse attribute float value type: {:?}", value);
+            log::info!("parse attribute float value type: {value:?}");
             Ok((remain, AttributeValueType::Float(value)))
         }
         Err(e) => {
-            log::trace!("parse attribute float value type failed, e = {:?}", e);
+            log::trace!("parse attribute float value type failed, e = {e:?}");
             Err(nom::Err::Error(DbcParseError::BadAttributeFloatValueType))
         }
     }
@@ -139,14 +139,14 @@ pub fn parser_attribute_string_value_type(
 
     match res {
         Ok((remain, value)) => {
-            log::info!("parse attribute string value type: {:?}", value);
+            log::info!("parse attribute string value type: {value:?}");
             Ok((
                 remain,
                 AttributeValueType::String(AttributeStringValueType {}),
             ))
         }
         Err(e) => {
-            log::trace!("parse attribute string value type failed, e = {:?}", e);
+            log::trace!("parse attribute string value type failed, e = {e:?}");
             Err(nom::Err::Error(DbcParseError::BadAttributeStringValueType))
         }
     }
@@ -164,7 +164,7 @@ impl fmt::Display for AttributeEnumValueType {
             "ENUM {}",
             self.values
                 .iter()
-                .map(|v| format!("\"{v}\""))
+                .map(|v| format!(r#""{v}""#))
                 .collect::<Vec<String>>()
                 .join(",")
         )
@@ -185,11 +185,11 @@ pub fn parser_attribute_enum_value_type(
 
     match res {
         Ok((remain, value)) => {
-            log::info!("parse attribute enum value type: {:?}", value);
+            log::info!("parse attribute enum value type: {value:?}");
             Ok((remain, AttributeValueType::Enum(value)))
         }
         Err(e) => {
-            log::trace!("parse attribute enum value type failed, e = {:?}", e);
+            log::trace!("parse attribute enum value type failed, e = {e:?}");
             Err(nom::Err::Error(DbcParseError::BadAttributeEnumValueType))
         }
     }
@@ -207,11 +207,11 @@ pub enum AttributeValueType {
 impl fmt::Display for AttributeValueType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            AttributeValueType::Integer(v) => write!(f, "{}", v),
-            AttributeValueType::Hex(v) => write!(f, "{}", v),
-            AttributeValueType::Float(v) => write!(f, "{}", v),
-            AttributeValueType::String(v) => write!(f, "{}", v),
-            AttributeValueType::Enum(v) => write!(f, "{}", v),
+            AttributeValueType::Integer(v) => write!(f, "{v}"),
+            AttributeValueType::Hex(v) => write!(f, "{v}"),
+            AttributeValueType::Float(v) => write!(f, "{v}"),
+            AttributeValueType::String(v) => write!(f, "{v}"),
+            AttributeValueType::Enum(v) => write!(f, "{v}"),
         }
     }
 }
@@ -230,11 +230,11 @@ pub fn parser_attribute_value_type(
 
     match res {
         Ok((remain, value)) => {
-            log::info!("parse attribute value type: {:?}", value);
+            log::info!("parse attribute value type: {value:?}");
             Ok((remain, value))
         }
         Err(e) => {
-            log::trace!("parse attribute value type failed, e = {:?}", e);
+            log::trace!("parse attribute value type failed, e = {e:?}");
             Err(e)
         }
     }
@@ -255,7 +255,7 @@ impl fmt::Display for NetworkAttribute {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "BA_DEF_ \"{}\" {};",
+            r#"BA_DEF_ "{}" {};"#,
             self.attribute_name, self.attribute_value_type
         )
     }
@@ -278,11 +278,11 @@ pub fn parser_network_attribute(input: &str) -> IResult<&str, AttributeDefinitio
 
     match res {
         Ok((remain, value)) => {
-            log::info!("parse network attribute: {:?}", value);
+            log::info!("parse network attribute: {value:?}");
             Ok((remain, AttributeDefinition::Network(value)))
         }
         Err(e) => {
-            log::trace!("parse network attribute failed, e = {:?}", e);
+            log::trace!("parse network attribute failed, e = {e:?}");
             Err(nom::Err::Error(DbcParseError::BadNetworkAttribute))
         }
     }
@@ -303,7 +303,7 @@ impl fmt::Display for NodeAttribute {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "BA_DEF_ BU_ \"{}\" {};",
+            r#"BA_DEF_ BU_ "{}" {};"#,
             self.attribute_name, self.attribute_value_type
         )
     }
@@ -327,11 +327,11 @@ pub fn parser_node_attribute(input: &str) -> IResult<&str, AttributeDefinition, 
 
     match res {
         Ok((remain, value)) => {
-            log::info!("parse node attribute: {:?}", value);
+            log::info!("parse node attribute: {value:?}");
             Ok((remain, AttributeDefinition::Node(value)))
         }
         Err(e) => {
-            log::trace!("parse node attribute failed, e = {:?}", e);
+            log::trace!("parse node attribute failed, e = {e:?}");
             Err(nom::Err::Error(DbcParseError::BadNodeAttribute))
         }
     }
@@ -352,7 +352,7 @@ impl fmt::Display for MessageAttribute {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "BA_DEF_ BO_ \"{}\" {};",
+            r#"BA_DEF_ BO_ "{}" {};"#,
             self.attribute_name, self.attribute_value_type
         )
     }
@@ -376,11 +376,11 @@ pub fn parser_message_attribute(input: &str) -> IResult<&str, AttributeDefinitio
 
     match res {
         Ok((remain, value)) => {
-            log::info!("parse message attribute: {:?}", value);
+            log::info!("parse message attribute: {value:?}");
             Ok((remain, AttributeDefinition::Message(value)))
         }
         Err(e) => {
-            log::trace!("parse message attribute failed, e = {:?}", e);
+            log::trace!("parse message attribute failed, e = {e:?}");
             Err(nom::Err::Error(DbcParseError::BadMessageAttribute))
         }
     }
@@ -401,7 +401,7 @@ impl fmt::Display for SignalAttribute {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "BA_DEF_ SG_ \"{}\" {};",
+            r#"BA_DEF_ SG_ "{}" {};"#,
             self.attribute_name, self.attribute_value_type
         )
     }
@@ -425,11 +425,11 @@ pub fn parser_signal_attribute(input: &str) -> IResult<&str, AttributeDefinition
 
     match res {
         Ok((remain, value)) => {
-            log::info!("parse signal attribute: {:?}", value);
+            log::info!("parse signal attribute: {value:?}");
             Ok((remain, AttributeDefinition::Signal(value)))
         }
         Err(e) => {
-            log::trace!("parse signal attribute failed, e = {:?}", e);
+            log::trace!("parse signal attribute failed, e = {e:?}");
             Err(nom::Err::Error(DbcParseError::BadSignalAttribute))
         }
     }
@@ -451,7 +451,7 @@ impl fmt::Display for EnvironmentVariableAttribute {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "BA_DEF_ EV_ \"{}\" {};",
+            r#"BA_DEF_ EV_ "{}" {};"#,
             self.attribute_name, self.attribute_value_type
         )
     }
@@ -477,11 +477,11 @@ pub fn parser_environment_variable_attribute(
 
     match res {
         Ok((remain, value)) => {
-            log::info!("parse environment variable attribute: {:?}", value);
+            log::info!("parse environment variable attribute: {value:?}");
             Ok((remain, AttributeDefinition::EnvironmentVariable(value)))
         }
         Err(e) => {
-            log::trace!("parse environment variable attribute failed, e = {:?}", e);
+            log::trace!("parse environment variable attribute failed, e = {e:?}");
             Err(nom::Err::Error(
                 DbcParseError::BadEnvironmentVariableAttribute,
             ))
@@ -506,7 +506,7 @@ impl fmt::Display for ControlUnitEnvironmentVariableAttribute {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "BA_DEF_REL_ BU_EV_REL_ \"{}\" {};",
+            r#"BA_DEF_REL_ BU_EV_REL_ "{}" {};"#,
             self.attribute_name, self.attribute_value_type
         )
     }
@@ -532,20 +532,14 @@ pub fn parser_control_unit_environment_variable_attribute(
 
     match res {
         Ok((remain, value)) => {
-            log::info!(
-                "parse control unit environment variable attribute: {:?}",
-                value
-            );
+            log::info!("parse control unit environment variable attribute: {value:?}");
             Ok((
                 remain,
                 AttributeDefinition::ControlUnitEnvironmentVariable(value),
             ))
         }
         Err(e) => {
-            log::trace!(
-                "parse control unit environment variable attribute failed, e = {:?}",
-                e
-            );
+            log::trace!("parse control unit environment variable attribute failed, e = {e:?}");
             Err(nom::Err::Error(
                 DbcParseError::BadControlUnitEnvironmentVariableAttribute,
             ))
@@ -570,7 +564,7 @@ impl fmt::Display for NodeTxMessageAttribute {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "BA_DEF_REL_ BU_BO_REL_ \"{}\" {};",
+            r#"BA_DEF_REL_ BU_BO_REL_ "{}" {};"#,
             self.attribute_name, self.attribute_value_type
         )
     }
@@ -596,11 +590,11 @@ pub fn parser_node_tx_message_attribute(
 
     match res {
         Ok((remain, value)) => {
-            log::info!("parse node tx message attribute: {:?}", value);
+            log::info!("parse node tx message attribute: {value:?}");
             Ok((remain, AttributeDefinition::NodeTxMessage(value)))
         }
         Err(e) => {
-            log::trace!("parse node tx message attribute failed, e = {:?}", e);
+            log::trace!("parse node tx message attribute failed, e = {e:?}");
             Err(nom::Err::Error(DbcParseError::BadNodeTxMessageAttribute))
         }
     }
@@ -623,7 +617,7 @@ impl fmt::Display for NodeMappedRxSignalAttribute {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "BA_DEF_REL_ BU_SG_REL_ \"{}\" {};",
+            r#"BA_DEF_REL_ BU_SG_REL_ "{}" {};"#,
             self.attribute_name, self.attribute_value_type
         )
     }
@@ -649,11 +643,11 @@ pub fn parser_node_mapped_rx_signal_attribute(
 
     match res {
         Ok((remain, value)) => {
-            log::info!("parse node mapped rx signal attribute: {:?}", value);
+            log::info!("parse node mapped rx signal attribute: {value:?}");
             Ok((remain, AttributeDefinition::NodeMappedRxSignal(value)))
         }
         Err(e) => {
-            log::trace!("parse node mapped rx signal attribute failed, e = {:?}", e);
+            log::trace!("parse node mapped rx signal attribute failed, e = {e:?}");
             Err(nom::Err::Error(
                 DbcParseError::BadNodeMappedRxSignalAttribute,
             ))
@@ -689,14 +683,14 @@ pub enum AttributeDefinition {
 impl fmt::Display for AttributeDefinition {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            AttributeDefinition::Network(v) => write!(f, "{}", v),
-            AttributeDefinition::Node(v) => write!(f, "{}", v),
-            AttributeDefinition::Message(v) => write!(f, "{}", v),
-            AttributeDefinition::Signal(v) => write!(f, "{}", v),
-            AttributeDefinition::EnvironmentVariable(v) => write!(f, "{}", v),
-            AttributeDefinition::ControlUnitEnvironmentVariable(v) => write!(f, "{}", v),
-            AttributeDefinition::NodeTxMessage(v) => write!(f, "{}", v),
-            AttributeDefinition::NodeMappedRxSignal(v) => write!(f, "{}", v),
+            AttributeDefinition::Network(v) => write!(f, "{v}"),
+            AttributeDefinition::Node(v) => write!(f, "{v}"),
+            AttributeDefinition::Message(v) => write!(f, "{v}"),
+            AttributeDefinition::Signal(v) => write!(f, "{v}"),
+            AttributeDefinition::EnvironmentVariable(v) => write!(f, "{v}"),
+            AttributeDefinition::ControlUnitEnvironmentVariable(v) => write!(f, "{v}"),
+            AttributeDefinition::NodeTxMessage(v) => write!(f, "{v}"),
+            AttributeDefinition::NodeMappedRxSignal(v) => write!(f, "{v}"),
         }
     }
 }
@@ -718,11 +712,11 @@ pub fn parser_attribute_definition(
 
     match res {
         Ok((remain, value)) => {
-            log::info!("parse attribute definition: {:?}", value);
+            log::info!("parse attribute definition: {value:?}");
             Ok((remain, value))
         }
         Err(e) => {
-            log::trace!("parse attribute definition failed, e = {:?}", e);
+            log::trace!("parse attribute definition failed, e = {e:?}");
             Err(e)
         }
     }

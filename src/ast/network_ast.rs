@@ -10,18 +10,18 @@ use super::attribute_definition::{parser_attribute_definition, AttributeDefiniti
 use super::attribute_value::{parser_object_attribute_value, ObjectAttributeValue};
 use super::bit_timing::{parser_bit_timing, BitTiming};
 use super::comment::{parser_comment, Comment};
-use super::common_parsers::*;
+use super::common_parsers::multispacey;
 use super::env_var::{parser_env_var, EnvironmentVariable};
 use super::env_var_data::{parser_env_var_data, EnvironmentVariableData};
 use super::env_var_value_descriptions::{
     parser_env_var_value_descriptions, EnvironmentVariableValueDescriptions,
 };
 use super::error::DbcParseError;
-use super::message::*;
+use super::message::{parser_dbc_message, Message};
 use super::new_symbols::{parser_new_symbols, NewSymbols};
 use super::nodes::{parser_nodes, Nodes};
 use super::signal_value_descriptions::{parser_signal_value_descriptions, SignalValueDescriptions};
-use super::value_tables::*;
+use super::value_tables::{parser_value_tables, ValueTable};
 use super::version::{parser_version, Version};
 
 #[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
@@ -76,73 +76,73 @@ impl fmt::Display for NetworkAst {
         writeln!(f, "{}", self.new_symbols)?;
 
         if let Some(bc) = &self.bit_timing {
-            writeln!(f, "{}", bc)?;
+            writeln!(f, "{bc}")?;
         }
 
         writeln!(f, "{}", self.nodes)?;
 
         if let Some(vt) = &self.value_tables {
             for table in vt {
-                writeln!(f, "{}", table)?;
+                writeln!(f, "{table}")?;
             }
             writeln!(f)?;
         }
 
         for message in &self.messages {
-            writeln!(f, "{}", message)?;
+            writeln!(f, "{message}")?;
         }
 
         for env_var in &self.env_vars {
-            writeln!(f, "{}", env_var)?;
+            writeln!(f, "{env_var}")?;
         }
         if !self.env_vars.is_empty() {
             writeln!(f)?;
         }
 
         for env_var_data in &self.env_vars_data {
-            writeln!(f, "{}", env_var_data)?;
+            writeln!(f, "{env_var_data}")?;
         }
         if !self.env_vars_data.is_empty() {
             writeln!(f)?;
         }
 
         for comment in &self.comments {
-            writeln!(f, "{}", comment)?;
+            writeln!(f, "{comment}")?;
         }
         if !self.comments.is_empty() {
             writeln!(f)?;
         }
 
         for attribute_definition in &self.attribute_definitions {
-            writeln!(f, "{}", attribute_definition)?;
+            writeln!(f, "{attribute_definition}")?;
         }
         if !self.attribute_definitions.is_empty() {
             writeln!(f)?;
         }
 
         for attribute_default in &self.attribute_defaults {
-            writeln!(f, "{}", attribute_default)?;
+            writeln!(f, "{attribute_default}")?;
         }
         if !self.attribute_defaults.is_empty() {
             writeln!(f)?;
         }
 
         for attribute_value in &self.attribute_values {
-            writeln!(f, "{}", attribute_value)?;
+            writeln!(f, "{attribute_value}")?;
         }
         if !self.attribute_values.is_empty() {
             writeln!(f)?;
         }
 
         for signal_value_description in &self.signal_value_descriptions {
-            writeln!(f, "{}", signal_value_description)?;
+            writeln!(f, "{signal_value_description}")?;
         }
         if !self.signal_value_descriptions.is_empty() {
             writeln!(f)?;
         }
 
         for env_var_value_description in &self.env_var_value_descriptions {
-            writeln!(f, "{}", env_var_value_description)?;
+            writeln!(f, "{env_var_value_description}")?;
         }
         Ok(())
     }
@@ -203,11 +203,10 @@ pub fn dbc_value(input: &str) -> IResult<&str, NetworkAst, DbcParseError> {
 
 pub fn parse_dbc(input: &str) -> Result<NetworkAst, DbcParseError> {
     let (_remain, result) = all_consuming(dbc_value).parse(input).map_err(|nom_err| {
-        log::error!("nom_err: {}", nom_err);
+        log::error!("nom_err: {nom_err}");
         match nom_err {
             nom::Err::Incomplete(_) => unreachable!(),
-            nom::Err::Error(e) => e,
-            nom::Err::Failure(e) => e,
+            nom::Err::Error(e) | nom::Err::Failure(e) => e,
         }
     })?;
     Ok(result)
@@ -224,6 +223,7 @@ mod tests {
     };
     use crate::ast::char_string::CharString;
     use crate::ast::env_var::EnvVarType;
+    use crate::ast::message::MessageHeader;
     use crate::ast::signal;
     use crate::ast::value_descriptions::{ValueDescriptionItem, ValueDescriptions};
 
@@ -294,7 +294,7 @@ BO_ 112 MM5_10_TX1: 8 DRS_MM5_10
                                 size: 16,
                                 byte_order: signal::ByteOrder::LittleEndian,
                                 value_type: signal::ValueType::Unsigned,
-                                factor: 0.000127465,
+                                factor: 0.000_127_465,
                                 offset: -4.1768,
                                 min: Some(-4.1768),
                                 max: Some(4.1765),
@@ -459,7 +459,7 @@ VAL_ ReadOnlyEnvVar 2 "Value2" 1 "Value1" 0 "Value0" ;
                                 size: 16,
                                 byte_order: signal::ByteOrder::LittleEndian,
                                 value_type: signal::ValueType::Unsigned,
-                                factor: 0.000127465,
+                                factor: 0.000_127_465,
                                 offset: -4.1768,
                                 min: Some(-4.1768),
                                 max: Some(4.1765),
@@ -486,7 +486,7 @@ VAL_ ReadOnlyEnvVar 2 "Value2" 1 "Value1" 0 "Value0" ;
                         env_var_type: EnvVarType::Integer,
                         minimum: 0.0,
                         maximum: 1234.0,
-                        unit: CharString("".to_string()),
+                        unit: CharString(String::new()),
                         initial_value: 60.0,
                         ev_id: 2,
                         access_type: 0x0003,
@@ -497,7 +497,7 @@ VAL_ ReadOnlyEnvVar 2 "Value2" 1 "Value1" 0 "Value0" ;
                         env_var_type: EnvVarType::Float,
                         minimum: 0.0,
                         maximum: 1234.0,
-                        unit: CharString("".to_string()),
+                        unit: CharString(String::new()),
                         initial_value: 60.0,
                         ev_id: 3,
                         access_type: 0x0002,
@@ -582,7 +582,7 @@ VAL_ ReadOnlyEnvVar 2 "Value2" 1 "Value1" 0 "Value0" ;
                 attribute_values: vec![],
                 signal_value_descriptions: vec![
                     SignalValueDescriptions {
-                        message_id: 2147487969,
+                        message_id: 2_147_487_969,
                         signal_name: "Value1".to_string(),
                         value_descriptions: ValueDescriptions {
                             values: vec![
@@ -606,7 +606,7 @@ VAL_ ReadOnlyEnvVar 2 "Value2" 1 "Value1" 0 "Value0" ;
                         }
                     },
                     SignalValueDescriptions {
-                        message_id: 2147487969,
+                        message_id: 2_147_487_969,
                         signal_name: "Value0".to_string(),
                         value_descriptions: ValueDescriptions {
                             values: vec![

@@ -7,7 +7,7 @@ use nom::multi::many0;
 use nom::{IResult, Parser};
 use serde::{Deserialize, Serialize};
 
-use super::common_parsers::*;
+use super::common_parsers::{multispacey, parser_env_var_name, spacey};
 use super::error::DbcParseError;
 
 /// Environment variables data section
@@ -59,7 +59,7 @@ pub fn parser_env_var_data(input: &str) -> IResult<&str, EnvironmentVariableData
     match res {
         Ok((remain, val)) => Ok((remain, val)),
         Err(e) => {
-            log::trace!("parse environment variable data failed, e = {:?}", e);
+            log::trace!("parse environment variable data failed, e = {e:?}");
             Err(nom::Err::Error(DbcParseError::BadEnvironmentVariableData))
         }
     }

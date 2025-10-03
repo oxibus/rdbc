@@ -8,6 +8,7 @@ readme = "README.md"
 repository = "https://github.com/MDGSF/rdbc"
 license = "MIT OR Apache-2.0"
 keywords = ["dbc", "parser", "format"]
+categories = ["embedded", "no-std", "encoding", "parsing"]
 rust-version = "1.72"
 
 [lib]
@@ -52,3 +53,23 @@ serde = { version = "1.0.210", features = ["derive"] }
 serde_json = "1.0.128"
 structopt = "0.3.26"
 thiserror = "2.0.17"
+
+[lints.rust]
+unsafe_code = "forbid"
+unused_qualifications = "warn"
+
+[lints.clippy]
+# Restrictions
+panic_in_result_fn = "warn"
+todo = "warn"
+#unwrap_used = "warn"  # TODO: fix and enable
+# Pedantics without being too noisy
+cargo = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+# Temporary allow - these should be fixed eventually, or at least considered
+missing_errors_doc = "allow"  # 190
+must_use_candidate = "allow"  # 4
+missing_panics_doc = "allow"  # 4
+multiple_crate_versions = "allow"  # 2
+cast_precision_loss = "allow"  # 2
+too_many_lines = "allow"  # 1

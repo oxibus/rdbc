@@ -7,7 +7,7 @@ use nom::multi::many0;
 use nom::{IResult, Parser};
 use serde::{Deserialize, Serialize};
 
-use super::common_parsers::*;
+use super::common_parsers::{dbc_object_name, multispacey, spacey};
 use super::error::DbcParseError;
 use super::value_descriptions::{parser_value_descriptions, ValueDescriptions};
 
@@ -24,7 +24,7 @@ use super::value_descriptions::{parser_value_descriptions, ValueDescriptions};
 ///
 /// Format: `VAL_TABLE_ <value_table_name> <value_description>;`
 ///
-/// value_description: List of `IntValue "StringValue"` Pairs, seperated by whitespaces
+/// `value_description`: List of `IntValue "StringValue"` Pairs, seperated by whitespaces
 #[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct ValueTable {
     pub name: String,
@@ -129,7 +129,7 @@ mod tests {
                 }
             }
             .to_string(),
-            "VAL_TABLE_ ABS_fault_info 2 \"active faults stored\" 1 \"inactive faults stored\" 0 \"no faults stored\";"
+            r#"VAL_TABLE_ ABS_fault_info 2 "active faults stored" 1 "inactive faults stored" 0 "no faults stored";"#
         );
     }
 

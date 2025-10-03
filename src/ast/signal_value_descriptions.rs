@@ -7,7 +7,7 @@ use nom::multi::many0;
 use nom::{IResult, Parser};
 use serde::{Deserialize, Serialize};
 
-use super::common_parsers::*;
+use super::common_parsers::{multispacey, parser_message_id, parser_signal_name, spacey};
 use super::error::DbcParseError;
 use super::value_descriptions::{parser_value_descriptions, ValueDescriptions};
 
@@ -56,7 +56,7 @@ pub fn parser_signal_value_descriptions(
     match res {
         Ok((remain, val)) => Ok((remain, val)),
         Err(e) => {
-            log::trace!("parse signal value descriptions failed, e = {:?}", e);
+            log::trace!("parse signal value descriptions failed, e = {e:?}");
             Err(nom::Err::Error(DbcParseError::BadSignalValueDescriptions))
         }
     }
@@ -77,7 +77,7 @@ mod tests {
             Ok((
                 "",
                 SignalValueDescriptions {
-                    message_id: 2147487969,
+                    message_id: 2_147_487_969,
                     signal_name: "Value1".to_string(),
                     value_descriptions: ValueDescriptions {
                         values: vec![
@@ -108,7 +108,7 @@ mod tests {
     fn test_signal_value_descriptions_string_01() {
         assert_eq!(
             SignalValueDescriptions {
-                message_id: 2147487969,
+                message_id: 2_147_487_969,
                 signal_name: "Value0".to_string(),
                 value_descriptions: ValueDescriptions {
                     values: vec![
@@ -141,7 +141,7 @@ mod tests {
                 value_descriptions: ValueDescriptions { values: vec![] }
             }
             .to_string(),
-            r#"VAL_ 12345 signal_name;"#,
+            "VAL_ 12345 signal_name;",
         );
     }
 }

@@ -10,7 +10,9 @@ use nom::{IResult, Parser};
 use serde::{Deserialize, Serialize};
 
 use super::char_string::{parser_char_string, CharString};
-use super::common_parsers::*;
+use super::common_parsers::{
+    multispacey, number_value, parser_node_name, parser_signal_name, spacey, unsigned_integer,
+};
 use super::error::DbcParseError;
 
 /// example:
@@ -113,7 +115,7 @@ impl fmt::Display for ValueType {
 /// Signed: + = unsigned; - = signed
 /// Endianness: 1 = little-endian, Intel; 0 = big-endian, Motorola
 /// M: If M than this signals contains a multiplexer identifier.
-/// MultiplexerIdentifier: Signal definition is only used if the value of the multiplexer signal equals to this value.
+/// `MultiplexerIdentifier`: Signal definition is only used if the value of the multiplexer signal equals to this value.
 #[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct Signal {
     pub name: String,
@@ -134,7 +136,7 @@ impl fmt::Display for Signal {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let multiplexer = match &self.multiplexer {
             Some(m) => format!("{m} "),
-            None => "".to_string(),
+            None => String::new(),
         };
         let value_type = match &self.value_type {
             ValueType::Signed => "-",
@@ -143,16 +145,16 @@ impl fmt::Display for Signal {
         let byte_order = &self.byte_order.to_string();
         let min_max = match (&self.min, &self.max) {
             (Some(min), Some(max)) => format!("[{min}|{max}]"),
-            _ => "".to_string(),
+            _ => String::new(),
         };
         let unit = match &self.unit {
-            Some(u) => format!("\"{u}\""),
-            None => "".to_string(),
+            Some(u) => format!(r#""{u}""#),
+            None => String::new(),
         };
         let mut receivers_str = String::new();
         if let Some(nodes) = &self.receivers {
             receivers_str = nodes.join(",");
-        };
+        }
 
         write!(
             f,
@@ -303,11 +305,11 @@ pub fn parser_signal(input: &str) -> IResult<&str, Signal, DbcParseError> {
 
     match res {
         Ok((remain, signal)) => {
-            log::info!("parse signal: {:?}", signal);
+            log::info!("parse signal: {signal:?}");
             Ok((remain, signal))
         }
         Err(e) => {
-            log::trace!("parse signal failed, e = {:?}", e);
+            log::trace!("parse signal failed, e = {e:?}");
             Err(nom::Err::Error(DbcParseError::BadSignal))
         }
     }
@@ -320,7 +322,7 @@ mod tests {
     #[test]
     fn test_dbc_signal_multiplexer_01() {
         assert_eq!(
-            parser_signal_multiplexer(r#"M"#),
+            parser_signal_multiplexer("M"),
             Ok((
                 "",
                 MultiplexerIndicator {
@@ -334,7 +336,7 @@ mod tests {
     #[test]
     fn test_dbc_signal_multiplexer_02() {
         assert_eq!(
-            parser_signal_multiplexer(r#"m0"#),
+            parser_signal_multiplexer("m0"),
             Ok((
                 "",
                 MultiplexerIndicator {
@@ -348,7 +350,7 @@ mod tests {
     #[test]
     fn test_dbc_signal_multiplexer_03() {
         assert_eq!(
-            parser_signal_multiplexer(r#"m123"#),
+            parser_signal_multiplexer("m123"),
             Ok((
                 "",
                 MultiplexerIndicator {
@@ -362,7 +364,7 @@ mod tests {
     #[test]
     fn test_dbc_signal_multiplexer_04() {
         assert_eq!(
-            parser_signal_multiplexer(r#"m3M"#),
+            parser_signal_multiplexer("m3M"),
             Ok((
                 "",
                 MultiplexerIndicator {
@@ -391,7 +393,7 @@ mod tests {
                         size: 16,
                         byte_order: ByteOrder::LittleEndian,
                         value_type: ValueType::Unsigned,
-                        factor: 0.000127465,
+                        factor: 0.000_127_465,
                         offset: -4.1768,
                         min: Some(-4.1768),
                         max: Some(4.1765),
@@ -400,7 +402,7 @@ mod tests {
                     }
                 );
             }
-            Err(err) => panic!("err = {:?}", err),
+            Err(err) => panic!("err = {err:?}"),
         }
     }
 
@@ -430,12 +432,12 @@ mod tests {
                         offset: 0.0,
                         min: Some(0.0),
                         max: Some(0.0),
-                        unit: Some(CharString("".into())),
+                        unit: Some(CharString(String::new())),
                         receivers: Some(vec!["Vector__XXX".into()]),
                     }
                 );
             }
-            Err(err) => panic!("err = {:?}", err),
+            Err(err) => panic!("err = {err:?}"),
         }
     }
 
@@ -465,12 +467,12 @@ mod tests {
                         offset: 0.0,
                         min: Some(0.0),
                         max: Some(0.0),
-                        unit: Some(CharString("".into())),
+                        unit: Some(CharString(String::new())),
                         receivers: Some(vec!["Vector__XXX".into()]),
                     }
                 );
             }
-            Err(err) => panic!("err = {:?}", err),
+            Err(err) => panic!("err = {err:?}"),
         }
     }
 
@@ -502,7 +504,7 @@ mod tests {
                     }
                 );
             }
-            Err(err) => panic!("err = {:?}", err),
+            Err(err) => panic!("err = {err:?}"),
         }
     }
 }

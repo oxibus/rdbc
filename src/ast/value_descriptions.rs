@@ -7,7 +7,7 @@ use nom::{IResult, Parser};
 use serde::{Deserialize, Serialize};
 
 use super::char_string::{parser_char_string, CharString};
-use super::common_parsers::*;
+use super::common_parsers::spacey;
 use super::error::DbcParseError;
 
 /// A value description defines a textual description for a single value. This value may
@@ -41,7 +41,7 @@ pub struct ValueDescriptionItem {
 
 impl fmt::Display for ValueDescriptionItem {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{} \"{}\"", self.num, self.str)
+        write!(f, r#"{} "{}""#, self.num, self.str)
     }
 }
 
@@ -52,15 +52,13 @@ pub struct ValueDescriptions {
 
 impl fmt::Display for ValueDescriptions {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{}",
-            self.values
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(" ")
-        )
+        for (i, item) in self.values.iter().enumerate() {
+            if i > 0 {
+                write!(f, " ")?;
+            }
+            write!(f, "{item}")?;
+        }
+        Ok(())
     }
 }
 
@@ -180,6 +178,6 @@ mod tests {
 
     #[test]
     fn test_value_descriptions_string_02() {
-        assert_eq!(ValueDescriptions { values: vec![] }.to_string(), r#""#);
+        assert_eq!(ValueDescriptions { values: vec![] }.to_string(), "");
     }
 }

@@ -8,7 +8,9 @@ use serde::{Deserialize, Serialize};
 
 use super::attribute::parser_attribute_name;
 use super::attribute_default::{parser_attribute_value, AttributeValue};
-use super::common_parsers::*;
+use super::common_parsers::{
+    multispacey, parser_env_var_name, parser_message_id, parser_node_name, parser_signal_name,
+};
 use super::error::DbcParseError;
 
 #[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
@@ -21,7 +23,7 @@ impl fmt::Display for NetworkAttributeValue {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "BA_ \"{}\" {};",
+            r#"BA_ "{}" {};"#,
             self.attribute_name, self.attribute_value
         )
     }
@@ -46,11 +48,11 @@ pub fn parser_network_attribute_value(
 
     match res {
         Ok((remain, value)) => {
-            log::info!("parse network attribute value: {:?}", value);
+            log::info!("parse network attribute value: {value:?}");
             Ok((remain, ObjectAttributeValue::Network(value)))
         }
         Err(e) => {
-            log::trace!("parse network attribute value failed, e = {:?}", e);
+            log::trace!("parse network attribute value failed, e = {e:?}");
             Err(nom::Err::Error(DbcParseError::BadNetworkAttributeValue))
         }
     }
@@ -67,7 +69,7 @@ impl fmt::Display for NodeAttributeValue {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "BA_ \"{}\" BU_ {} {};",
+            r#"BA_ "{}" BU_ {} {};"#,
             self.attribute_name, self.node_name, self.attribute_value
         )
     }
@@ -95,11 +97,11 @@ pub fn parser_node_attribute_value(
 
     match res {
         Ok((remain, value)) => {
-            log::info!("parse node attribute value: {:?}", value);
+            log::info!("parse node attribute value: {value:?}");
             Ok((remain, ObjectAttributeValue::Node(value)))
         }
         Err(e) => {
-            log::trace!("parse node attribute value failed, e = {:?}", e);
+            log::trace!("parse node attribute value failed, e = {e:?}");
             Err(nom::Err::Error(DbcParseError::BadNodeAttributeValue))
         }
     }
@@ -116,7 +118,7 @@ impl fmt::Display for MessageAttributeValue {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "BA_ \"{}\" BO_ {} {};",
+            r#"BA_ "{}" BO_ {} {};"#,
             self.attribute_name, self.message_id, self.attribute_value
         )
     }
@@ -144,11 +146,11 @@ pub fn parser_message_attribute_value(
 
     match res {
         Ok((remain, value)) => {
-            log::info!("parse message attribute value: {:?}", value);
+            log::info!("parse message attribute value: {value:?}");
             Ok((remain, ObjectAttributeValue::Message(value)))
         }
         Err(e) => {
-            log::trace!("parse message attribute value failed, e = {:?}", e);
+            log::trace!("parse message attribute value failed, e = {e:?}");
             Err(nom::Err::Error(DbcParseError::BadMessageAttributeValue))
         }
     }
@@ -166,7 +168,7 @@ impl fmt::Display for SignalAttributeValue {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "BA_ \"{}\" SG_ {} {} {};",
+            r#"BA_ "{}" SG_ {} {} {};"#,
             self.attribute_name, self.message_id, self.signal_name, self.attribute_value
         )
     }
@@ -198,11 +200,11 @@ pub fn parser_signal_attribute_value(
 
     match res {
         Ok((remain, value)) => {
-            log::info!("parse signal attribute value: {:?}", value);
+            log::info!("parse signal attribute value: {value:?}");
             Ok((remain, ObjectAttributeValue::Signal(value)))
         }
         Err(e) => {
-            log::trace!("parse signal attribute value failed, e = {:?}", e);
+            log::trace!("parse signal attribute value failed, e = {e:?}");
             Err(nom::Err::Error(DbcParseError::BadSignalAttributeValue))
         }
     }
@@ -219,7 +221,7 @@ impl fmt::Display for EnvironmentVariableAttributeValue {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "BA_ \"{}\" EV_ {} {};",
+            r#"BA_ "{}" EV_ {} {};"#,
             self.attribute_name, self.env_var_name, self.attribute_value
         )
     }
@@ -249,14 +251,11 @@ pub fn parser_environment_variable_attribute_value(
 
     match res {
         Ok((remain, value)) => {
-            log::info!("parse environment variable attribute value: {:?}", value);
+            log::info!("parse environment variable attribute value: {value:?}");
             Ok((remain, ObjectAttributeValue::EnvironmentVariable(value)))
         }
         Err(e) => {
-            log::trace!(
-                "parse environment variable attribute value failed, e = {:?}",
-                e
-            );
+            log::trace!("parse environment variable attribute value failed, e = {e:?}");
             Err(nom::Err::Error(
                 DbcParseError::BadEnvironmentVariableAttributeValue,
             ))
@@ -276,11 +275,11 @@ pub enum ObjectAttributeValue {
 impl fmt::Display for ObjectAttributeValue {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            ObjectAttributeValue::Network(v) => write!(f, "{}", v),
-            ObjectAttributeValue::Node(v) => write!(f, "{}", v),
-            ObjectAttributeValue::Message(v) => write!(f, "{}", v),
-            ObjectAttributeValue::Signal(v) => write!(f, "{}", v),
-            ObjectAttributeValue::EnvironmentVariable(v) => write!(f, "{}", v),
+            ObjectAttributeValue::Network(v) => write!(f, "{v}"),
+            ObjectAttributeValue::Node(v) => write!(f, "{v}"),
+            ObjectAttributeValue::Message(v) => write!(f, "{v}"),
+            ObjectAttributeValue::Signal(v) => write!(f, "{v}"),
+            ObjectAttributeValue::EnvironmentVariable(v) => write!(f, "{v}"),
         }
     }
 }
@@ -299,11 +298,11 @@ pub fn parser_object_attribute_value(
 
     match res {
         Ok((remain, value)) => {
-            log::info!("parse attribute value: {:?}", value);
+            log::info!("parse attribute value: {value:?}");
             Ok((remain, value))
         }
         Err(e) => {
-            log::trace!("parse attribute value failed, e = {:?}", e);
+            log::trace!("parse attribute value failed, e = {e:?}");
             Err(e)
         }
     }

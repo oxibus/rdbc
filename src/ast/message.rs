@@ -8,13 +8,15 @@ use nom::multi::many0;
 use nom::{IResult, Parser};
 use serde::{Deserialize, Serialize};
 
-use super::common_parsers::*;
+use super::common_parsers::{
+    dbc_identifier, multispacey, parser_message_id, parser_node_name, spacey, unsigned_integer,
+};
 use super::error::DbcParseError;
 use super::signal::{parser_signal, Signal};
 
 /// Message definition.
 /// Format: `BO_ <CAN-ID> <MessageName>: <MessageSize> <SendingNode>`
-/// MessageSize in bytes.
+/// `MessageSize` in bytes.
 #[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct MessageHeader {
     /// The message's CAN-ID. The CAN-ID has to be unique within the DBC file. If the
@@ -67,7 +69,7 @@ impl fmt::Display for Message {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         writeln!(f, "{}", self.header)?;
         for signal in &self.signals {
-            writeln!(f, "\t{}", signal)?;
+            writeln!(f, "\t{signal}")?;
         }
         Ok(())
     }
@@ -106,11 +108,11 @@ fn parser_message_header(input: &str) -> IResult<&str, MessageHeader, DbcParseEr
 
     match res {
         Ok((remain, header)) => {
-            log::info!("parse message header: {:?}", header);
+            log::info!("parse message header: {header:?}");
             Ok((remain, header))
         }
         Err(e) => {
-            log::trace!("parse message header failed, e = {:?}", e);
+            log::trace!("parse message header failed, e = {e:?}");
             Err(nom::Err::Error(DbcParseError::BadMessageHeader))
         }
     }
@@ -135,11 +137,11 @@ mod tests {
     #[test]
     fn test_dbc_message_header_01() {
         assert_eq!(
-            parser_message_header(r#"BO_ 2348941054 Normal: 8 Vector__XXX"#),
+            parser_message_header("BO_ 2348941054 Normal: 8 Vector__XXX"),
             Ok((
                 "",
                 MessageHeader {
-                    id: 2348941054,
+                    id: 2_348_941_054,
                     name: "Normal".into(),
                     size: 8,
                     transmitter: "Vector__XXX".into(),
@@ -151,11 +153,11 @@ mod tests {
     #[test]
     fn test_dbc_message_header_02() {
         assert_eq!(
-            parser_message_header(r#"BO_ 2147487969 CANMultiplexed: 2 Node0"#),
+            parser_message_header("BO_ 2147487969 CANMultiplexed: 2 Node0"),
             Ok((
                 "",
                 MessageHeader {
-                    id: 2147487969,
+                    id: 2_147_487_969,
                     name: "CANMultiplexed".into(),
                     size: 2,
                     transmitter: "Node0".into(),
@@ -167,7 +169,7 @@ mod tests {
     #[test]
     fn test_dbc_message_header_03() {
         assert_eq!(
-            parser_message_header(r#"BO_ 1234 CANMessage: 8 Node0"#),
+            parser_message_header("BO_ 1234 CANMessage: 8 Node0"),
             Ok((
                 "",
                 MessageHeader {
@@ -183,7 +185,7 @@ mod tests {
     #[test]
     fn test_dbc_message_header_04() {
         assert_eq!(
-            parser_message_header(r#"BO_ 835 BREMSE_33: 8 ABS"#),
+            parser_message_header("BO_ 835 BREMSE_33: 8 ABS"),
             Ok((
                 "",
                 MessageHeader {
@@ -199,7 +201,7 @@ mod tests {
     #[test]
     fn test_dbc_message_header_05() {
         assert_eq!(
-            parser_message_header(r#"BO_ 117 DRS_RX_ID0: 8 ABS"#),
+            parser_message_header("BO_ 117 DRS_RX_ID0: 8 ABS"),
             Ok((
                 "",
                 MessageHeader {
@@ -215,7 +217,7 @@ mod tests {
     #[test]
     fn test_dbc_message_header_06() {
         assert_eq!(
-            parser_message_header(r#"BO_ 1 M1: 8 FOO"#),
+            parser_message_header("BO_ 1 M1: 8 FOO"),
             Ok((
                 "",
                 MessageHeader {
@@ -231,7 +233,7 @@ mod tests {
     #[test]
     fn test_dbc_message_header_07() {
         assert_eq!(
-            parser_message_header(r#"BO_ 1234 INV2EventMsg1: 8 Inv2"#),
+            parser_message_header("BO_ 1234 INV2EventMsg1: 8 Inv2"),
             Ok((
                 "",
                 MessageHeader {
@@ -247,7 +249,7 @@ mod tests {
     #[test]
     fn test_dbc_message_header_08() {
         assert_eq!(
-            parser_message_header(r#"BO_ 83 Message_2: 8 ECU2"#),
+            parser_message_header("BO_ 83 Message_2: 8 ECU2"),
             Ok((
                 "",
                 MessageHeader {
@@ -263,11 +265,11 @@ mod tests {
     #[test]
     fn test_dbc_message_header_09() {
         assert_eq!(
-            parser_message_header(r#"BO_ 2147483705 TheMessage: 8 Vector__XXX"#),
+            parser_message_header("BO_ 2147483705 TheMessage: 8 Vector__XXX"),
             Ok((
                 "",
                 MessageHeader {
-                    id: 2147483705,
+                    id: 2_147_483_705,
                     name: "TheMessage".into(),
                     size: 8,
                     transmitter: "Vector__XXX".into(),
@@ -279,7 +281,7 @@ mod tests {
     #[test]
     fn test_dbc_message_header_10() {
         assert_eq!(
-            parser_message_header(r#"BO_ 1 Message1: 1 Vector__XXX"#),
+            parser_message_header("BO_ 1 Message1: 1 Vector__XXX"),
             Ok((
                 "",
                 MessageHeader {

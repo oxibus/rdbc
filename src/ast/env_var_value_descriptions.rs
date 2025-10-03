@@ -7,7 +7,7 @@ use nom::multi::many0;
 use nom::{IResult, Parser};
 use serde::{Deserialize, Serialize};
 
-use super::common_parsers::*;
+use super::common_parsers::{multispacey, parser_env_var_name, spacey};
 use super::error::DbcParseError;
 use super::value_descriptions::{parser_value_descriptions, ValueDescriptions};
 
@@ -50,10 +50,7 @@ pub fn parser_env_var_value_descriptions(
     match res {
         Ok((remain, val)) => Ok((remain, val)),
         Err(e) => {
-            log::trace!(
-                "parse environment variable value descriptions failed, e = {:?}",
-                e
-            );
+            log::trace!("parse environment variable value descriptions failed, e = {e:?}");
             Err(nom::Err::Error(
                 DbcParseError::BadEnvironmentVariableValueDescriptions,
             ))

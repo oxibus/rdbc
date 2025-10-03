@@ -29,7 +29,7 @@ impl fmt::Display for CharString {
                     }
                 }
             } else {
-                write!(f, "{}", c)?;
+                write!(f, "{c}")?;
             }
         }
         Ok(())
@@ -121,6 +121,7 @@ mod tests {
     }
 
     #[test]
+    #[allow(clippy::needless_raw_string_hashes)]
     fn test_char_string_to_string_02() {
         assert_eq!(
             CharString("hello\\Iworld".to_string()).to_string(),
@@ -132,14 +133,14 @@ mod tests {
     fn test_char_string_to_string_03() {
         assert_eq!(
             CharString("hello\nworld".to_string()).to_string(),
-            r#"hello
-world"#
+            "hello
+world"
         );
     }
 
     #[test]
     fn test_char_string_01() {
-        assert_eq!(char_string("\"hello\""), Ok(("", "hello".to_string())));
+        assert_eq!(char_string(r#""hello""#), Ok(("", "hello".to_string())));
     }
 
     #[test]
