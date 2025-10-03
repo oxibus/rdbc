@@ -5,12 +5,12 @@ use nom::character::complete::{line_ending, u64};
 use nom::combinator::{map, opt};
 use nom::multi::many0;
 use nom::{IResult, Parser};
-use serde::{Deserialize, Serialize};
 
 use super::common_parsers::{multispacey, spacey};
 use super::error::DbcParseError;
 
-#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct BitTimingValue {
     // Baud rate
     pub baudrate: u64,
@@ -31,7 +31,8 @@ impl fmt::Display for BitTimingValue {
 /// keyword `BS_` must appear in the DBC file.
 ///
 /// Format: `bit_timing = BS_: [baudrate : BTR1 , BTR2 ] ;`
-#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct BitTiming {
     pub value: Option<BitTimingValue>,
 }

@@ -4,14 +4,14 @@ use nom::branch::alt;
 use nom::bytes::complete::tag;
 use nom::combinator::map;
 use nom::{IResult, Parser};
-use serde::{Deserialize, Serialize};
 
 use super::attribute::parser_attribute_name;
 use super::char_string::{parser_char_string, CharString};
 use super::common_parsers::{multispacey, number_value};
 use super::error::DbcParseError;
 
-#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum AttributeValue {
     Double(f64),
     String(CharString),
@@ -49,7 +49,8 @@ pub fn parser_attribute_value(input: &str) -> IResult<&str, AttributeValue, DbcP
     }
 }
 
-#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct AttributeDefinitionDefault {
     attribute_name: String,
     attribute_value: AttributeValue,
@@ -96,7 +97,8 @@ pub fn parser_attribute_definition_default(
     }
 }
 
-#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct RelationAttributeDefinitionDefault {
     attribute_name: String,
     attribute_value: AttributeValue,
@@ -143,7 +145,8 @@ pub fn parser_relation_attribute_definition_default(
     }
 }
 
-#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum AttributeDefault {
     Attribute(AttributeDefinitionDefault),
     RelationAttribute(RelationAttributeDefinitionDefault),

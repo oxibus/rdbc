@@ -5,7 +5,6 @@ use nom::character::complete::line_ending;
 use nom::combinator::map;
 use nom::multi::many0;
 use nom::{IResult, Parser};
-use serde::{Deserialize, Serialize};
 
 use super::common_parsers::{multispacey, parser_message_id, parser_signal_name, spacey};
 use super::error::DbcParseError;
@@ -16,7 +15,8 @@ use super::value_descriptions::{parser_value_descriptions, ValueDescriptions};
 /// VAL_ 2147487969 Value1 3 "Three" 2 "Two" 1 "One" 0 "Zero" ;
 /// VAL_ 2147487969 Value0 2 "Value2" 1 "Value1" 0 "Value0" ;
 /// ```
-#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct SignalValueDescriptions {
     pub message_id: u32,
     pub signal_name: String,

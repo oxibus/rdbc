@@ -35,6 +35,14 @@ usage example:
 dbc2json -i input.dbc -o output.json
 ```
 
+## Features
+
+By default, the crate is built with all features enabled. Some of them are only needed to build binary tools. For faster compilation, disable defaults and optionally enable `serde` and/or `encoding`:
+
+```toml
+rrdbc = { version = "0.1", default-features = false, features = ["serde", "encoding"] }
+```
+
 ## Resources
 
 * <https://bitbucket.org/tobylorenz/vector_dbc/src/master/>

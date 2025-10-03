@@ -4,7 +4,6 @@ use nom::character::complete::i64;
 use nom::combinator::map;
 use nom::multi::many0;
 use nom::{IResult, Parser};
-use serde::{Deserialize, Serialize};
 
 use super::char_string::{parser_char_string, CharString};
 use super::common_parsers::spacey;
@@ -33,7 +32,8 @@ use super::error::DbcParseError;
 /// VAL_ WriteOnlyEnvVar 2 "Value2" 1 "Value1" 0 "Value0" ;
 /// VAL_ ReadOnlyEnvVar 2 "Value2" 1 "Value1" 0 "Value0" ;
 /// ```
-#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ValueDescriptionItem {
     pub num: i64,
     pub str: CharString,
@@ -45,7 +45,8 @@ impl fmt::Display for ValueDescriptionItem {
     }
 }
 
-#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ValueDescriptions {
     pub values: Vec<ValueDescriptionItem>,
 }

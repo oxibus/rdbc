@@ -3,7 +3,6 @@ use std::fmt;
 use nom::combinator::{all_consuming, map};
 use nom::multi::many0;
 use nom::{IResult, Parser};
-use serde::{Deserialize, Serialize};
 
 use super::attribute_default::{parser_attribute_default, AttributeDefault};
 use super::attribute_definition::{parser_attribute_definition, AttributeDefinition};
@@ -24,7 +23,8 @@ use super::signal_value_descriptions::{parser_signal_value_descriptions, SignalV
 use super::value_tables::{parser_value_tables, ValueTable};
 use super::version::{parser_version, Version};
 
-#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct NetworkAst {
     // VERSION "xxx"
     pub version: Version,

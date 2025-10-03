@@ -5,7 +5,6 @@ use nom::character::complete::{line_ending, space0};
 use nom::combinator::map;
 use nom::multi::many0;
 use nom::{IResult, Parser};
-use serde::{Deserialize, Serialize};
 
 use super::common_parsers::{dbc_object_name, multispacey};
 use super::error::DbcParseError;
@@ -21,7 +20,8 @@ use super::error::DbcParseError;
 ///     ...
 /// ```
 /// */
-#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct NewSymbols(pub Vec<String>);
 
 impl fmt::Display for NewSymbols {

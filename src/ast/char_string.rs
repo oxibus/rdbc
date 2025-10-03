@@ -7,11 +7,11 @@ use nom::combinator::{map, recognize};
 use nom::multi::many0;
 use nom::sequence::{delimited, pair};
 use nom::{IResult, Parser};
-use serde::{Deserialize, Serialize};
 
 use super::error::DbcParseError;
 
-#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct CharString(pub String);
 
 impl fmt::Display for CharString {

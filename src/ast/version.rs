@@ -4,7 +4,6 @@ use nom::bytes::complete::tag;
 use nom::combinator::map;
 use nom::sequence::preceded;
 use nom::{IResult, Parser};
-use serde::{Deserialize, Serialize};
 
 use super::char_string::{parser_char_string, CharString};
 use super::common_parsers::spacey;
@@ -13,7 +12,8 @@ use super::error::DbcParseError;
 /// Version identifier of the DBC file.
 ///
 /// Format: `VERSION "<VersionIdentifier>"`
-#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Version(pub CharString);
 
 impl fmt::Display for Version {

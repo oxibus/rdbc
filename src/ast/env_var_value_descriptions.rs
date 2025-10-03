@@ -5,7 +5,6 @@ use nom::character::complete::line_ending;
 use nom::combinator::map;
 use nom::multi::many0;
 use nom::{IResult, Parser};
-use serde::{Deserialize, Serialize};
 
 use super::common_parsers::{multispacey, parser_env_var_name, spacey};
 use super::error::DbcParseError;
@@ -17,7 +16,8 @@ use super::value_descriptions::{parser_value_descriptions, ValueDescriptions};
 /// VAL_ WriteOnlyEnvVar 2 "Value2" 1 "Value1" 0 "Value0" ;
 /// VAL_ ReadOnlyEnvVar 2 "Value2" 1 "Value1" 0 "Value0" ;
 /// ```
-#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct EnvironmentVariableValueDescriptions {
     pub env_var_name: String,
     pub value_descriptions: ValueDescriptions,

@@ -9,49 +9,33 @@ repository = "https://github.com/MDGSF/rdbc"
 license = "MIT OR Apache-2.0"
 keywords = ["dbc", "parser", "format"]
 categories = ["embedded", "no-std", "encoding", "parsing"]
-rust-version = "1.72"
+rust-version = "1.74"
 
-[lib]
-name = "rrdbc"
-path = "src/lib.rs"
-
-[[bin]]
-name = "demo"
-path = "src/bin/demo.rs"
-
-[[bin]]
-name = "dbcfmt"
-path = "src/bin/dbcfmt.rs"
-
-[[bin]]
-name = "dbc2json"
-path = "src/bin/dbc2json.rs"
-
-[[bin]]
-name = "json2dbc"
-path = "src/bin/json2dbc.rs"
-
-[[bin]]
-name = "toutf8"
-path = "src/bin/toutf8.rs"
-
-[[bin]]
-name = "gbk2utf8"
-path = "src/bin/gbk2utf8.rs"
-
-[[bin]]
-name = "utf82gbk"
-path = "src/bin/utf82gbk.rs"
+[features]
+default = ["bin", "serde"]
+# Used to build the CLI tool
+bin = [
+    "dep:anyhow",
+    "dep:clap",
+    "dep:env_logger",
+    "dep:serde_json",
+    "encoding",
+    "serde",
+]
+# Support re-coding from different encodings (e.g. Windows-1252)
+encoding = ["dep:encoding_rs"]
+# Add support for serde serialization
+serde = ["dep:serde"]
 
 [dependencies]
-anyhow = "1.0.88"
-encoding_rs = "0.8.34"
-env_logger = "0.11.5"
+anyhow = { version = "1.0.88", optional = true }
+clap = { version = "4.4", features = ["derive"], optional = true }
+encoding_rs = { version = "0.8.34", optional = true }
+env_logger = { version = "0.11.5", optional = true }
 log = "0.4.22"
 nom = "8.0"
-serde = { version = "1.0.210", features = ["derive"] }
-serde_json = "1.0.128"
-structopt = "0.3.26"
+serde = { version = "1.0.210", features = ["derive"], optional = true }
+serde_json = { version = "1.0.128", optional = true }
 thiserror = "2.0.17"
 
 [lints.rust]
