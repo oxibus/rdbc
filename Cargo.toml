@@ -8,6 +8,7 @@ readme = "README.md"
 repository = "https://github.com/MDGSF/rdbc"
 license = "MIT OR Apache-2.0"
 keywords = ["dbc", "parser", "format"]
+rust-version = "1.72"
 
 [lib]
 name = "rrdbc"
