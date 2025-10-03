@@ -6,8 +6,8 @@ use super::error::DbcParseError;
 use nom::branch::alt;
 use nom::bytes::complete::tag;
 use nom::combinator::map;
-use nom::sequence::tuple;
 use nom::IResult;
+use nom::Parser;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
@@ -31,17 +31,18 @@ pub fn parser_network_attribute_value(
     input: &str,
 ) -> IResult<&str, ObjectAttributeValue, DbcParseError> {
     let res = map(
-        tuple((
+        (
             multispacey(tag("BA_")),
             multispacey(parser_attribute_name),
             multispacey(parser_attribute_value),
             multispacey(tag(";")),
-        )),
+        ),
         |(_, attribute_name, attribute_value, _)| NetworkAttributeValue {
             attribute_name: attribute_name.to_string(),
             attribute_value,
         },
-    )(input);
+    )
+    .parse(input);
 
     match res {
         Ok((remain, value)) => {
@@ -76,20 +77,21 @@ pub fn parser_node_attribute_value(
     input: &str,
 ) -> IResult<&str, ObjectAttributeValue, DbcParseError> {
     let res = map(
-        tuple((
+        (
             multispacey(tag("BA_")),
             multispacey(parser_attribute_name),
             multispacey(tag("BU_")),
             multispacey(parser_node_name),
             multispacey(parser_attribute_value),
             multispacey(tag(";")),
-        )),
+        ),
         |(_, attribute_name, _, node_name, attribute_value, _)| NodeAttributeValue {
             attribute_name: attribute_name.to_string(),
             node_name: node_name.to_string(),
             attribute_value,
         },
-    )(input);
+    )
+    .parse(input);
 
     match res {
         Ok((remain, value)) => {
@@ -124,20 +126,21 @@ pub fn parser_message_attribute_value(
     input: &str,
 ) -> IResult<&str, ObjectAttributeValue, DbcParseError> {
     let res = map(
-        tuple((
+        (
             multispacey(tag("BA_")),
             multispacey(parser_attribute_name),
             multispacey(tag("BO_")),
             multispacey(parser_message_id),
             multispacey(parser_attribute_value),
             multispacey(tag(";")),
-        )),
+        ),
         |(_, attribute_name, _, message_id, attribute_value, _)| MessageAttributeValue {
             attribute_name: attribute_name.to_string(),
             message_id: message_id,
             attribute_value,
         },
-    )(input);
+    )
+    .parse(input);
 
     match res {
         Ok((remain, value)) => {
@@ -173,7 +176,7 @@ pub fn parser_signal_attribute_value(
     input: &str,
 ) -> IResult<&str, ObjectAttributeValue, DbcParseError> {
     let res = map(
-        tuple((
+        (
             multispacey(tag("BA_")),
             multispacey(parser_attribute_name),
             multispacey(tag("SG_")),
@@ -181,7 +184,7 @@ pub fn parser_signal_attribute_value(
             multispacey(parser_signal_name),
             multispacey(parser_attribute_value),
             multispacey(tag(";")),
-        )),
+        ),
         |(_, attribute_name, _, message_id, signal_name, attribute_value, _)| {
             SignalAttributeValue {
                 attribute_name: attribute_name.to_string(),
@@ -190,7 +193,8 @@ pub fn parser_signal_attribute_value(
                 attribute_value,
             }
         },
-    )(input);
+    )
+    .parse(input);
 
     match res {
         Ok((remain, value)) => {
@@ -225,14 +229,14 @@ pub fn parser_environment_variable_attribute_value(
     input: &str,
 ) -> IResult<&str, ObjectAttributeValue, DbcParseError> {
     let res = map(
-        tuple((
+        (
             multispacey(tag("BA_")),
             multispacey(parser_attribute_name),
             multispacey(tag("EV_")),
             multispacey(parser_env_var_name),
             multispacey(parser_attribute_value),
             multispacey(tag(";")),
-        )),
+        ),
         |(_, attribute_name, _, env_var_name, attribute_value, _)| {
             EnvironmentVariableAttributeValue {
                 attribute_name: attribute_name.to_string(),
@@ -240,7 +244,8 @@ pub fn parser_environment_variable_attribute_value(
                 attribute_value,
             }
         },
-    )(input);
+    )
+    .parse(input);
 
     match res {
         Ok((remain, value)) => {
@@ -289,7 +294,8 @@ pub fn parser_object_attribute_value(
         parser_message_attribute_value,
         parser_signal_attribute_value,
         parser_environment_variable_attribute_value,
-    ))(input);
+    ))
+    .parse(input);
 
     match res {
         Ok((remain, value)) => {

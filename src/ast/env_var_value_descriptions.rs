@@ -6,8 +6,8 @@ use nom::bytes::complete::tag;
 use nom::character::complete::line_ending;
 use nom::combinator::map;
 use nom::multi::many0;
-use nom::sequence::tuple;
 use nom::IResult;
+use nom::Parser;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
@@ -31,18 +31,19 @@ pub fn parser_env_var_value_descriptions(
     input: &str,
 ) -> IResult<&str, EnvironmentVariableValueDescriptions, DbcParseError> {
     let res = map(
-        tuple((
+        (
             multispacey(tag("VAL_")),
             spacey(parser_env_var_name),
             spacey(parser_value_descriptions),
             spacey(tag(";")),
             many0(line_ending),
-        )),
+        ),
         |(_, env_var_name, value_descriptions, _, _)| EnvironmentVariableValueDescriptions {
             env_var_name: env_var_name.to_string(),
             value_descriptions,
         },
-    )(input);
+    )
+    .parse(input);
 
     match res {
         Ok((remain, val)) => Ok((remain, val)),

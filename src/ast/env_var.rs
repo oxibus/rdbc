@@ -10,8 +10,8 @@ use nom::combinator::map;
 use nom::multi::many0;
 use nom::multi::separated_list0;
 use nom::sequence::pair;
-use nom::sequence::tuple;
 use nom::IResult;
+use nom::Parser;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
@@ -132,7 +132,7 @@ impl fmt::Display for EnvironmentVariable {
 }
 
 pub fn parser_env_var_type(input: &str) -> IResult<&str, u32, DbcParseError> {
-    u32(input)
+    u32.parse(input)
 }
 
 pub fn parser_minimum(input: &str) -> IResult<&str, f64, DbcParseError> {
@@ -161,7 +161,7 @@ pub fn parser_access_type(input: &str) -> IResult<&str, &str, DbcParseError> {
 
 pub fn parser_env_var(input: &str) -> IResult<&str, EnvironmentVariable, DbcParseError> {
     let res = map(
-        tuple((
+        (
             multispacey(tag("EV_")),
             spacey(parser_env_var_name),
             spacey(tag(":")),
@@ -178,7 +178,7 @@ pub fn parser_env_var(input: &str) -> IResult<&str, EnvironmentVariable, DbcPars
             spacey(separated_list0(tag(","), spacey(parser_node_name))),
             spacey(tag(";")),
             many0(line_ending),
-        )),
+        ),
         |(
             _,
             env_var_name,
@@ -220,7 +220,8 @@ pub fn parser_env_var(input: &str) -> IResult<&str, EnvironmentVariable, DbcPars
                 access_nodes: access_nodes.iter().map(|s| s.to_string()).collect(),
             }
         },
-    )(input);
+    )
+    .parse(input);
 
     match res {
         Ok((remain, val)) => Ok((remain, val)),

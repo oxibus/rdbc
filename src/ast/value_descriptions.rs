@@ -5,8 +5,8 @@ use super::error::DbcParseError;
 use nom::character::complete::i64;
 use nom::combinator::map;
 use nom::multi::many0;
-use nom::sequence::tuple;
 use nom::IResult;
+use nom::Parser;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
@@ -67,16 +67,17 @@ impl fmt::Display for ValueDescriptions {
 pub fn parser_value_description_item(
     input: &str,
 ) -> IResult<&str, ValueDescriptionItem, DbcParseError> {
-    map(
-        tuple((spacey(i64), spacey(parser_char_string))),
-        |(num, str)| ValueDescriptionItem { num, str },
-    )(input)
+    map((spacey(i64), spacey(parser_char_string)), |(num, str)| {
+        ValueDescriptionItem { num, str }
+    })
+    .parse(input)
 }
 
 pub fn parser_value_descriptions(input: &str) -> IResult<&str, ValueDescriptions, DbcParseError> {
     map(many0(spacey(parser_value_description_item)), |values| {
         ValueDescriptions { values }
-    })(input)
+    })
+    .parse(input)
 }
 
 #[cfg(test)]

@@ -5,8 +5,8 @@ use super::error::DbcParseError;
 use nom::branch::alt;
 use nom::bytes::complete::tag;
 use nom::combinator::map;
-use nom::sequence::tuple;
 use nom::IResult;
+use nom::Parser;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
@@ -118,7 +118,8 @@ pub fn parser_comment(input: &str) -> IResult<&str, Comment, DbcParseError> {
         parser_message_comment,
         parser_signal_comment,
         parser_environment_variable_comment,
-    ))(input);
+    ))
+    .parse(input);
 
     match res {
         Ok((remain, comment)) => {
@@ -134,13 +135,14 @@ pub fn parser_comment(input: &str) -> IResult<&str, Comment, DbcParseError> {
 
 pub fn parser_network_comment(input: &str) -> IResult<&str, Comment, DbcParseError> {
     let res = map(
-        tuple((
+        (
             multispacey(tag("CM_")),
             multispacey(parser_char_string),
             multispacey(tag(";")),
-        )),
+        ),
         |(_, comment, _)| NetworkComment { comment },
-    )(input);
+    )
+    .parse(input);
 
     match res {
         Ok((remain, comment)) => {
@@ -156,18 +158,19 @@ pub fn parser_network_comment(input: &str) -> IResult<&str, Comment, DbcParseErr
 
 pub fn parser_node_comment(input: &str) -> IResult<&str, Comment, DbcParseError> {
     let res = map(
-        tuple((
+        (
             multispacey(tag("CM_")),
             multispacey(tag("BU_")),
             multispacey(parser_node_name),
             multispacey(parser_char_string),
             multispacey(tag(";")),
-        )),
+        ),
         |(_, _, node_name, comment, _)| NodeComment {
             node_name: node_name.to_string(),
             comment,
         },
-    )(input);
+    )
+    .parse(input);
 
     match res {
         Ok((remain, comment)) => {
@@ -183,18 +186,19 @@ pub fn parser_node_comment(input: &str) -> IResult<&str, Comment, DbcParseError>
 
 pub fn parser_message_comment(input: &str) -> IResult<&str, Comment, DbcParseError> {
     let res = map(
-        tuple((
+        (
             multispacey(tag("CM_")),
             multispacey(tag("BO_")),
             multispacey(parser_message_id),
             multispacey(parser_char_string),
             multispacey(tag(";")),
-        )),
+        ),
         |(_, _, message_id, comment, _)| MessageComment {
             message_id,
             comment,
         },
-    )(input);
+    )
+    .parse(input);
 
     match res {
         Ok((remain, comment)) => {
@@ -210,20 +214,21 @@ pub fn parser_message_comment(input: &str) -> IResult<&str, Comment, DbcParseErr
 
 pub fn parser_signal_comment(input: &str) -> IResult<&str, Comment, DbcParseError> {
     let res = map(
-        tuple((
+        (
             multispacey(tag("CM_")),
             multispacey(tag("SG_")),
             multispacey(parser_message_id),
             multispacey(parser_signal_name),
             multispacey(parser_char_string),
             multispacey(tag(";")),
-        )),
+        ),
         |(_, _, message_id, signal_name, comment, _)| SignalComment {
             message_id,
             signal_name: signal_name.to_string(),
             comment,
         },
-    )(input);
+    )
+    .parse(input);
 
     match res {
         Ok((remain, comment)) => {
@@ -239,18 +244,19 @@ pub fn parser_signal_comment(input: &str) -> IResult<&str, Comment, DbcParseErro
 
 pub fn parser_environment_variable_comment(input: &str) -> IResult<&str, Comment, DbcParseError> {
     let res = map(
-        tuple((
+        (
             multispacey(tag("CM_")),
             multispacey(tag("EV_")),
             multispacey(parser_env_var_name),
             multispacey(parser_char_string),
             multispacey(tag(";")),
-        )),
+        ),
         |(_, _, environment_variable_name, comment, _)| EnvironmentVariableComment {
             environment_variable_name: environment_variable_name.to_string(),
             comment,
         },
-    )(input);
+    )
+    .parse(input);
 
     match res {
         Ok((remain, comment)) => {

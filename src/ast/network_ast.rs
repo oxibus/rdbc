@@ -29,8 +29,8 @@ use super::version::Version;
 use nom::combinator::all_consuming;
 use nom::combinator::map;
 use nom::multi::many0;
-use nom::sequence::tuple;
 use nom::IResult;
+use nom::Parser;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
@@ -160,7 +160,7 @@ impl fmt::Display for NetworkAst {
 
 pub fn dbc_value(input: &str) -> IResult<&str, NetworkAst, DbcParseError> {
     map(
-        multispacey(tuple((
+        multispacey((
             multispacey(parser_version),
             multispacey(parser_new_symbols),
             multispacey(parser_bit_timing),
@@ -175,7 +175,7 @@ pub fn dbc_value(input: &str) -> IResult<&str, NetworkAst, DbcParseError> {
             multispacey(many0(parser_object_attribute_value)),
             multispacey(many0(parser_signal_value_descriptions)),
             multispacey(many0(parser_env_var_value_descriptions)),
-        ))),
+        )),
         |(
             version,
             new_symbols,
@@ -207,11 +207,12 @@ pub fn dbc_value(input: &str) -> IResult<&str, NetworkAst, DbcParseError> {
             signal_value_descriptions,
             env_var_value_descriptions,
         },
-    )(input)
+    )
+    .parse(input)
 }
 
 pub fn parse_dbc(input: &str) -> Result<NetworkAst, DbcParseError> {
-    let (_remain, result) = all_consuming(dbc_value)(input).map_err(|nom_err| {
+    let (_remain, result) = all_consuming(dbc_value).parse(input).map_err(|nom_err| {
         log::error!("nom_err: {}", nom_err);
         match nom_err {
             nom::Err::Incomplete(_) => unreachable!(),

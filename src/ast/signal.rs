@@ -12,8 +12,8 @@ use nom::multi::separated_list0;
 use nom::sequence::delimited;
 use nom::sequence::pair;
 use nom::sequence::separated_pair;
-use nom::sequence::tuple;
 use nom::IResult;
+use nom::Parser;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
@@ -178,12 +178,13 @@ impl fmt::Display for Signal {
 
 fn parser_signal_multiplexer(input: &str) -> IResult<&str, MultiplexerIndicator, DbcParseError> {
     map(
-        tuple((opt(pair(tag("m"), unsigned_integer)), opt(tag("M")))),
+        (opt(pair(tag("m"), unsigned_integer)), opt(tag("M"))),
         |(multiplexer_signal, multiplexer_switch)| MultiplexerIndicator {
             multiplexer_signal: multiplexer_signal.map(|(_, num)| num),
             multiplexer_switch: multiplexer_switch.map(|_| ()),
         },
-    )(input)
+    )
+    .parse(input)
 }
 
 fn parser_signal_multiplexer_option(
@@ -208,14 +209,16 @@ fn parser_signal_byte_order(input: &str) -> IResult<&str, ByteOrder, DbcParseErr
     alt((
         map(tag("1"), |_| ByteOrder::LittleEndian),
         map(tag("0"), |_| ByteOrder::BigEndian),
-    ))(input)
+    ))
+    .parse(input)
 }
 
 fn parser_signal_value_type(input: &str) -> IResult<&str, ValueType, DbcParseError> {
     alt((
         map(tag("+"), |_| ValueType::Unsigned),
         map(tag("-"), |_| ValueType::Signed),
-    ))(input)
+    ))
+    .parse(input)
 }
 
 fn parser_signal_factor_offset(input: &str) -> IResult<&str, (f64, f64), DbcParseError> {
@@ -223,7 +226,8 @@ fn parser_signal_factor_offset(input: &str) -> IResult<&str, (f64, f64), DbcPars
         spacey(tag("(")),
         separated_pair(number_value, spacey(tag(",")), number_value),
         spacey(tag(")")),
-    )(input)?;
+    )
+    .parse(input)?;
 
     Ok((remain, (factor, offset)))
 }
@@ -233,7 +237,8 @@ fn parser_signal_min_max(input: &str) -> IResult<&str, (f64, f64), DbcParseError
         spacey(tag("[")),
         separated_pair(number_value, spacey(tag("|")), number_value),
         spacey(tag("]")),
-    )(input)?;
+    )
+    .parse(input)?;
 
     Ok((remain, (min_value, max_value)))
 }
@@ -243,13 +248,14 @@ fn parser_signal_unit(input: &str) -> IResult<&str, CharString, DbcParseError> {
 }
 
 fn parser_signal_receivers(input: &str) -> IResult<&str, Vec<String>, DbcParseError> {
-    let (remain, nodes) = spacey(separated_list0(tag(","), spacey(parser_node_name)))(input)?;
+    let (remain, nodes) =
+        spacey(separated_list0(tag(","), spacey(parser_node_name))).parse(input)?;
     Ok((remain, nodes.into_iter().map(String::from).collect()))
 }
 
 pub fn parser_signal(input: &str) -> IResult<&str, Signal, DbcParseError> {
     let res = map(
-        tuple((
+        (
             multispacey(tag("SG_")),
             spacey(parser_signal_name),
             spacey(parser_signal_multiplexer_option),
@@ -265,7 +271,7 @@ pub fn parser_signal(input: &str) -> IResult<&str, Signal, DbcParseError> {
             spacey(opt(parser_signal_unit)),
             spacey(opt(parser_signal_receivers)),
             many0(line_ending),
-        )),
+        ),
         |(
             _,
             name,
@@ -296,7 +302,8 @@ pub fn parser_signal(input: &str) -> IResult<&str, Signal, DbcParseError> {
             unit,
             receivers: receiving_nodes,
         },
-    )(input);
+    )
+    .parse(input);
 
     match res {
         Ok((remain, signal)) => {

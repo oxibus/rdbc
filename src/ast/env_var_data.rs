@@ -5,8 +5,8 @@ use nom::character::complete::line_ending;
 use nom::character::complete::u32;
 use nom::combinator::map;
 use nom::multi::many0;
-use nom::sequence::tuple;
 use nom::IResult;
+use nom::Parser;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
@@ -36,24 +36,25 @@ impl fmt::Display for EnvironmentVariableData {
 }
 
 fn parser_data_size(input: &str) -> IResult<&str, u32, DbcParseError> {
-    u32(input)
+    u32.parse(input)
 }
 
 pub fn parser_env_var_data(input: &str) -> IResult<&str, EnvironmentVariableData, DbcParseError> {
     let res = map(
-        tuple((
+        (
             multispacey(tag("ENVVAR_DATA_")),
             spacey(parser_env_var_name),
             spacey(tag(":")),
             spacey(parser_data_size),
             spacey(tag(";")),
             many0(line_ending),
-        )),
+        ),
         |(_, env_var_name, _, data_size, _, _)| EnvironmentVariableData {
             env_var_name: env_var_name.to_string(),
             data_size,
         },
-    )(input);
+    )
+    .parse(input);
 
     match res {
         Ok((remain, val)) => Ok((remain, val)),

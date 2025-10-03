@@ -7,8 +7,8 @@ use nom::character::complete::line_ending;
 use nom::combinator::map;
 use nom::combinator::opt;
 use nom::multi::many0;
-use nom::sequence::tuple;
 use nom::IResult;
+use nom::Parser;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
@@ -48,18 +48,19 @@ pub fn parser_value_table_name(input: &str) -> IResult<&str, &str, DbcParseError
 
 pub fn parser_value_table(input: &str) -> IResult<&str, ValueTable, DbcParseError> {
     map(
-        tuple((
+        (
             multispacey(tag("VAL_TABLE_")),
             spacey(parser_value_table_name),
             spacey(parser_value_descriptions),
             spacey(tag(";")),
             many0(line_ending),
-        )),
+        ),
         |(_, name, values, _, _)| ValueTable {
             name: name.to_string(),
             value_descriptions: values,
         },
-    )(input)
+    )
+    .parse(input)
 }
 
 pub fn parser_value_tables(input: &str) -> IResult<&str, Option<Vec<ValueTable>>, DbcParseError> {
@@ -72,7 +73,8 @@ pub fn parser_value_tables(input: &str) -> IResult<&str, Option<Vec<ValueTable>>
             }
         }
         None => None,
-    })(input)
+    })
+    .parse(input)
 }
 
 #[cfg(test)]

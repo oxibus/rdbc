@@ -5,8 +5,8 @@ use nom::character::complete::line_ending;
 use nom::character::complete::space0;
 use nom::combinator::map;
 use nom::multi::many0;
-use nom::sequence::tuple;
 use nom::IResult;
+use nom::Parser;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
@@ -36,20 +36,22 @@ impl fmt::Display for NewSymbols {
 
 fn parser_one_line_new_symbols(input: &str) -> IResult<&str, String, DbcParseError> {
     map(
-        tuple((space0, dbc_object_name, space0, line_ending)),
+        (space0, dbc_object_name, space0, line_ending),
         |(_, name, _, _)| name.to_owned(),
-    )(input)
+    )
+    .parse(input)
 }
 
 pub fn parser_new_symbols(input: &str) -> IResult<&str, NewSymbols, DbcParseError> {
     let res = map(
-        tuple((
+        (
             multispacey(tag("NS_")),
             multispacey(tag(":")),
             multispacey(many0(parser_one_line_new_symbols)),
-        )),
+        ),
         |(_, _, names)| NewSymbols(names),
-    )(input);
+    )
+    .parse(input);
     match res {
         Ok((remain, names)) => {
             log::info!("parse names: {:?}", names.0);

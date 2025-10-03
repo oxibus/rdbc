@@ -7,8 +7,8 @@ use nom::bytes::complete::tag;
 use nom::character::complete::line_ending;
 use nom::combinator::map;
 use nom::multi::many0;
-use nom::sequence::tuple;
 use nom::IResult;
+use nom::Parser;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
@@ -82,26 +82,27 @@ fn parser_message_size(input: &str) -> IResult<&str, u32, DbcParseError> {
 }
 
 fn parser_transmitter(input: &str) -> IResult<&str, &str, DbcParseError> {
-    alt((parser_node_name, tag("Vector__XXX")))(input)
+    alt((parser_node_name, tag("Vector__XXX"))).parse(input)
 }
 
 fn parser_message_header(input: &str) -> IResult<&str, MessageHeader, DbcParseError> {
     let res = map(
-        tuple((
+        (
             multispacey(tag("BO_")),
             spacey(parser_message_id),
             spacey(parser_message_name),
             spacey(tag(":")),
             spacey(parser_message_size),
             spacey(parser_transmitter),
-        )),
+        ),
         |(_, id, message_name, _, size, sending_node_name)| MessageHeader {
             id,
             name: String::from(message_name),
             size,
             transmitter: String::from(sending_node_name),
         },
-    )(input);
+    )
+    .parse(input);
 
     match res {
         Ok((remain, header)) => {
@@ -117,13 +118,14 @@ fn parser_message_header(input: &str) -> IResult<&str, MessageHeader, DbcParseEr
 
 pub fn parser_dbc_message(input: &str) -> IResult<&str, Message, DbcParseError> {
     map(
-        tuple((
+        (
             parser_message_header,
             many0(parser_signal),
             many0(line_ending),
-        )),
+        ),
         |(header, signals, _)| Message { header, signals },
-    )(input)
+    )
+    .parse(input)
 }
 
 #[cfg(test)]

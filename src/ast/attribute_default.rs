@@ -6,8 +6,8 @@ use super::error::DbcParseError;
 use nom::branch::alt;
 use nom::bytes::complete::tag;
 use nom::combinator::map;
-use nom::sequence::tuple;
 use nom::IResult;
+use nom::Parser;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
@@ -27,15 +27,15 @@ impl fmt::Display for AttributeValue {
 }
 
 pub fn parser_attribute_value_double(input: &str) -> IResult<&str, AttributeValue, DbcParseError> {
-    map(number_value, AttributeValue::Double)(input)
+    map(number_value, AttributeValue::Double).parse(input)
 }
 
 pub fn parser_attribute_value_string(input: &str) -> IResult<&str, AttributeValue, DbcParseError> {
-    map(parser_char_string, AttributeValue::String)(input)
+    map(parser_char_string, AttributeValue::String).parse(input)
 }
 
 pub fn parser_attribute_value(input: &str) -> IResult<&str, AttributeValue, DbcParseError> {
-    let res = alt((parser_attribute_value_double, parser_attribute_value_string))(input);
+    let res = alt((parser_attribute_value_double, parser_attribute_value_string)).parse(input);
 
     match res {
         Ok((remain, value)) => {
@@ -69,17 +69,18 @@ pub fn parser_attribute_definition_default(
     input: &str,
 ) -> IResult<&str, AttributeDefault, DbcParseError> {
     let res = map(
-        tuple((
+        (
             multispacey(tag("BA_DEF_DEF_")),
             multispacey(parser_attribute_name),
             multispacey(parser_attribute_value),
             multispacey(tag(";")),
-        )),
+        ),
         |(_, attribute_name, attribute_value, _)| AttributeDefinitionDefault {
             attribute_name: attribute_name.to_string(),
             attribute_value,
         },
-    )(input);
+    )
+    .parse(input);
 
     match res {
         Ok((remain, value)) => {
@@ -115,17 +116,18 @@ pub fn parser_relation_attribute_definition_default(
     input: &str,
 ) -> IResult<&str, AttributeDefault, DbcParseError> {
     let res = map(
-        tuple((
+        (
             multispacey(tag("BA_DEF_DEF_REL_")),
             multispacey(parser_attribute_name),
             multispacey(parser_attribute_value),
             multispacey(tag(";")),
-        )),
+        ),
         |(_, attribute_name, attribute_value, _)| RelationAttributeDefinitionDefault {
             attribute_name: attribute_name.to_string(),
             attribute_value,
         },
-    )(input);
+    )
+    .parse(input);
 
     match res {
         Ok((remain, value)) => {
@@ -160,7 +162,8 @@ pub fn parser_attribute_default(input: &str) -> IResult<&str, AttributeDefault, 
     let res = alt((
         parser_attribute_definition_default,
         parser_relation_attribute_definition_default,
-    ))(input);
+    ))
+    .parse(input);
 
     match res {
         Ok((remain, value)) => {
