@@ -1,14 +1,14 @@
-use super::char_string::parser_char_string;
-use super::char_string::CharString;
-use super::common_parsers::*;
-use super::error::DbcParseError;
+use std::fmt;
+
 use nom::character::complete::i64;
 use nom::combinator::map;
 use nom::multi::many0;
-use nom::IResult;
-use nom::Parser;
+use nom::{IResult, Parser};
 use serde::{Deserialize, Serialize};
-use std::fmt;
+
+use super::char_string::{parser_char_string, CharString};
+use super::common_parsers::*;
+use super::error::DbcParseError;
 
 /// A value description defines a textual description for a single value. This value may
 /// either be a signal raw value transferred on the bus or the value of an environment

@@ -1,21 +1,17 @@
-use super::char_string::parser_char_string;
-use super::char_string::CharString;
-use super::common_parsers::*;
-use super::error::DbcParseError;
+use std::fmt;
+
 use nom::branch::alt;
 use nom::bytes::complete::tag;
 use nom::character::complete::line_ending;
-use nom::combinator::map;
-use nom::combinator::opt;
-use nom::multi::many0;
-use nom::multi::separated_list0;
-use nom::sequence::delimited;
-use nom::sequence::pair;
-use nom::sequence::separated_pair;
-use nom::IResult;
-use nom::Parser;
+use nom::combinator::{map, opt};
+use nom::multi::{many0, separated_list0};
+use nom::sequence::{delimited, pair, separated_pair};
+use nom::{IResult, Parser};
 use serde::{Deserialize, Serialize};
-use std::fmt;
+
+use super::char_string::{parser_char_string, CharString};
+use super::common_parsers::*;
+use super::error::DbcParseError;
 
 /// example:
 ///

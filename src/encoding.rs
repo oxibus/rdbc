@@ -1,10 +1,11 @@
 // https://github.com/hsivonen/recode_rs
 
-use crate::error::DbcError;
-use encoding_rs::*;
-use std::io::Read;
-use std::io::Write;
+use std::io::{Read, Write};
 use std::str::from_utf8_mut;
+
+use encoding_rs::*;
+
+use crate::error::DbcError;
 
 pub fn utf8_to_gbk(src_data: &[u8]) -> Result<Vec<u8>, DbcError> {
     recode(src_data, "UTF-8", "GBK")

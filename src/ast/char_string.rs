@@ -1,18 +1,15 @@
-use super::error::DbcParseError;
+use std::fmt;
+
 use nom::branch::alt;
 use nom::bytes::complete::tag;
-use nom::character::complete::anychar;
-use nom::character::complete::none_of;
-use nom::character::complete::satisfy;
-use nom::combinator::map;
-use nom::combinator::recognize;
+use nom::character::complete::{anychar, none_of, satisfy};
+use nom::combinator::{map, recognize};
 use nom::multi::many0;
-use nom::sequence::delimited;
-use nom::sequence::pair;
-use nom::IResult;
-use nom::Parser;
+use nom::sequence::{delimited, pair};
+use nom::{IResult, Parser};
 use serde::{Deserialize, Serialize};
-use std::fmt;
+
+use super::error::DbcParseError;
 
 #[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct CharString(pub String);

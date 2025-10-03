@@ -1,27 +1,14 @@
-use super::error::DbcParseError;
 use nom::branch::alt;
-use nom::bytes::complete::tag;
-use nom::bytes::complete::tag_no_case;
-use nom::bytes::complete::take_while1;
-use nom::character::complete::alphanumeric1;
-use nom::character::complete::digit0;
-use nom::character::complete::digit1;
-use nom::character::complete::i32;
-use nom::character::complete::multispace0;
-use nom::character::complete::one_of;
-use nom::character::complete::satisfy;
-use nom::character::complete::space0;
-use nom::character::complete::u32;
-use nom::combinator::map;
-use nom::combinator::not;
-use nom::combinator::opt;
-use nom::combinator::recognize;
+use nom::bytes::complete::{tag, tag_no_case, take_while1};
+use nom::character::complete::{
+    alphanumeric1, digit0, digit1, i32, multispace0, one_of, satisfy, space0, u32,
+};
+use nom::combinator::{map, not, opt, recognize};
 use nom::multi::many0;
-use nom::sequence::delimited;
-use nom::sequence::pair;
-use nom::AsChar;
-use nom::IResult;
-use nom::Parser;
+use nom::sequence::{delimited, pair};
+use nom::{AsChar, IResult, Parser};
+
+use super::error::DbcParseError;
 
 pub fn spacey<I, O, E>(
     f: impl Parser<I, Output = O, Error = E>,

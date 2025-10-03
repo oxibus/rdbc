@@ -1,9 +1,9 @@
-use super::common_parsers::*;
-use super::error::DbcParseError;
 use nom::bytes::complete::tag;
 use nom::sequence::delimited;
-use nom::IResult;
-use nom::Parser;
+use nom::{IResult, Parser};
+
+use super::common_parsers::*;
+use super::error::DbcParseError;
 
 pub fn parser_attribute_name(input: &str) -> IResult<&str, &str, DbcParseError> {
     delimited(tag("\""), dbc_identifier, tag("\"")).parse(input)

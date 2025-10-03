@@ -1,15 +1,15 @@
-use super::common_parsers::*;
-use super::error::DbcParseError;
-use super::value_descriptions::parser_value_descriptions;
-use super::value_descriptions::ValueDescriptions;
+use std::fmt;
+
 use nom::bytes::complete::tag;
 use nom::character::complete::line_ending;
 use nom::combinator::map;
 use nom::multi::many0;
-use nom::IResult;
-use nom::Parser;
+use nom::{IResult, Parser};
 use serde::{Deserialize, Serialize};
-use std::fmt;
+
+use super::common_parsers::*;
+use super::error::DbcParseError;
+use super::value_descriptions::{parser_value_descriptions, ValueDescriptions};
 
 /// ```text
 /// VAL_ env_var_name [value_descriptions];
