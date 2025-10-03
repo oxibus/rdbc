@@ -115,7 +115,7 @@ impl fmt::Display for ValueType {
 /// Signed: + = unsigned; - = signed
 /// Endianness: 1 = little-endian, Intel; 0 = big-endian, Motorola
 /// M: If M than this signals contains a multiplexer identifier.
-/// `MultiplexerIdentifier`: Signal definition is only used if the value of the multiplexer signal equals to this value.
+/// `MultiplexerIdentifier`: Signal definition is only used if the value of the multiplexer signal equals this value.
 #[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct Signal {
     pub name: String,
