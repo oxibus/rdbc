@@ -7,7 +7,7 @@ use nom::multi::many0;
 use nom::{IResult, Parser};
 use serde::{Deserialize, Serialize};
 
-use super::common_parsers::*;
+use super::common_parsers::{multispacey, parser_node_name, spacey};
 use super::error::DbcParseError;
 
 /// List of all CAN-Nodes, seperated by whitespaces.
@@ -56,7 +56,7 @@ pub fn parser_nodes(input: &str) -> IResult<&str, Nodes, DbcParseError> {
             Ok((remain, can_nodes))
         }
         Err(e) => {
-            log::trace!("parse nodes failed, e = {:?}", e);
+            log::trace!("parse nodes failed, e = {e:?}");
             Err(nom::Err::Error(DbcParseError::BadCanNodes))
         }
     }
@@ -70,9 +70,9 @@ mod tests {
     fn test_dbc_can_nodes_01() {
         assert_eq!(
             parser_nodes(
-                r#"BU_: ABS DRS_MM5_10
+                "BU_: ABS DRS_MM5_10
 
-"#
+"
             ),
             Ok(("", Nodes(vec!["ABS".into(), "DRS_MM5_10".into()]))),
         );
@@ -81,7 +81,7 @@ mod tests {
     #[test]
     fn test_dbc_can_nodes_02() {
         assert_eq!(
-            parser_nodes(r#"BU_:Matrix"#),
+            parser_nodes("BU_:Matrix"),
             Ok(("", Nodes(vec!["Matrix".into()]))),
         );
     }
@@ -89,7 +89,7 @@ mod tests {
     #[test]
     fn test_dbc_can_nodes_03() {
         assert_eq!(
-            parser_nodes(r#"BU_: Node2 Node1 Node0"#),
+            parser_nodes("BU_: Node2 Node1 Node0"),
             Ok((
                 "",
                 Nodes(vec!["Node2".into(), "Node1".into(), "Node0".into()])

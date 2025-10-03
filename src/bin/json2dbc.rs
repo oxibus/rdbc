@@ -21,7 +21,7 @@ fn main() -> Result<()> {
     let opt = Opt::from_args();
     let input_data = std::fs::read_to_string(opt.input)?;
     let network_ast: NetworkAst = serde_json::from_str(&input_data)?;
-    let output_data = format!("{}", network_ast);
+    let output_data = format!("{network_ast}");
     std::fs::write(opt.output, output_data)?;
     Ok(())
 }

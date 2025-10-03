@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 
 use super::attribute::parser_attribute_name;
 use super::char_string::{parser_char_string, CharString};
-use super::common_parsers::*;
+use super::common_parsers::{multispacey, number_value};
 use super::error::DbcParseError;
 
 #[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
@@ -20,8 +20,8 @@ pub enum AttributeValue {
 impl fmt::Display for AttributeValue {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            AttributeValue::Double(v) => write!(f, "{}", v),
-            AttributeValue::String(v) => write!(f, "\"{}\"", v),
+            AttributeValue::Double(v) => write!(f, "{v}"),
+            AttributeValue::String(v) => write!(f, r#""{v}""#),
         }
     }
 }
@@ -39,11 +39,11 @@ pub fn parser_attribute_value(input: &str) -> IResult<&str, AttributeValue, DbcP
 
     match res {
         Ok((remain, value)) => {
-            log::info!("parse attribute value: {:?}", value);
+            log::info!("parse attribute value: {value:?}");
             Ok((remain, value))
         }
         Err(e) => {
-            log::trace!("parse attribute value failed, e = {:?}", e);
+            log::trace!("parse attribute value failed, e = {e:?}");
             Err(e)
         }
     }
@@ -59,7 +59,7 @@ impl fmt::Display for AttributeDefinitionDefault {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "BA_DEF_DEF_ \"{}\" {};",
+            r#"BA_DEF_DEF_ "{}" {};"#,
             self.attribute_name, self.attribute_value
         )
     }
@@ -84,11 +84,11 @@ pub fn parser_attribute_definition_default(
 
     match res {
         Ok((remain, value)) => {
-            log::info!("parse attribute default: {:?}", value);
+            log::info!("parse attribute default: {value:?}");
             Ok((remain, AttributeDefault::Attribute(value)))
         }
         Err(e) => {
-            log::trace!("parse attribute default failed, e = {:?}", e);
+            log::trace!("parse attribute default failed, e = {e:?}");
             Err(nom::Err::Error(
                 DbcParseError::BadAttributeDefinitionDefault,
             ))
@@ -106,7 +106,7 @@ impl fmt::Display for RelationAttributeDefinitionDefault {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "BA_DEF_DEF_REL_ \"{}\" {};",
+            r#"BA_DEF_DEF_REL_ "{}" {};"#,
             self.attribute_name, self.attribute_value
         )
     }
@@ -131,11 +131,11 @@ pub fn parser_relation_attribute_definition_default(
 
     match res {
         Ok((remain, value)) => {
-            log::info!("parse relation attribute default: {:?}", value);
+            log::info!("parse relation attribute default: {value:?}");
             Ok((remain, AttributeDefault::RelationAttribute(value)))
         }
         Err(e) => {
-            log::trace!("parse relation attribute default failed, e = {:?}", e);
+            log::trace!("parse relation attribute default failed, e = {e:?}");
             Err(nom::Err::Error(
                 DbcParseError::BadRelationAttributeDefinitionDefault,
             ))
@@ -152,8 +152,8 @@ pub enum AttributeDefault {
 impl fmt::Display for AttributeDefault {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            AttributeDefault::Attribute(v) => write!(f, "{}", v),
-            AttributeDefault::RelationAttribute(v) => write!(f, "{}", v),
+            AttributeDefault::Attribute(v) => write!(f, "{v}"),
+            AttributeDefault::RelationAttribute(v) => write!(f, "{v}"),
         }
     }
 }
@@ -167,11 +167,11 @@ pub fn parser_attribute_default(input: &str) -> IResult<&str, AttributeDefault, 
 
     match res {
         Ok((remain, value)) => {
-            log::info!("parse attribute default: {:?}", value);
+            log::info!("parse attribute default: {value:?}");
             Ok((remain, value))
         }
         Err(e) => {
-            log::trace!("parse attribute default failed, e = {:?}", e);
+            log::trace!("parse attribute default failed, e = {e:?}");
             Err(e)
         }
     }

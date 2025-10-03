@@ -3,7 +3,7 @@
 use std::io::{Read, Write};
 use std::str::from_utf8_mut;
 
-use encoding_rs::*;
+use encoding_rs::{CoderResult, Decoder, Encoder, Encoding, UTF_8};
 
 use crate::error::DbcError;
 
@@ -62,13 +62,14 @@ pub fn convert_via_utf8(
 ) -> Result<(), DbcError> {
     let mut input_buffer = [0u8; 2048];
     let mut intermediate_buffer_bytes = [0u8; 4096];
-    let intermediate_buffer: &mut str = from_utf8_mut(&mut intermediate_buffer_bytes[..]).unwrap();
+    let intermediate_buffer: &mut str = from_utf8_mut(&mut intermediate_buffer_bytes[..])
+        .expect("Should never fail because we are creating a valid UTF-8 buffer");
     let mut output_buffer = [0u8; 4096];
     let mut current_input_ended = false;
     while !current_input_ended {
         match read.read(&mut input_buffer) {
             Err(e) => {
-                log::error!("Error reading input, error = {}", e);
+                log::error!("Error reading input, error = {e}");
                 return Err(DbcError::EncodingReadInputError);
             }
             Ok(decoder_input_end) => {
@@ -101,7 +102,7 @@ pub fn convert_via_utf8(
                         if let Err(e) =
                             write.write_all(&intermediate_buffer.as_bytes()[..decoder_written])
                         {
-                            log::error!("Error writing output, error = {}", e);
+                            log::error!("Error writing output, error = {e}");
                             return Err(DbcError::EncodingWriteOutputError);
                         }
                     } else {
@@ -115,29 +116,19 @@ pub fn convert_via_utf8(
                                 );
                             encoder_input_start += encoder_read;
                             if let Err(e) = write.write_all(&output_buffer[..encoder_written]) {
-                                log::error!("Error writing output, error = {}", e);
+                                log::error!("Error writing output, error = {e}");
                                 return Err(DbcError::EncodingWriteOutputError);
                             }
-                            match encoder_result {
-                                CoderResult::InputEmpty => {
-                                    break;
-                                }
-                                CoderResult::OutputFull => {
-                                    continue;
-                                }
+                            if let CoderResult::InputEmpty = encoder_result {
+                                break;
                             }
                         }
                     }
 
                     // Now let's see if we should read again or process the
                     // rest of the current input buffer.
-                    match decoder_result {
-                        CoderResult::InputEmpty => {
-                            break;
-                        }
-                        CoderResult::OutputFull => {
-                            continue;
-                        }
+                    if let CoderResult::InputEmpty = decoder_result {
+                        break;
                     }
                 }
             }

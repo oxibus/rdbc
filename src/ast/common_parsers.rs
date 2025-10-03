@@ -15,7 +15,7 @@ pub fn spacey<I, O, E>(
 ) -> impl Parser<I, Output = O, Error = E>
 where
     I: nom::Input,
-    <I as nom::Input>::Item: nom::AsChar + Clone,
+    <I as nom::Input>::Item: AsChar + Clone,
     E: nom::error::ParseError<I>,
 {
     delimited(space0, f, space0)
@@ -26,7 +26,7 @@ pub fn multispacey<I, O, E>(
 ) -> impl Parser<I, Output = O, Error = E>
 where
     I: nom::Input,
-    <I as nom::Input>::Item: nom::AsChar + Clone,
+    <I as nom::Input>::Item: AsChar + Clone,
     E: nom::error::ParseError<I>,
 {
     delimited(multispace0, f, multispace0)
@@ -34,7 +34,7 @@ where
 
 pub fn c_identifier(input: &str) -> IResult<&str, &str, DbcParseError> {
     recognize((
-        alt((tag("_"), recognize(satisfy(|c| c.is_alpha())))),
+        alt((tag("_"), recognize(satisfy(AsChar::is_alpha)))),
         opt(recognize(many0(alt((tag("_"), alphanumeric1))))),
     ))
     .parse(input)
@@ -154,7 +154,7 @@ pub fn dbc_object_name(input: &str) -> IResult<&str, &str, DbcParseError> {
 
 pub fn dbc_identifier_01(input: &str) -> IResult<&str, &str, DbcParseError> {
     recognize((
-        alt((tag("_"), recognize(satisfy(|c| c.is_alpha())))),
+        alt((tag("_"), recognize(satisfy(AsChar::is_alpha)))),
         opt(recognize(many0(alt((tag("_"), tag("-"), alphanumeric1))))),
     ))
     .parse(input)
@@ -163,7 +163,7 @@ pub fn dbc_identifier_01(input: &str) -> IResult<&str, &str, DbcParseError> {
 pub fn dbc_identifier(input: &str) -> IResult<&str, &str, DbcParseError> {
     let res = not(dbc_key_word).parse(input);
     match res {
-        Ok((remain, _)) => dbc_identifier_01(remain),
+        Ok((remain, ())) => dbc_identifier_01(remain),
         Err(_) => Err(nom::Err::Error(DbcParseError::UseKeywordAsIdentifier)),
     }
 }

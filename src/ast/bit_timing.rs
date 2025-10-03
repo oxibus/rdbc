@@ -7,7 +7,7 @@ use nom::multi::many0;
 use nom::{IResult, Parser};
 use serde::{Deserialize, Serialize};
 
-use super::common_parsers::*;
+use super::common_parsers::{multispacey, spacey};
 use super::error::DbcParseError;
 
 #[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
@@ -30,7 +30,7 @@ impl fmt::Display for BitTimingValue {
 /// the network. This section is obsolete and not used any more. Nevertheless, the
 /// keyword `BS_` must appear in the DBC file.
 ///
-/// Format:: `bit_timing = 'BS_:' [baudrate ':' BTR1 ',' BTR2 ] ;`
+/// Format: `bit_timing = BS_: [baudrate : BTR1 , BTR2 ] ;`
 #[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct BitTiming {
     pub value: Option<BitTimingValue>,
@@ -39,7 +39,7 @@ pub struct BitTiming {
 impl fmt::Display for BitTiming {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match &self.value {
-            Some(value) => writeln!(f, "BS_: {}", value),
+            Some(value) => writeln!(f, "BS_: {value}"),
             None => writeln!(f, "BS_:"),
         }
     }
@@ -63,11 +63,11 @@ pub fn parser_bit_timing_value(input: &str) -> IResult<&str, BitTimingValue, Dbc
     .parse(input);
     match res {
         Ok((remain, bit_timing)) => {
-            log::info!("parse bit timing value: {:?}", bit_timing);
+            log::info!("parse bit timing value: {bit_timing:?}");
             Ok((remain, bit_timing))
         }
         Err(e) => {
-            log::trace!("parse bit timing value failed, e = {:?}", e);
+            log::trace!("parse bit timing value failed, e = {e:?}");
             Err(nom::Err::Error(DbcParseError::BadBitTimingValue))
         }
     }
@@ -90,11 +90,11 @@ pub fn parser_bit_timing(input: &str) -> IResult<&str, Option<BitTiming>, DbcPar
     .parse(input);
     match res {
         Ok((remain, bit_timing)) => {
-            log::info!("parse bit timing: {:?}", bit_timing);
+            log::info!("parse bit timing: {bit_timing:?}");
             Ok((remain, bit_timing))
         }
         Err(e) => {
-            log::trace!("parse bit timing failed, e = {:?}", e);
+            log::trace!("parse bit timing failed, e = {e:?}");
             Err(nom::Err::Error(DbcParseError::BadBitTiming))
         }
     }
@@ -107,9 +107,9 @@ mod tests {
     #[test]
     fn test_parser_bit_timing_01() {
         let ret = parser_bit_timing(
-            r#"BS_: 12:123:456
+            "BS_: 12:123:456
 
-"#,
+",
         );
         match ret {
             Ok((_remain, bus_config)) => {
@@ -124,46 +124,46 @@ mod tests {
                     })
                 );
             }
-            Err(err) => panic!("err = {:?}", err),
+            Err(err) => panic!("err = {err:?}"),
         }
     }
 
     #[test]
     fn test_parser_bit_timing_02() {
         let ret = parser_bit_timing(
-            r#"BS_:
+            "BS_:
 
-"#,
+",
         );
         match ret {
             Ok((_remain, bus_config)) => {
                 assert_eq!(bus_config, Some(BitTiming { value: None }));
             }
-            Err(err) => panic!("err = {:?}", err),
+            Err(err) => panic!("err = {err:?}"),
         }
     }
 
     #[test]
     fn test_parser_bit_timing_03() {
         let ret = parser_bit_timing(
-            r#"BS_: ;
+            "BS_: ;
 
-"#,
+",
         );
         match ret {
             Ok((_remain, bus_config)) => {
                 assert_eq!(bus_config, Some(BitTiming { value: None }));
             }
-            Err(err) => panic!("err = {:?}", err),
+            Err(err) => panic!("err = {err:?}"),
         }
     }
 
     #[test]
     fn test_parser_bit_timing_04() {
         let ret = parser_bit_timing(
-            r#"BS_: 12:123:456 ;
+            "BS_: 12:123:456 ;
 
-"#,
+",
         );
         match ret {
             Ok((_remain, bus_config)) => {
@@ -178,7 +178,7 @@ mod tests {
                     })
                 );
             }
-            Err(err) => panic!("err = {:?}", err),
+            Err(err) => panic!("err = {err:?}"),
         }
     }
 

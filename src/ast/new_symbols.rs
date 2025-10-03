@@ -7,7 +7,7 @@ use nom::multi::many0;
 use nom::{IResult, Parser};
 use serde::{Deserialize, Serialize};
 
-use super::common_parsers::*;
+use super::common_parsers::{dbc_object_name, multispacey};
 use super::error::DbcParseError;
 
 /// New Symbols, Names used throughout the DBC file.
@@ -58,7 +58,7 @@ pub fn parser_new_symbols(input: &str) -> IResult<&str, NewSymbols, DbcParseErro
             Ok((remain, names))
         }
         Err(e) => {
-            log::trace!("parse names failed, e = {:?}", e);
+            log::trace!("parse names failed, e = {e:?}");
             Err(nom::Err::Error(DbcParseError::BadNames))
         }
     }
@@ -71,53 +71,53 @@ mod tests {
     #[test]
     fn test_parser_one_line_new_symbols_01() {
         let ret = parser_one_line_new_symbols(
-            r#"  BS_
-  "#,
+            "  BS_
+  ",
         );
         match ret {
             Ok((_remain, name)) => {
                 assert_eq!(name, "BS_".to_string());
             }
-            Err(err) => panic!("err = {:?}", err),
+            Err(err) => panic!("err = {err:?}"),
         }
     }
 
     #[test]
     fn test_parser_one_line_new_symbols_02() {
         let ret = parser_one_line_new_symbols(
-            r#"  CM_
-    "#,
+            "  CM_
+    ",
         );
         match ret {
             Ok((_remain, name)) => {
                 assert_eq!(name, "CM_".to_string());
             }
-            Err(err) => panic!("err = {:?}", err),
+            Err(err) => panic!("err = {err:?}"),
         }
     }
 
     #[test]
     fn test_parser_new_symbols_01() {
         let ret = parser_new_symbols(
-            r#"NS_:
+            "NS_:
     BS_
     CM_
 
 
-"#,
+",
         );
         match ret {
             Ok((_remain, names)) => {
                 assert_eq!(names, NewSymbols(vec!["BS_".into(), "CM_".into()]));
             }
-            Err(err) => panic!("err = {:?}", err),
+            Err(err) => panic!("err = {err:?}"),
         }
     }
 
     #[test]
     fn test_parser_new_symbols_02() {
         let ret = parser_new_symbols(
-            r#"
+            "
 
 NS_ :
     NS_DESC_
@@ -126,7 +126,7 @@ NS_ :
     BA_
 
 
-"#,
+",
         );
 
         match ret {
@@ -141,19 +141,19 @@ NS_ :
                     ])
                 );
             }
-            Err(err) => panic!("err = {:?}", err),
+            Err(err) => panic!("err = {err:?}"),
         }
     }
 
     #[test]
     fn test_new_symbol_string_01() {
         let names = NewSymbols(vec!["NS_DESC_".into(), "CM_".into()]);
-        assert_eq!(format!("{}", names), "NS_:\n\tNS_DESC_\n\tCM_\n");
+        assert_eq!(format!("{names}"), "NS_:\n\tNS_DESC_\n\tCM_\n");
     }
 
     #[test]
     fn test_new_symbol_string_02() {
         let names = NewSymbols(vec![]);
-        assert_eq!(format!("{}", names), "NS_:\n");
+        assert_eq!(format!("{names}"), "NS_:\n");
     }
 }

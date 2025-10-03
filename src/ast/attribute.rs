@@ -2,7 +2,7 @@ use nom::bytes::complete::tag;
 use nom::sequence::delimited;
 use nom::{IResult, Parser};
 
-use super::common_parsers::*;
+use super::common_parsers::dbc_identifier;
 use super::error::DbcParseError;
 
 pub fn parser_attribute_name(input: &str) -> IResult<&str, &str, DbcParseError> {
@@ -15,13 +15,13 @@ mod tests {
 
     #[test]
     fn test_attribute_name_01() {
-        assert_eq!(parser_attribute_name("\"hello\""), Ok(("", "hello")));
+        assert_eq!(parser_attribute_name(r#""hello""#), Ok(("", "hello")));
     }
 
     #[test]
     fn test_attribute_name_02() {
         assert_eq!(
-            parser_attribute_name("\"RWEnvVar_wData_Val\""),
+            parser_attribute_name(r#""RWEnvVar_wData_Val""#),
             Ok(("", "RWEnvVar_wData_Val"))
         );
     }

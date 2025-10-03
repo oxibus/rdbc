@@ -7,7 +7,9 @@ use nom::{IResult, Parser};
 use serde::{Deserialize, Serialize};
 
 use super::char_string::{parser_char_string, CharString};
-use super::common_parsers::*;
+use super::common_parsers::{
+    multispacey, parser_env_var_name, parser_message_id, parser_node_name, parser_signal_name,
+};
 use super::error::DbcParseError;
 
 #[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
@@ -17,7 +19,7 @@ pub struct NetworkComment {
 
 impl fmt::Display for NetworkComment {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "CM_ \"{}\";", self.comment)
+        write!(f, r#"CM_ "{}";"#, self.comment)
     }
 }
 
@@ -29,7 +31,7 @@ pub struct NodeComment {
 
 impl fmt::Display for NodeComment {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "CM_ BU_ {} \"{}\";", self.node_name, self.comment)
+        write!(f, r#"CM_ BU_ {} "{}";"#, self.node_name, self.comment)
     }
 }
 
@@ -41,7 +43,7 @@ pub struct MessageComment {
 
 impl fmt::Display for MessageComment {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "CM_ BO_ {} \"{}\";", self.message_id, self.comment)
+        write!(f, r#"CM_ BO_ {} "{}";"#, self.message_id, self.comment)
     }
 }
 
@@ -56,7 +58,7 @@ impl fmt::Display for SignalComment {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "CM_ SG_ {} {} \"{}\";",
+            r#"CM_ SG_ {} {} "{}";"#,
             self.message_id, self.signal_name, self.comment
         )
     }
@@ -72,7 +74,7 @@ impl fmt::Display for EnvironmentVariableComment {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "CM_ EV_ {} \"{}\";",
+            r#"CM_ EV_ {} "{}";"#,
             self.environment_variable_name, self.comment
         )
     }
@@ -102,11 +104,11 @@ pub enum Comment {
 impl fmt::Display for Comment {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Comment::Network(comment) => write!(f, "{}", comment),
-            Comment::Node(comment) => write!(f, "{}", comment),
-            Comment::Message(comment) => write!(f, "{}", comment),
-            Comment::Signal(comment) => write!(f, "{}", comment),
-            Comment::EnvironmentVariable(comment) => write!(f, "{}", comment),
+            Comment::Network(comment) => write!(f, "{comment}"),
+            Comment::Node(comment) => write!(f, "{comment}"),
+            Comment::Message(comment) => write!(f, "{comment}"),
+            Comment::Signal(comment) => write!(f, "{comment}"),
+            Comment::EnvironmentVariable(comment) => write!(f, "{comment}"),
         }
     }
 }
@@ -123,11 +125,11 @@ pub fn parser_comment(input: &str) -> IResult<&str, Comment, DbcParseError> {
 
     match res {
         Ok((remain, comment)) => {
-            log::info!("parse comment: {:?}", comment);
+            log::info!("parse comment: {comment:?}");
             Ok((remain, comment))
         }
         Err(e) => {
-            log::trace!("parse comment failed, e = {:?}", e);
+            log::trace!("parse comment failed, e = {e:?}");
             Err(nom::Err::Error(DbcParseError::BadComment))
         }
     }
@@ -146,11 +148,11 @@ pub fn parser_network_comment(input: &str) -> IResult<&str, Comment, DbcParseErr
 
     match res {
         Ok((remain, comment)) => {
-            log::info!("parse network comment: {:?}", comment);
+            log::info!("parse network comment: {comment:?}");
             Ok((remain, Comment::Network(comment)))
         }
         Err(e) => {
-            log::trace!("parse network comment failed, e = {:?}", e);
+            log::trace!("parse network comment failed, e = {e:?}");
             Err(nom::Err::Error(DbcParseError::BadNetworkComment))
         }
     }
@@ -174,11 +176,11 @@ pub fn parser_node_comment(input: &str) -> IResult<&str, Comment, DbcParseError>
 
     match res {
         Ok((remain, comment)) => {
-            log::info!("parse node comment: {:?}", comment);
+            log::info!("parse node comment: {comment:?}");
             Ok((remain, Comment::Node(comment)))
         }
         Err(e) => {
-            log::trace!("parse node comment failed, e = {:?}", e);
+            log::trace!("parse node comment failed, e = {e:?}");
             Err(nom::Err::Error(DbcParseError::BadNodeComment))
         }
     }
@@ -202,11 +204,11 @@ pub fn parser_message_comment(input: &str) -> IResult<&str, Comment, DbcParseErr
 
     match res {
         Ok((remain, comment)) => {
-            log::info!("parse message comment: {:?}", comment);
+            log::info!("parse message comment: {comment:?}");
             Ok((remain, Comment::Message(comment)))
         }
         Err(e) => {
-            log::trace!("parse message comment failed, e = {:?}", e);
+            log::trace!("parse message comment failed, e = {e:?}");
             Err(nom::Err::Error(DbcParseError::BadMessageComment))
         }
     }
@@ -232,11 +234,11 @@ pub fn parser_signal_comment(input: &str) -> IResult<&str, Comment, DbcParseErro
 
     match res {
         Ok((remain, comment)) => {
-            log::info!("parse signal comment: {:?}", comment);
+            log::info!("parse signal comment: {comment:?}");
             Ok((remain, Comment::Signal(comment)))
         }
         Err(e) => {
-            log::trace!("parse signal comment failed, e = {:?}", e);
+            log::trace!("parse signal comment failed, e = {e:?}");
             Err(nom::Err::Error(DbcParseError::BadSignalComment))
         }
     }
@@ -260,11 +262,11 @@ pub fn parser_environment_variable_comment(input: &str) -> IResult<&str, Comment
 
     match res {
         Ok((remain, comment)) => {
-            log::info!("parse environment variable comment: {:?}", comment);
+            log::info!("parse environment variable comment: {comment:?}");
             Ok((remain, Comment::EnvironmentVariable(comment)))
         }
         Err(e) => {
-            log::trace!("parse environment variable comment failed, e = {:?}", e);
+            log::trace!("parse environment variable comment failed, e = {e:?}");
             Err(nom::Err::Error(
                 DbcParseError::BadEnvironmentVariableComment,
             ))
@@ -351,7 +353,7 @@ mod tests {
                 "",
                 Comment::Node(NodeComment {
                     node_name: "TestNode".into(),
-                    comment: CharString("".into())
+                    comment: CharString(String::new())
                 })
             )),
         );
@@ -426,7 +428,7 @@ mod tests {
             Ok((
                 "",
                 Comment::Message(MessageComment {
-                    message_id: 2303364386,
+                    message_id: 2_303_364_386,
                     comment: CharString("This cumulative distance calculation is updated when the trigger is active.".into())
                 })
             )),
@@ -470,7 +472,7 @@ Bit7 (128) Invalid Individual";"#
                     message_id: 834,
                     signal_name: "WheelQuality_FL".into(),
                     comment: CharString(
-                        r#"Bit matrix
+                        "Bit matrix
 Bit0 ( 1) Signal Reduced Monitored
 Bit1 ( 2) Reduced Accuracy
 Bit2 ( 4) Interfered
@@ -478,7 +480,7 @@ Bit3 ( 8) Suspicious Plausibility
 Bit4 (16) Suspicious Lost
 Bit5 (32) Not Initialized
 Bit6 (64) Invalid Generic
-Bit7 (128) Invalid Individual"#
+Bit7 (128) Invalid Individual"
                             .into()
                     )
                 })
