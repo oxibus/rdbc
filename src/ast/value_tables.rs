@@ -64,15 +64,8 @@ pub fn parser_value_table(input: &str) -> IResult<&str, ValueTable, DbcParseErro
 }
 
 pub fn parser_value_tables(input: &str) -> IResult<&str, Option<Vec<ValueTable>>, DbcParseError> {
-    map(opt(many0(parser_value_table)), |values| match values {
-        Some(values) => {
-            if values.is_empty() {
-                None
-            } else {
-                Some(values)
-            }
-        }
-        None => None,
+    map(opt(many0(parser_value_table)), |values| {
+        values.filter(|values| !values.is_empty())
     })
     .parse(input)
 }

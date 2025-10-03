@@ -99,11 +99,7 @@ pub fn float_value(input: &str) -> IResult<&str, f64, DbcParseError> {
 }
 
 pub fn number_value(input: &str) -> IResult<&str, f64, DbcParseError> {
-    alt((
-        map(float_value, |f| f.into()),
-        map(integer_value, |i| i as f64),
-    ))
-    .parse(input)
+    alt((map(float_value, |f| f), map(integer_value, |i| i as f64))).parse(input)
 }
 
 pub fn unsigned_integer(input: &str) -> IResult<&str, u32, DbcParseError> {

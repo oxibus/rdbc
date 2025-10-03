@@ -22,7 +22,7 @@ struct Opt {
 fn main() -> Result<()> {
     env_logger::init();
     let opt = Opt::from_args();
-    let network_ast = parser_dbc_file(&opt.input.to_str().unwrap(), &opt.encoding)?;
+    let network_ast = parser_dbc_file(opt.input.to_str().unwrap(), &opt.encoding)?;
     let network_ast_json = serde_json::to_string_pretty(&network_ast)?;
     std::fs::write(opt.output, network_ast_json)?;
     Ok(())

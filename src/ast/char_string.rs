@@ -23,7 +23,7 @@ impl fmt::Display for CharString {
         while let Some(c) = chars.next() {
             if c == '\\' {
                 match chars.peek() {
-                    Some(&next_c) if next_c == '\\' => {
+                    Some('\\') => {
                         f.write_str("\\")?;
                         chars.next();
                     }
@@ -47,7 +47,7 @@ pub fn parser_char_string(input: &str) -> IResult<&str, CharString, DbcParseErro
 pub fn printable_character(input: &str) -> IResult<&str, &str, DbcParseError> {
     recognize(satisfy(|c| {
         let c = c as u32;
-        c >= 0x20 && c <= 0x74
+        (0x20..0x75).contains(&c)
     }))
     .parse(input)
 }

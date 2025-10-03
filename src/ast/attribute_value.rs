@@ -136,7 +136,7 @@ pub fn parser_message_attribute_value(
         ),
         |(_, attribute_name, _, message_id, attribute_value, _)| MessageAttributeValue {
             attribute_name: attribute_name.to_string(),
-            message_id: message_id,
+            message_id,
             attribute_value,
         },
     )
@@ -188,7 +188,7 @@ pub fn parser_signal_attribute_value(
         |(_, attribute_name, _, message_id, signal_name, attribute_value, _)| {
             SignalAttributeValue {
                 attribute_name: attribute_name.to_string(),
-                message_id: message_id,
+                message_id,
                 signal_name: signal_name.to_string(),
                 attribute_value,
             }

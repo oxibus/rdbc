@@ -4,6 +4,7 @@ use crate::error::DbcError;
 use encoding_rs::*;
 use std::io::Read;
 use std::io::Write;
+use std::str::from_utf8_mut;
 
 pub fn utf8_to_gbk(src_data: &[u8]) -> Result<Vec<u8>, DbcError> {
     recode(src_data, "UTF-8", "GBK")
@@ -44,7 +45,7 @@ pub fn recode(
 pub fn get_encoding(opt: Option<String>) -> Result<&'static Encoding, DbcError> {
     match opt {
         None => Ok(UTF_8),
-        Some(label) => match Encoding::for_label((&label).as_bytes()) {
+        Some(label) => match Encoding::for_label(label.as_bytes()) {
             None => Err(DbcError::InvalidEncodingLabel(label)),
             Some(encoding) => Ok(encoding),
         },
@@ -60,9 +61,7 @@ pub fn convert_via_utf8(
 ) -> Result<(), DbcError> {
     let mut input_buffer = [0u8; 2048];
     let mut intermediate_buffer_bytes = [0u8; 4096];
-    // Is there a safe way to create a stack-allocated &mut str?
-    let mut intermediate_buffer: &mut str =
-        unsafe { std::mem::transmute(&mut intermediate_buffer_bytes[..]) };
+    let intermediate_buffer: &mut str = from_utf8_mut(&mut intermediate_buffer_bytes[..]).unwrap();
     let mut output_buffer = [0u8; 4096];
     let mut current_input_ended = false;
     while !current_input_ended {
@@ -78,7 +77,7 @@ pub fn convert_via_utf8(
                 loop {
                     let (decoder_result, decoder_read, decoder_written, _) = decoder.decode_to_str(
                         &input_buffer[decoder_input_start..decoder_input_end],
-                        &mut intermediate_buffer,
+                        intermediate_buffer,
                         input_ended,
                     );
                     decoder_input_start += decoder_read;
@@ -98,12 +97,11 @@ pub fn convert_via_utf8(
 
                     if encoder.encoding() == UTF_8 {
                         // If the target is UTF-8, optimize out the encoder.
-                        match write.write_all(&intermediate_buffer.as_bytes()[..decoder_written]) {
-                            Err(e) => {
-                                log::error!("Error writing output, error = {}", e);
-                                return Err(DbcError::EncodingWriteOutputError);
-                            }
-                            Ok(_) => {}
+                        if let Err(e) =
+                            write.write_all(&intermediate_buffer.as_bytes()[..decoder_written])
+                        {
+                            log::error!("Error writing output, error = {}", e);
+                            return Err(DbcError::EncodingWriteOutputError);
                         }
                     } else {
                         let mut encoder_input_start = 0usize;
@@ -115,12 +113,9 @@ pub fn convert_via_utf8(
                                     last_output,
                                 );
                             encoder_input_start += encoder_read;
-                            match write.write_all(&output_buffer[..encoder_written]) {
-                                Err(e) => {
-                                    log::error!("Error writing output, error = {}", e);
-                                    return Err(DbcError::EncodingWriteOutputError);
-                                }
-                                Ok(_) => {}
+                            if let Err(e) = write.write_all(&output_buffer[..encoder_written]) {
+                                log::error!("Error writing output, error = {}", e);
+                                return Err(DbcError::EncodingWriteOutputError);
                             }
                             match encoder_result {
                                 CoderResult::InputEmpty => {

@@ -26,12 +26,12 @@ pub struct MessageHeader {
     /// The names defined in this section have to be unique within the set of messages.
     pub name: String,
 
-    /// The message_size specifies the size of the message in bytes.
+    /// The `message_size` specifies the size of the message in bytes.
     pub size: u32,
 
     /// The transmitter name specifies the name of the node transmitting the message.
     /// The sender name has to be defined in the set of node names in the node section.
-    /// If the massage shall have no sender, the string 'Vector__XXX' has to be given
+    /// If the massage shall have no sender, the string `Vector__XXX` has to be given
     /// here.
     pub transmitter: String,
 }
