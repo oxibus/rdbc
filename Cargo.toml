@@ -38,6 +38,9 @@ serde = { version = "1.0.210", features = ["derive"], optional = true }
 serde_json = { version = "1.0.128", optional = true }
 thiserror = "2.0.17"
 
+[dev-dependencies]
+insta = { version = "1.43.2", features = ["yaml"] }
+
 [lints.rust]
 unsafe_code = "forbid"
 unused_qualifications = "warn"

@@ -1,0 +1,168 @@
+---
+source: tests/snapshots.rs
+---
+version: "1.0"
+new_symbols:
+  - NS_DESC_
+  - CM_
+  - BA_DEF_
+  - BA_
+  - VAL_
+  - CAT_DEF_
+  - CAT_
+  - FILTER
+  - BA_DEF_DEF_
+  - EV_DATA_
+  - ENVVAR_DATA_
+  - SGTYPE_
+  - SGTYPE_VAL_
+  - BA_DEF_SGTYPE_
+  - BA_SGTYPE_
+  - SIG_TYPE_REF_
+  - VAL_TABLE_
+  - SIG_GROUP_
+  - SIG_VALTYPE_
+  - SIGTYPE_VALTYPE_
+  - BO_TX_BU_
+  - BA_DEF_REL_
+  - BA_REL_
+  - BA_DEF_DEF_REL_
+  - BU_SG_REL_
+  - BU_EV_REL_
+  - BU_BO_REL_
+  - SG_MUL_VAL_
+bit_timing:
+  value: ~
+nodes:
+  - PCM1
+  - FOO
+value_tables: ~
+messages:
+  - header:
+      id: 2147484144
+      name: ExampleMessage
+      size: 8
+      transmitter: PCM1
+    signals:
+      - name: Temperature
+        multiplexer: ~
+        start_bit: 0
+        size: 12
+        byte_order: BigEndian
+        value_type: Signed
+        factor: 0.01
+        offset: 250
+        min: 229.52
+        max: 270.47
+        unit: degK
+        receivers:
+          - PCM1
+          - FOO
+      - name: AverageRadius
+        multiplexer: ~
+        start_bit: 6
+        size: 6
+        byte_order: BigEndian
+        value_type: Unsigned
+        factor: 0.1
+        offset: 0
+        min: 0
+        max: 5
+        unit: m
+        receivers:
+          - Vector__XXX
+      - name: Enable
+        multiplexer: ~
+        start_bit: 7
+        size: 1
+        byte_order: BigEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: "-"
+        receivers:
+          - Vector__XXX
+env_vars: []
+env_vars_data: []
+comments:
+  - Message:
+      message_id: 2147484144
+      comment: Example message used as template in MotoHawk models.
+attribute_definitions:
+  - Message:
+      attribute_name: GenMsgCycleTime
+      attribute_value_type:
+        Integer:
+          minimum: 0
+          maximum: 65535
+  - Network:
+      attribute_name: BusType
+      attribute_value_type:
+        String: {}
+  - Message:
+      attribute_name: VFrameFormat
+      attribute_value_type:
+        Enum:
+          values:
+            - StandardCAN
+            - ExtendedCAN
+            - reserved
+            - J1939PG
+            - reserved
+            - reserved
+            - reserved
+            - reserved
+            - reserved
+            - reserved
+            - reserved
+            - reserved
+            - reserved
+            - reserved
+            - StandardCAN_FD
+            - ExtendedCAN_FD
+  - Message:
+      attribute_name: CANFD_BRS
+      attribute_value_type:
+        Enum:
+          values:
+            - "0"
+            - "1"
+attribute_defaults:
+  - Attribute:
+      attribute_name: GenMsgCycleTime
+      attribute_value:
+        Double: 0
+  - Attribute:
+      attribute_name: BusType
+      attribute_value:
+        String: ""
+  - Attribute:
+      attribute_name: VFrameFormat
+      attribute_value:
+        String: StandardCAN
+  - Attribute:
+      attribute_name: CANFD_BRS
+      attribute_value:
+        String: "1"
+attribute_values:
+  - Network:
+      attribute_name: BusType
+      attribute_value:
+        String: CAN FD
+  - Message:
+      attribute_name: VFrameFormat
+      message_id: 2147484144
+      attribute_value:
+        Double: 15
+signal_value_descriptions:
+  - message_id: 2147484144
+    signal_name: Enable
+    value_descriptions:
+      values:
+        - num: 0
+          str: Disabled
+        - num: 1
+          str: Enabled
+env_var_value_descriptions: []

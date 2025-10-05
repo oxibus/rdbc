@@ -1,0 +1,112 @@
+---
+source: tests/snapshots.rs
+---
+version: "1.0"
+new_symbols:
+  - NS_DESC_
+  - CM_
+  - BA_DEF_
+  - BA_
+  - VAL_
+  - CAT_DEF_
+  - CAT_
+  - FILTER
+  - BA_DEF_DEF_
+  - EV_DATA_
+  - ENVVAR_DATA_
+  - SGTYPE_
+  - SGTYPE_VAL_
+  - BA_DEF_SGTYPE_
+  - BA_SGTYPE_
+  - SIG_TYPE_REF_
+  - VAL_TABLE_
+  - SIG_GROUP_
+  - SIG_VALTYPE_
+  - SIGTYPE_VALTYPE_
+  - BO_TX_BU_
+  - BA_DEF_REL_
+  - BA_REL_
+  - BA_DEF_DEF_REL_
+  - BU_SG_REL_
+  - BU_EV_REL_
+  - BU_BO_REL_
+  - SG_MUL_VAL_
+bit_timing:
+  value: ~
+nodes:
+  - PCM1
+  - FOO
+value_tables:
+  - name: TempValueTable
+    value_descriptions:
+      values:
+        - num: 4095
+          str: Error
+        - num: 4094
+          str: Init
+messages:
+  - header:
+      id: 496
+      name: ExampleMessage
+      size: 2
+      transmitter: PCM1
+    signals:
+      - name: Temperature
+        multiplexer: ~
+        start_bit: 3
+        size: 12
+        byte_order: BigEndian
+        value_type: Unsigned
+        factor: -0.01
+        offset: 4100
+        min: 4070
+        max: 4100
+        unit: degK
+        receivers:
+          - PCM1
+          - FOO
+env_vars: []
+env_vars_data: []
+comments:
+  - Message:
+      message_id: 496
+      comment: Example message
+attribute_definitions:
+  - Signal:
+      attribute_name: GenSigStartValue
+      attribute_value_type:
+        Integer:
+          minimum: -2147483648
+          maximum: 2147483647
+  - Message:
+      attribute_name: GenMsgCycleTime
+      attribute_value_type:
+        Integer:
+          minimum: 0
+          maximum: 65535
+attribute_defaults:
+  - Attribute:
+      attribute_name: GenSigStartValue
+      attribute_value:
+        Double: 0
+  - Attribute:
+      attribute_name: GenMsgCycleTime
+      attribute_value:
+        Double: 0
+attribute_values:
+  - Signal:
+      attribute_name: GenSigStartValue
+      message_id: 496
+      signal_name: Temperature
+      attribute_value:
+        Double: 4094
+signal_value_descriptions:
+  - message_id: 496
+    signal_name: Temperature
+    value_descriptions:
+      values:
+        - num: 4095
+          str: Error
+        - num: 4094
+          str: Init
+env_var_value_descriptions: []

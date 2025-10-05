@@ -1,0 +1,1848 @@
+---
+source: tests/snapshots.rs
+---
+version: ""
+new_symbols:
+  - NS_DESC_
+  - CM_
+  - BA_DEF_
+  - BA_
+  - VAL_
+  - CAT_DEF_
+  - CAT_
+  - FILTER
+  - BA_DEF_DEF_
+  - EV_DATA_
+  - ENVVAR_DATA_
+  - SGTYPE_
+  - SGTYPE_VAL_
+  - BA_DEF_SGTYPE_
+  - BA_SGTYPE_
+  - SIG_TYPE_REF_
+  - VAL_TABLE_
+  - SIG_GROUP_
+  - SIG_VALTYPE_
+  - SIGTYPE_VALTYPE_
+  - BO_TX_BU_
+  - BA_DEF_REL_
+  - BA_REL_
+  - BA_DEF_DEF_REL_
+  - BU_SG_REL_
+  - BU_EV_REL_
+  - BU_BO_REL_
+  - SG_MUL_VAL_
+bit_timing:
+  value: ~
+nodes:
+  - ABS
+  - DRS_MM5_10
+value_tables:
+  - name: ABS_fault_info
+    value_descriptions:
+      values:
+        - num: 2
+          str: active faults stored
+        - num: 1
+          str: inactive faults stored
+        - num: 0
+          str: no faults stored
+  - name: vt_WheelSpeedQualifier
+    value_descriptions:
+      values:
+        - num: 5
+          str: InvalidUnderVoltage
+        - num: 4
+          str: NotCalculated
+        - num: 3
+          str: ReducedMonitored
+        - num: 2
+          str: Faulty
+        - num: 1
+          str: Normal
+        - num: 0
+          str: NotInitialized
+messages:
+  - header:
+      id: 835
+      name: BREMSE_33
+      size: 8
+      transmitter: ABS
+    signals:
+      - name: whlspeed_FL
+        multiplexer: ~
+        start_bit: 0
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 0.015625
+        offset: 0
+        min: 0
+        max: 100
+        unit: m/s
+        receivers:
+          - Vector__XXX
+      - name: whlspeed_FR
+        multiplexer: ~
+        start_bit: 16
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 0.015625
+        offset: 0
+        min: 0
+        max: 100
+        unit: m/s
+        receivers:
+          - Vector__XXX
+      - name: whlspeed_RL
+        multiplexer: ~
+        start_bit: 32
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 0.015625
+        offset: 0
+        min: 0
+        max: 100
+        unit: m/s
+        receivers:
+          - Vector__XXX
+      - name: whlspeed_RR
+        multiplexer: ~
+        start_bit: 48
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 0.015625
+        offset: 0
+        min: 0
+        max: 100
+        unit: m/s
+        receivers:
+          - Vector__XXX
+  - header:
+      id: 320
+      name: BREMSE_10
+      size: 8
+      transmitter: ABS
+    signals: []
+  - header:
+      id: 321
+      name: BREMSE_11
+      size: 8
+      transmitter: ABS
+    signals: []
+  - header:
+      id: 322
+      name: BREMSE_12
+      size: 8
+      transmitter: ABS
+    signals: []
+  - header:
+      id: 323
+      name: BREMSE_13
+      size: 8
+      transmitter: ABS
+    signals: []
+  - header:
+      id: 117
+      name: DRS_RX_ID0
+      size: 8
+      transmitter: ABS
+    signals: []
+  - header:
+      id: 112
+      name: MM5_10_TX1
+      size: 8
+      transmitter: DRS_MM5_10
+    signals:
+      - name: Yaw_Rate
+        multiplexer: ~
+        start_bit: 0
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 0.005
+        offset: -163.84
+        min: -163.84
+        max: 163.83
+        unit: Â°/s
+        receivers:
+          - ABS
+      - name: AY1
+        multiplexer: ~
+        start_bit: 32
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 0.000127465
+        offset: -4.1768
+        min: -4.1768
+        max: 4.1765
+        unit: g
+        receivers:
+          - ABS
+  - header:
+      id: 128
+      name: MM5_10_TX2
+      size: 8
+      transmitter: DRS_MM5_10
+    signals:
+      - name: Roll_Rate
+        multiplexer: ~
+        start_bit: 0
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 0.005
+        offset: -163.84
+        min: -163.84
+        max: 163.835
+        unit: Â°/s
+        receivers:
+          - ABS
+      - name: AX1
+        multiplexer: ~
+        start_bit: 32
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 0.000127465
+        offset: -4.1768
+        min: -4.1768
+        max: 4.1765
+        unit: g
+        receivers:
+          - ABS
+  - header:
+      id: 1398
+      name: MM5_10_TX3
+      size: 8
+      transmitter: DRS_MM5_10
+    signals:
+      - name: AZ
+        multiplexer: ~
+        start_bit: 32
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 0.000127465
+        offset: -4.1768
+        min: -4.1768
+        max: 4.1765
+        unit: g
+        receivers:
+          - ABS
+  - header:
+      id: 586
+      name: BREMSE_2
+      size: 8
+      transmitter: ABS
+    signals:
+      - name: whlspeed_FL_Bremse2
+        multiplexer: ~
+        start_bit: 0
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 0.015625
+        offset: 0
+        min: 0
+        max: 100
+        unit: m/s
+        receivers:
+          - Vector__XXX
+      - name: whlspeed_FR_Bremse2
+        multiplexer: ~
+        start_bit: 16
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 0.015625
+        offset: 0
+        min: 0
+        max: 100
+        unit: m/s
+        receivers:
+          - Vector__XXX
+      - name: whlspeed_RL_Bremse2
+        multiplexer: ~
+        start_bit: 32
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 0.015625
+        offset: 0
+        min: 0
+        max: 100
+        unit: m/s
+        receivers:
+          - Vector__XXX
+      - name: whlspeed_RR_Bremse2
+        multiplexer: ~
+        start_bit: 48
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 0.015625
+        offset: 0
+        min: 0
+        max: 100
+        unit: m/s
+        receivers:
+          - Vector__XXX
+  - header:
+      id: 588
+      name: ABS_Switch
+      size: 8
+      transmitter: Vector__XXX
+    signals:
+      - name: ABS_Switchposition
+        multiplexer: ~
+        start_bit: 0
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 11
+        unit: ""
+        receivers:
+          - ABS
+  - header:
+      id: 832
+      name: BREMSE_30
+      size: 8
+      transmitter: ABS
+    signals: []
+  - header:
+      id: 833
+      name: BREMSE_31
+      size: 8
+      transmitter: ABS
+    signals:
+      - name: Idle_Time
+        multiplexer: ~
+        start_bit: 16
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: "-"
+        receivers:
+          - Vector__XXX
+  - header:
+      id: 834
+      name: BREMSE_32
+      size: 8
+      transmitter: ABS
+    signals:
+      - name: acc_FA
+        multiplexer: ~
+        start_bit: 0
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 0.05
+        offset: 0
+        min: 0
+        max: 10
+        unit: cm3
+        receivers:
+          - Vector__XXX
+      - name: acc_RA
+        multiplexer: ~
+        start_bit: 8
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 0.05
+        offset: 0
+        min: 0
+        max: 10
+        unit: cm3
+        receivers:
+          - Vector__XXX
+      - name: WheelQuality_FL
+        multiplexer: ~
+        start_bit: 32
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 32
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: WheelQuality_FR
+        multiplexer: ~
+        start_bit: 40
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 32
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: WheelQuality_RL
+        multiplexer: ~
+        start_bit: 48
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 32
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: WheelQuality_RR
+        multiplexer: ~
+        start_bit: 56
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 32
+        unit: ""
+        receivers:
+          - Vector__XXX
+  - header:
+      id: 1345
+      name: BREMSE_51
+      size: 8
+      transmitter: ABS
+    signals:
+      - name: AX1_ABS_int
+        multiplexer: ~
+        start_bit: 0
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 0.00012742
+        offset: -4.1768
+        min: -4.1768
+        max: 4.1736697
+        unit: g
+        receivers:
+          - Vector__XXX
+      - name: AY1_ABS_int
+        multiplexer: ~
+        start_bit: 16
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 0.00012742
+        offset: -4.1768
+        min: -4.1768
+        max: 4.1765
+        unit: g
+        receivers:
+          - Vector__XXX
+      - name: IF_variant
+        multiplexer: ~
+        start_bit: 48
+        size: 6
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 63
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: IF_revision
+        multiplexer: ~
+        start_bit: 54
+        size: 6
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 63
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: IF_chksum
+        multiplexer: ~
+        start_bit: 60
+        size: 4
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 15
+        unit: ""
+        receivers:
+          - Vector__XXX
+  - header:
+      id: 1346
+      name: BREMSE_52
+      size: 8
+      transmitter: ABS
+    signals:
+      - name: Mplx_SW_Info
+        multiplexer:
+          multiplexer_signal: ~
+          multiplexer_switch: ~
+        start_bit: 0
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 255
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: SW_version_High_upper
+        multiplexer:
+          multiplexer_signal: 1
+          multiplexer_switch: ~
+        start_bit: 8
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 255
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: SW_version_High_lower
+        multiplexer:
+          multiplexer_signal: 1
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 255
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: SW_version_Mid_upper
+        multiplexer:
+          multiplexer_signal: 1
+          multiplexer_switch: ~
+        start_bit: 24
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 255
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: SW_version_Mid_lower
+        multiplexer:
+          multiplexer_signal: 1
+          multiplexer_switch: ~
+        start_bit: 32
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 255
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: SW_version_Low_upper
+        multiplexer:
+          multiplexer_signal: 1
+          multiplexer_switch: ~
+        start_bit: 40
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 255
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: SW_version_Low_lower
+        multiplexer:
+          multiplexer_signal: 1
+          multiplexer_switch: ~
+        start_bit: 48
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 255
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: BB_dig1
+        multiplexer:
+          multiplexer_signal: 2
+          multiplexer_switch: ~
+        start_bit: 8
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 255
+        unit: ASCII
+        receivers:
+          - Vector__XXX
+      - name: BB_dig2
+        multiplexer:
+          multiplexer_signal: 2
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 255
+        unit: ASCII
+        receivers:
+          - Vector__XXX
+      - name: BB_dig3
+        multiplexer:
+          multiplexer_signal: 2
+          multiplexer_switch: ~
+        start_bit: 24
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 255
+        unit: ASCII
+        receivers:
+          - Vector__XXX
+      - name: BB_dig4
+        multiplexer:
+          multiplexer_signal: 2
+          multiplexer_switch: ~
+        start_bit: 32
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 255
+        unit: ASCII
+        receivers:
+          - Vector__XXX
+      - name: BB_dig5
+        multiplexer:
+          multiplexer_signal: 2
+          multiplexer_switch: ~
+        start_bit: 40
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 255
+        unit: ASCII
+        receivers:
+          - Vector__XXX
+      - name: BB_dig6
+        multiplexer:
+          multiplexer_signal: 2
+          multiplexer_switch: ~
+        start_bit: 48
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 255
+        unit: ASCII
+        receivers:
+          - Vector__XXX
+      - name: BB_dig7
+        multiplexer:
+          multiplexer_signal: 2
+          multiplexer_switch: ~
+        start_bit: 56
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 255
+        unit: ASCII
+        receivers:
+          - Vector__XXX
+      - name: Appl_Id_01
+        multiplexer:
+          multiplexer_signal: 3
+          multiplexer_switch: ~
+        start_bit: 8
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 255
+        unit: ASCII
+        receivers:
+          - Vector__XXX
+      - name: Appl_Id_02
+        multiplexer:
+          multiplexer_signal: 3
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 255
+        unit: ASCII
+        receivers:
+          - Vector__XXX
+      - name: Appl_Id_03
+        multiplexer:
+          multiplexer_signal: 3
+          multiplexer_switch: ~
+        start_bit: 24
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 255
+        unit: ASCII
+        receivers:
+          - Vector__XXX
+      - name: Appl_Id_04
+        multiplexer:
+          multiplexer_signal: 3
+          multiplexer_switch: ~
+        start_bit: 32
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 255
+        unit: ASCII
+        receivers:
+          - Vector__XXX
+      - name: Appl_Id_05
+        multiplexer:
+          multiplexer_signal: 3
+          multiplexer_switch: ~
+        start_bit: 40
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 255
+        unit: ASCII
+        receivers:
+          - Vector__XXX
+      - name: Appl_Id_06
+        multiplexer:
+          multiplexer_signal: 3
+          multiplexer_switch: ~
+        start_bit: 48
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 255
+        unit: ASCII
+        receivers:
+          - Vector__XXX
+      - name: Appl_Id_07
+        multiplexer:
+          multiplexer_signal: 3
+          multiplexer_switch: ~
+        start_bit: 56
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 255
+        unit: ASCII
+        receivers:
+          - Vector__XXX
+      - name: Appl_Id_08
+        multiplexer:
+          multiplexer_signal: 4
+          multiplexer_switch: ~
+        start_bit: 8
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 255
+        unit: ASCII
+        receivers:
+          - Vector__XXX
+      - name: Appl_Id_09
+        multiplexer:
+          multiplexer_signal: 4
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 255
+        unit: ASCII
+        receivers:
+          - Vector__XXX
+      - name: Appl_Id_10
+        multiplexer:
+          multiplexer_signal: 4
+          multiplexer_switch: ~
+        start_bit: 24
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 255
+        unit: ASCII
+        receivers:
+          - Vector__XXX
+      - name: Appl_Id_11
+        multiplexer:
+          multiplexer_signal: 4
+          multiplexer_switch: ~
+        start_bit: 32
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 255
+        unit: ASCII
+        receivers:
+          - Vector__XXX
+      - name: Appl_Id_12
+        multiplexer:
+          multiplexer_signal: 4
+          multiplexer_switch: ~
+        start_bit: 40
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 255
+        unit: ASCII
+        receivers:
+          - Vector__XXX
+      - name: Appl_Id_13
+        multiplexer:
+          multiplexer_signal: 4
+          multiplexer_switch: ~
+        start_bit: 48
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 255
+        unit: ASCII
+        receivers:
+          - Vector__XXX
+      - name: Appl_Id_14
+        multiplexer:
+          multiplexer_signal: 4
+          multiplexer_switch: ~
+        start_bit: 56
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 255
+        unit: ASCII
+        receivers:
+          - Vector__XXX
+      - name: Appl_date_01
+        multiplexer:
+          multiplexer_signal: 5
+          multiplexer_switch: ~
+        start_bit: 8
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 99
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: Appl_date_02
+        multiplexer:
+          multiplexer_signal: 5
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 1
+        max: 12
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: Appl_date_03
+        multiplexer:
+          multiplexer_signal: 5
+          multiplexer_switch: ~
+        start_bit: 24
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 1
+        max: 31
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: Appl_date_04
+        multiplexer:
+          multiplexer_signal: 5
+          multiplexer_switch: ~
+        start_bit: 32
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 24
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: Appl_date_05
+        multiplexer:
+          multiplexer_signal: 5
+          multiplexer_switch: ~
+        start_bit: 40
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 59
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: Appl_date_06
+        multiplexer:
+          multiplexer_signal: 5
+          multiplexer_switch: ~
+        start_bit: 48
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 59
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: SW_CAN_ident
+        multiplexer:
+          multiplexer_signal: 6
+          multiplexer_switch: ~
+        start_bit: 8
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 255
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: HU_date_year
+        multiplexer:
+          multiplexer_signal: 7
+          multiplexer_switch: ~
+        start_bit: 8
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 99
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: HU_date_month
+        multiplexer:
+          multiplexer_signal: 7
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 1
+        max: 12
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: HU_date_day
+        multiplexer:
+          multiplexer_signal: 7
+          multiplexer_switch: ~
+        start_bit: 24
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 1
+        max: 31
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: Ecu_serial
+        multiplexer:
+          multiplexer_signal: 7
+          multiplexer_switch: ~
+        start_bit: 32
+        size: 32
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 99999
+        unit: ""
+        receivers:
+          - Vector__XXX
+  - header:
+      id: 1376
+      name: BREMSE_50
+      size: 8
+      transmitter: ABS
+    signals:
+      - name: Brake_bal_at50
+        multiplexer: ~
+        start_bit: 16
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 0.1
+        offset: 0
+        min: 0
+        max: 100
+        unit: Bar
+        receivers:
+          - Vector__XXX
+      - name: Brake_bal_at50_advice
+        multiplexer: ~
+        start_bit: 32
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 100
+        unit: Bar
+        receivers:
+          - Vector__XXX
+      - name: Brake_bal_pct
+        multiplexer: ~
+        start_bit: 40
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 0.1
+        offset: 0
+        min: 0
+        max: 100
+        unit: "%"
+        receivers:
+          - Vector__XXX
+      - name: Brake_bal_pct_advice
+        multiplexer: ~
+        start_bit: 56
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 100
+        unit: "%"
+        receivers:
+          - Vector__XXX
+  - header:
+      id: 1472
+      name: BREMSE_53
+      size: 8
+      transmitter: ABS
+    signals:
+      - name: SwitchPosition
+        multiplexer: ~
+        start_bit: 0
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 1
+        max: 12
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: P_FA
+        multiplexer: ~
+        start_bit: 8
+        size: 16
+        byte_order: LittleEndian
+        value_type: Signed
+        factor: 0.01526
+        offset: 0
+        min: -42.5
+        max: 425
+        unit: bar
+        receivers:
+          - Vector__XXX
+      - name: BLS
+        multiplexer: ~
+        start_bit: 24
+        size: 1
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 1
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: Bremse_53_cnt
+        multiplexer: ~
+        start_bit: 26
+        size: 2
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 3
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: ABS_Malfunction
+        multiplexer: ~
+        start_bit: 28
+        size: 1
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 1
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: ABS_Active
+        multiplexer: ~
+        start_bit: 29
+        size: 1
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 1
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: EBD_Lamp
+        multiplexer: ~
+        start_bit: 30
+        size: 1
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 1
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: ABS_Lamp
+        multiplexer: ~
+        start_bit: 31
+        size: 1
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 1
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: Diag_FL
+        multiplexer: ~
+        start_bit: 32
+        size: 2
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 3
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: Diag_FR
+        multiplexer: ~
+        start_bit: 34
+        size: 2
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 3
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: Diag_RL
+        multiplexer: ~
+        start_bit: 36
+        size: 2
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 3
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: Diag_RR
+        multiplexer: ~
+        start_bit: 38
+        size: 2
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 3
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: Diag_ABSUnit
+        multiplexer: ~
+        start_bit: 40
+        size: 1
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 1
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: Diag_FuseValve
+        multiplexer: ~
+        start_bit: 41
+        size: 1
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 1
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: Diag_FusePump
+        multiplexer: ~
+        start_bit: 42
+        size: 1
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 1
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: Diag_P_FA
+        multiplexer: ~
+        start_bit: 43
+        size: 1
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 1
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: Diag_P_RA
+        multiplexer: ~
+        start_bit: 44
+        size: 1
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 1
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: Diag_YRS
+        multiplexer: ~
+        start_bit: 45
+        size: 1
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 1
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: ABS_fault_info
+        multiplexer: ~
+        start_bit: 46
+        size: 2
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 3
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: P_RA
+        multiplexer: ~
+        start_bit: 48
+        size: 16
+        byte_order: LittleEndian
+        value_type: Signed
+        factor: 0.01526
+        offset: 0
+        min: -42.5
+        max: 425
+        unit: bar
+        receivers:
+          - Vector__XXX
+env_vars: []
+env_vars_data: []
+comments:
+  - Network:
+      comment: Version 2.0
+  - Signal:
+      message_id: 835
+      signal_name: whlspeed_FL
+      comment: Radgeschwindigkeit / wheel speed absCtrl FL
+  - Signal:
+      message_id: 835
+      signal_name: whlspeed_FR
+      comment: Radgeschwindigkeit / wheel speed absCtrl FR
+  - Signal:
+      message_id: 835
+      signal_name: whlspeed_RL
+      comment: Radgeschwindigkeit / wheel speed absCtrl RL
+  - Signal:
+      message_id: 835
+      signal_name: whlspeed_RR
+      comment: Radgeschwindigkeit / wheel speed absCtrl RR
+  - Signal:
+      message_id: 112
+      signal_name: Yaw_Rate
+      comment: Measured yaw rate around the Z axle.
+  - Signal:
+      message_id: 112
+      signal_name: AY1
+      comment: Measured lateral acceleration.
+  - Signal:
+      message_id: 128
+      signal_name: Roll_Rate
+      comment: Measured roll rate around the X axle.
+  - Signal:
+      message_id: 128
+      signal_name: AX1
+      comment: Measured longitudional acceleration.
+  - Signal:
+      message_id: 1398
+      signal_name: AZ
+      comment: Measured vertical acceleration.
+  - Signal:
+      message_id: 586
+      signal_name: whlspeed_FL_Bremse2
+      comment: Radgeschwindigkeit / wheel speed direct FL
+  - Signal:
+      message_id: 586
+      signal_name: whlspeed_FR_Bremse2
+      comment: Radgeschwindigkeit / wheel speed direct FR
+  - Signal:
+      message_id: 586
+      signal_name: whlspeed_RL_Bremse2
+      comment: Radgeschwindigkeit / wheel speed direct RL
+  - Signal:
+      message_id: 586
+      signal_name: whlspeed_RR_Bremse2
+      comment: Radgeschwindigkeit / wheel speed direct RR
+  - Signal:
+      message_id: 588
+      signal_name: ABS_Switchposition
+      comment: Channel to send the swich position via CAN to the ABS.
+  - Signal:
+      message_id: 834
+      signal_name: acc_FA
+      comment: Fill level of the fluid reservoir of the front axle.
+  - Signal:
+      message_id: 834
+      signal_name: acc_RA
+      comment: Fill level of the fluid reservoir of the rear axle.
+  - Signal:
+      message_id: 834
+      signal_name: WheelQuality_FL
+      comment: "Bit matrix\nBit0 ( 1) Signal Reduced Monitored\nBit1 ( 2) Reduced Accuracy\nBit2 ( 4) Interfered\nBit3 ( 8) Suspicious Plausibility\nBit4 (16) Suspicious Lost\nBit5 (32) Not Initialized\nBit6 (64) Invalid Generic\nBit7 (128) Invalid Individual"
+  - Signal:
+      message_id: 834
+      signal_name: WheelQuality_FR
+      comment: "Bit matrix\nBit0 ( 1) Signal Reduced Monitored\nBit1 ( 2) Reduced Accuracy\nBit2 ( 4) Interfered\nBit3 ( 8) Suspicious Plausibility\nBit4 (16) Suspicious Lost\nBit5 (32) Not Initialized\nBit6 (64) Invalid Generic\nBit7 (128) Invalid Individual"
+  - Signal:
+      message_id: 834
+      signal_name: WheelQuality_RL
+      comment: "Bit matrix\nBit0 ( 1) Signal Reduced Monitored\nBit1 ( 2) Reduced Accuracy\nBit2 ( 4) Interfered\nBit3 ( 8) Suspicious Plausibility\nBit4 (16) Suspicious Lost\nBit5 (32) Not Initialized\nBit6 (64) Invalid Generic\nBit7 (128) Invalid Individual"
+  - Signal:
+      message_id: 834
+      signal_name: WheelQuality_RR
+      comment: "Bit matrix\nBit0 ( 1) Signal Reduced Monitored\nBit1 ( 2) Reduced Accuracy\nBit2 ( 4) Interfered\nBit3 ( 8) Suspicious Plausibility\nBit4 (16) Suspicious Lost\nBit5 (32) Not Initialized\nBit6 (64) Invalid Generic\nBit7 (128) Invalid Individual"
+  - Signal:
+      message_id: 1345
+      signal_name: AX1_ABS_int
+      comment: Used longitudional acceleration value in the ABS.
+  - Signal:
+      message_id: 1345
+      signal_name: AY1_ABS_int
+      comment: Used lateral acceleration value in the ABS.
+  - Signal:
+      message_id: 1345
+      signal_name: IF_variant
+      comment: external info to e.g. MS6 which dbc has to be used. This index increments on changes that make the MS6 interface incompatible to the predecessor CAN interface implementation
+  - Signal:
+      message_id: 1345
+      signal_name: IF_revision
+      comment: external info to e.g. MS6 which dbc has to be used. This index increments with added features (rest of MS6 interface stays intact.)
+  - Signal:
+      message_id: 1345
+      signal_name: IF_chksum
+      comment: "external info to e.g. MS6 which dbc has to be used. Checksum "
+  - Signal:
+      message_id: 1346
+      signal_name: Mplx_SW_Info
+      comment: "1=SW version; 2=BB#; 3,4=application name; 5=application date (UTC); 6=deviceType (SW CAN ident, ABS M5=2, ABS M6=3); 7=Serial#"
+  - Signal:
+      message_id: 1346
+      signal_name: SW_version_High_upper
+      comment: "version 1.0 as 0x01(upper), version 100.20 as 0x64(upper)"
+  - Signal:
+      message_id: 1346
+      signal_name: SW_version_High_lower
+      comment: "version 1.0 as 0x00(lower), version 100.20 as 0x14(lower)"
+  - Signal:
+      message_id: 1346
+      signal_name: SW_version_Mid_upper
+      comment: "version 1.0 as 0x01(upper), version 100.20 as 0x64(upper)"
+  - Signal:
+      message_id: 1346
+      signal_name: SW_version_Mid_lower
+      comment: "version 1.0 as 0x00(lower), version 100.20 as 0x14(lower)"
+  - Signal:
+      message_id: 1346
+      signal_name: SW_version_Low_upper
+      comment: "version 1.0 as 0x01(upper), version 100.20 as 0x64(upper)"
+  - Signal:
+      message_id: 1346
+      signal_name: SW_version_Low_lower
+      comment: "version 1.0 as 0x00(lower), version 100.20 as 0x14(lower)"
+  - Signal:
+      message_id: 1346
+      signal_name: Appl_date_01
+      comment: year
+  - Signal:
+      message_id: 1346
+      signal_name: Appl_date_02
+      comment: month
+  - Signal:
+      message_id: 1346
+      signal_name: Appl_date_03
+      comment: day
+  - Signal:
+      message_id: 1346
+      signal_name: Appl_date_04
+      comment: hour
+  - Signal:
+      message_id: 1346
+      signal_name: Appl_date_05
+      comment: minute
+  - Signal:
+      message_id: 1346
+      signal_name: Appl_date_06
+      comment: seconds
+  - Signal:
+      message_id: 1376
+      signal_name: Brake_bal_at50
+      comment: Calculated rear axle brake pressure if the front pressure is at 50 bar.
+  - Signal:
+      message_id: 1376
+      signal_name: Brake_bal_at50_advice
+      comment: Recommended rear axle brake pressure if the front pressure is at 50 bar.
+  - Signal:
+      message_id: 1376
+      signal_name: Brake_bal_pct
+      comment: "Percental brake balance on the front axle. "
+  - Signal:
+      message_id: 1376
+      signal_name: Brake_bal_pct_advice
+      comment: "Recommended percental brake balance on the front axle. "
+  - Signal:
+      message_id: 1472
+      signal_name: SwitchPosition
+      comment: Used switch position of the ABS.
+  - Signal:
+      message_id: 1472
+      signal_name: P_FA
+      comment: Brake pressure on the front axle.
+  - Signal:
+      message_id: 1472
+      signal_name: BLS
+      comment: Bit for the brake light switch.
+  - Signal:
+      message_id: 1472
+      signal_name: ABS_Malfunction
+      comment: "Bit will jump to 1, if the ABS control is deactivated by a fault."
+  - Signal:
+      message_id: 1472
+      signal_name: ABS_Active
+      comment: "Bit will jump to 1, when the ABS control is active."
+  - Signal:
+      message_id: 1472
+      signal_name: EBD_Lamp
+      comment: "Bit will jump to 1, when the EBD is deactivated due to a fault."
+  - Signal:
+      message_id: 1472
+      signal_name: ABS_Lamp
+      comment: "Bit will jump to 1, when the ABS control is deactivated due to a fault, switch to the off position or while working with RaceABS."
+  - Signal:
+      message_id: 1472
+      signal_name: Diag_FL
+      comment: "Value to show faults related to the wheel speed sensor. \n0 - Signal ok, 1 - Wiring related fault, 2 - Signal related fault"
+  - Signal:
+      message_id: 1472
+      signal_name: Diag_FR
+      comment: "Value to show faults related to the wheel speed sensor. \n0 - Signal ok, 1 - Wiring related fault, 2 - Signal related fault"
+  - Signal:
+      message_id: 1472
+      signal_name: Diag_RL
+      comment: "Value to show faults related to the wheel speed sensor. \n0 - Signal ok, 1 - Wiring related fault, 2 - Signal related fault"
+  - Signal:
+      message_id: 1472
+      signal_name: Diag_RR
+      comment: "Value to show faults related to the wheel speed sensor. \n0 - Signal ok, 1 - Wiring related fault, 2 - Signal related fault"
+  - Signal:
+      message_id: 1472
+      signal_name: Diag_ABSUnit
+      comment: "Bit to show, if a ABS error related to the hydraulic unit is present"
+  - Signal:
+      message_id: 1472
+      signal_name: Diag_FuseValve
+      comment: "Bit to show, if a ABS error related to the fuse or power supply of the ABS valves is present."
+  - Signal:
+      message_id: 1472
+      signal_name: Diag_FusePump
+      comment: "Bit to show, if a ABS error related to the fuse or power supply of the ABS pump is present."
+  - Signal:
+      message_id: 1472
+      signal_name: Diag_P_FA
+      comment: "Bit to show, if the pressure sensor FA is working properly. An error is pressent, if the bit is 1."
+  - Signal:
+      message_id: 1472
+      signal_name: Diag_P_RA
+      comment: "Bit to show, if the pressure sensor RA is working properly. An error is pressent, if the bit is 1."
+  - Signal:
+      message_id: 1472
+      signal_name: Diag_YRS
+      comment: "Bit to show, if the yaw rate sensor is working properly. An error is pressent, if the bit is 1."
+  - Signal:
+      message_id: 1472
+      signal_name: ABS_fault_info
+      comment: Bit matrix to show if a fault or a active fault is stored in the ABS. Bit will also show minor errors which do  not shut down the ABS controller.
+  - Signal:
+      message_id: 1472
+      signal_name: P_RA
+      comment: Brake pressure on the rear axle.
+attribute_definitions:
+  - Message:
+      attribute_name: GenMsgCycleTime
+      attribute_value_type:
+        Integer:
+          minimum: 1
+          maximum: 3000
+  - Message:
+      attribute_name: VFrameFormat
+      attribute_value_type:
+        Enum:
+          values:
+            - StandardCAN
+            - ExtendedCAN
+            - reserved
+            - reserved
+            - reserved
+            - reserved
+            - reserved
+            - reserved
+            - reserved
+            - reserved
+            - reserved
+            - reserved
+            - reserved
+            - reserved
+            - StandardCAN_FD
+            - ExtendedCAN_FD
+  - Network:
+      attribute_name: BusType
+      attribute_value_type:
+        String: {}
+attribute_defaults:
+  - Attribute:
+      attribute_name: GenMsgCycleTime
+      attribute_value:
+        Double: 10
+  - Attribute:
+      attribute_name: VFrameFormat
+      attribute_value:
+        String: ""
+  - Attribute:
+      attribute_name: BusType
+      attribute_value:
+        String: CAN
+attribute_values:
+  - Network:
+      attribute_name: BusType
+      attribute_value:
+        String: CAN
+  - Message:
+      attribute_name: VFrameFormat
+      message_id: 835
+      attribute_value:
+        Double: 0
+  - Message:
+      attribute_name: VFrameFormat
+      message_id: 320
+      attribute_value:
+        Double: 0
+  - Message:
+      attribute_name: VFrameFormat
+      message_id: 321
+      attribute_value:
+        Double: 0
+  - Message:
+      attribute_name: VFrameFormat
+      message_id: 322
+      attribute_value:
+        Double: 0
+  - Message:
+      attribute_name: VFrameFormat
+      message_id: 323
+      attribute_value:
+        Double: 0
+  - Message:
+      attribute_name: VFrameFormat
+      message_id: 117
+      attribute_value:
+        Double: 0
+  - Message:
+      attribute_name: VFrameFormat
+      message_id: 112
+      attribute_value:
+        Double: 0
+  - Message:
+      attribute_name: VFrameFormat
+      message_id: 128
+      attribute_value:
+        Double: 0
+  - Message:
+      attribute_name: VFrameFormat
+      message_id: 1398
+      attribute_value:
+        Double: 0
+  - Message:
+      attribute_name: VFrameFormat
+      message_id: 586
+      attribute_value:
+        Double: 0
+  - Message:
+      attribute_name: VFrameFormat
+      message_id: 588
+      attribute_value:
+        Double: 0
+  - Message:
+      attribute_name: VFrameFormat
+      message_id: 832
+      attribute_value:
+        Double: 0
+  - Message:
+      attribute_name: VFrameFormat
+      message_id: 833
+      attribute_value:
+        Double: 0
+  - Message:
+      attribute_name: VFrameFormat
+      message_id: 834
+      attribute_value:
+        Double: 0
+  - Message:
+      attribute_name: VFrameFormat
+      message_id: 1345
+      attribute_value:
+        Double: 0
+  - Message:
+      attribute_name: VFrameFormat
+      message_id: 1346
+      attribute_value:
+        Double: 0
+  - Message:
+      attribute_name: VFrameFormat
+      message_id: 1376
+      attribute_value:
+        Double: 0
+  - Message:
+      attribute_name: VFrameFormat
+      message_id: 1472
+      attribute_value:
+        Double: 0
+signal_value_descriptions:
+  - message_id: 1472
+    signal_name: Diag_FL
+    value_descriptions:
+      values:
+        - num: 2
+          str: Signal error
+        - num: 1
+          str: Line error
+        - num: 0
+          str: Signal ok
+  - message_id: 1472
+    signal_name: Diag_FR
+    value_descriptions:
+      values:
+        - num: 2
+          str: Signal error
+        - num: 1
+          str: Line error
+        - num: 0
+          str: Signal ok
+  - message_id: 1472
+    signal_name: Diag_RL
+    value_descriptions:
+      values:
+        - num: 2
+          str: Signal error
+        - num: 1
+          str: Line error
+        - num: 0
+          str: Signal ok
+  - message_id: 1472
+    signal_name: Diag_RR
+    value_descriptions:
+      values:
+        - num: 2
+          str: Signal error
+        - num: 1
+          str: Line error
+        - num: 0
+          str: Signal ok
+  - message_id: 1472
+    signal_name: ABS_fault_info
+    value_descriptions:
+      values:
+        - num: 2
+          str: active faults stored
+        - num: 1
+          str: inactive faults stored
+        - num: 0
+          str: no faults stored
+env_var_value_descriptions: []

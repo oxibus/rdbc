@@ -1,0 +1,18 @@
+---
+source: tests/snapshots.rs
+---
+version: ""
+new_symbols: []
+bit_timing:
+  value: ~
+nodes: []
+value_tables: ~
+messages: []
+env_vars: []
+env_vars_data: []
+comments: []
+attribute_definitions: []
+attribute_defaults: []
+attribute_values: []
+signal_value_descriptions: []
+env_var_value_descriptions: []

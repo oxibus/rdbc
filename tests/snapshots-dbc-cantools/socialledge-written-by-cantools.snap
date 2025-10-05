@@ -1,0 +1,448 @@
+---
+source: tests/snapshots.rs
+---
+version: ""
+new_symbols:
+  - NS_DESC_
+  - CM_
+  - BA_DEF_
+  - BA_
+  - VAL_
+  - CAT_DEF_
+  - CAT_
+  - FILTER
+  - BA_DEF_DEF_
+  - EV_DATA_
+  - ENVVAR_DATA_
+  - SGTYPE_
+  - SGTYPE_VAL_
+  - BA_DEF_SGTYPE_
+  - BA_SGTYPE_
+  - SIG_TYPE_REF_
+  - VAL_TABLE_
+  - SIG_GROUP_
+  - SIG_VALTYPE_
+  - SIGTYPE_VALTYPE_
+  - BO_TX_BU_
+  - BA_DEF_REL_
+  - BA_REL_
+  - BA_DEF_DEF_REL_
+  - BU_SG_REL_
+  - BU_EV_REL_
+  - BU_BO_REL_
+  - SG_MUL_VAL_
+bit_timing:
+  value: ~
+nodes:
+  - DBG
+  - DRIVER
+  - IO
+  - MOTOR
+  - SENSOR
+value_tables: ~
+messages:
+  - header:
+      id: 100
+      name: DRIVER_HEARTBEAT
+      size: 1
+      transmitter: DRIVER
+    signals:
+      - name: DRIVER_HEARTBEAT_cmd
+        multiplexer: ~
+        start_bit: 0
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - SENSOR
+          - MOTOR
+  - header:
+      id: 500
+      name: IO_DEBUG
+      size: 4
+      transmitter: IO
+    signals:
+      - name: IO_DEBUG_test_unsigned
+        multiplexer: ~
+        start_bit: 0
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - DBG
+      - name: IO_DEBUG_test_enum
+        multiplexer: ~
+        start_bit: 8
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - DBG
+      - name: IO_DEBUG_test_signed
+        multiplexer: ~
+        start_bit: 16
+        size: 8
+        byte_order: LittleEndian
+        value_type: Signed
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - DBG
+      - name: IO_DEBUG_test_float
+        multiplexer: ~
+        start_bit: 24
+        size: 8
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 0.5
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - DBG
+  - header:
+      id: 101
+      name: MOTOR_CMD
+      size: 1
+      transmitter: DRIVER
+    signals:
+      - name: MOTOR_CMD_steer
+        multiplexer: ~
+        start_bit: 0
+        size: 4
+        byte_order: LittleEndian
+        value_type: Signed
+        factor: 1
+        offset: -5
+        min: -5
+        max: 5
+        unit: ""
+        receivers:
+          - MOTOR
+      - name: MOTOR_CMD_drive
+        multiplexer: ~
+        start_bit: 4
+        size: 4
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 9
+        unit: ""
+        receivers:
+          - MOTOR
+  - header:
+      id: 400
+      name: MOTOR_STATUS
+      size: 3
+      transmitter: MOTOR
+    signals:
+      - name: MOTOR_STATUS_wheel_error
+        multiplexer: ~
+        start_bit: 0
+        size: 1
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - DRIVER
+          - IO
+      - name: MOTOR_STATUS_speed_kph
+        multiplexer: ~
+        start_bit: 8
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 0.001
+        offset: 0
+        min: 0
+        max: 0
+        unit: kph
+        receivers:
+          - DRIVER
+          - IO
+  - header:
+      id: 200
+      name: SENSOR_SONARS
+      size: 8
+      transmitter: SENSOR
+    signals:
+      - name: SENSOR_SONARS_mux
+        multiplexer:
+          multiplexer_signal: ~
+          multiplexer_switch: ~
+        start_bit: 0
+        size: 4
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - DRIVER
+          - IO
+      - name: SENSOR_SONARS_err_count
+        multiplexer: ~
+        start_bit: 4
+        size: 12
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - DRIVER
+          - IO
+      - name: SENSOR_SONARS_left
+        multiplexer:
+          multiplexer_signal: 0
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 12
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 0.1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - DRIVER
+          - IO
+      - name: SENSOR_SONARS_middle
+        multiplexer:
+          multiplexer_signal: 0
+          multiplexer_switch: ~
+        start_bit: 28
+        size: 12
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 0.1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - DRIVER
+          - IO
+      - name: SENSOR_SONARS_right
+        multiplexer:
+          multiplexer_signal: 0
+          multiplexer_switch: ~
+        start_bit: 40
+        size: 12
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 0.1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - DRIVER
+          - IO
+      - name: SENSOR_SONARS_rear
+        multiplexer:
+          multiplexer_signal: 0
+          multiplexer_switch: ~
+        start_bit: 52
+        size: 12
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 0.1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - DRIVER
+          - IO
+      - name: SENSOR_SONARS_no_filt_left
+        multiplexer:
+          multiplexer_signal: 1
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 12
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 0.1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - DBG
+      - name: SENSOR_SONARS_no_filt_middle
+        multiplexer:
+          multiplexer_signal: 1
+          multiplexer_switch: ~
+        start_bit: 28
+        size: 12
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 0.1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - DBG
+      - name: SENSOR_SONARS_no_filt_right
+        multiplexer:
+          multiplexer_signal: 1
+          multiplexer_switch: ~
+        start_bit: 40
+        size: 12
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 0.1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - DBG
+      - name: SENSOR_SONARS_no_filt_rear
+        multiplexer:
+          multiplexer_signal: 1
+          multiplexer_switch: ~
+        start_bit: 52
+        size: 12
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 0.1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - DBG
+env_vars: []
+env_vars_data: []
+comments:
+  - Node:
+      node_name: DRIVER
+      comment: // The driver controller driving the car //
+  - Node:
+      node_name: MOTOR
+      comment: The motor controller of the car
+  - Node:
+      node_name: SENSOR
+      comment: The sensor controller of the car
+  - Message:
+      message_id: 100
+      comment: Sync message used to synchronize the controllers
+attribute_definitions:
+  - Network:
+      attribute_name: BusType
+      attribute_value_type:
+        String: {}
+  - Message:
+      attribute_name: GenMsgCycleTime
+      attribute_value_type:
+        Integer:
+          minimum: 0
+          maximum: 0
+  - Signal:
+      attribute_name: FieldType
+      attribute_value_type:
+        String: {}
+attribute_defaults:
+  - Attribute:
+      attribute_name: BusType
+      attribute_value:
+        String: CAN
+  - Attribute:
+      attribute_name: GenMsgCycleTime
+      attribute_value:
+        Double: 0
+  - Attribute:
+      attribute_name: FieldType
+      attribute_value:
+        String: ""
+attribute_values:
+  - Message:
+      attribute_name: GenMsgCycleTime
+      message_id: 100
+      attribute_value:
+        Double: 1000
+  - Signal:
+      attribute_name: FieldType
+      message_id: 100
+      signal_name: DRIVER_HEARTBEAT_cmd
+      attribute_value:
+        String: DRIVER_HEARTBEAT_cmd
+  - Message:
+      attribute_name: GenMsgCycleTime
+      message_id: 500
+      attribute_value:
+        Double: 100
+  - Signal:
+      attribute_name: FieldType
+      message_id: 500
+      signal_name: IO_DEBUG_test_enum
+      attribute_value:
+        String: IO_DEBUG_test_enum
+  - Message:
+      attribute_name: GenMsgCycleTime
+      message_id: 101
+      attribute_value:
+        Double: 100
+  - Message:
+      attribute_name: GenMsgCycleTime
+      message_id: 400
+      attribute_value:
+        Double: 100
+  - Message:
+      attribute_name: GenMsgCycleTime
+      message_id: 200
+      attribute_value:
+        Double: 100
+signal_value_descriptions:
+  - message_id: 100
+    signal_name: DRIVER_HEARTBEAT_cmd
+    value_descriptions:
+      values:
+        - num: 2
+          str: DRIVER_HEARTBEAT_cmd_REBOOT
+        - num: 1
+          str: DRIVER_HEARTBEAT_cmd_SYNC
+        - num: 0
+          str: DRIVER_HEARTBEAT_cmd_NOOP
+  - message_id: 500
+    signal_name: IO_DEBUG_test_enum
+    value_descriptions:
+      values:
+        - num: 2
+          str: IO_DEBUG_test2_enum_two
+        - num: 1
+          str: IO_DEBUG_test2_enum_one
+env_var_value_descriptions: []
