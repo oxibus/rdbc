@@ -1,0 +1,138 @@
+---
+source: tests/snapshots.rs
+---
+version: ""
+new_symbols:
+  - NS_DESC_
+  - CM_
+  - BA_DEF_
+  - BA_
+  - VAL_
+  - CAT_DEF_
+  - CAT_
+  - FILTER
+  - BA_DEF_DEF_
+  - EV_DATA_
+  - ENVVAR_DATA_
+  - SGTYPE_
+  - SGTYPE_VAL_
+  - BA_DEF_SGTYPE_
+  - BA_SGTYPE_
+  - SIG_TYPE_REF_
+  - VAL_TABLE_
+  - SIG_GROUP_
+  - SIG_VALTYPE_
+  - SIGTYPE_VALTYPE_
+  - BO_TX_BU_
+  - BA_DEF_REL_
+  - BA_REL_
+  - BA_DEF_DEF_REL_
+  - BU_SG_REL_
+  - BU_EV_REL_
+  - BU_BO_REL_
+  - SG_MUL_VAL_
+bit_timing:
+  value: ~
+nodes:
+  - dummy_node
+value_tables: ~
+messages:
+  - header:
+      id: 0
+      name: dummy_msg
+      size: 8
+      transmitter: dummy_node
+    signals: []
+env_vars: []
+env_vars_data: []
+comments: []
+attribute_definitions:
+  - Signal:
+      attribute_name: GenSigSendType
+      attribute_value_type:
+        Enum:
+          values:
+            - Cyclic
+            - OnWrite
+            - OnWriteWithRepetition
+            - OnChange
+            - OnChangeWithRepetition
+            - IfActive
+            - IfActiveWithRepetition
+            - NoSigSendType
+  - Signal:
+      attribute_name: GenSigInactiveValue
+      attribute_value_type:
+        Integer:
+          minimum: 0
+          maximum: 0
+  - Message:
+      attribute_name: GenMsgCycleTime
+      attribute_value_type:
+        Integer:
+          minimum: 0
+          maximum: 0
+  - Message:
+      attribute_name: GenMsgSendType
+      attribute_value_type:
+        Enum:
+          values:
+            - Cyclic
+            - not_used
+            - not_used
+            - not_used
+            - not_used
+            - Cyclic
+            - not_used
+            - IfActive
+            - NoMsgSendType
+  - Node:
+      attribute_name: NmStationAddress
+      attribute_value_type:
+        Hex:
+          minimum: 0
+          maximum: 0
+  - Network:
+      attribute_name: DBName
+      attribute_value_type:
+        String: {}
+  - Network:
+      attribute_name: BusType
+      attribute_value_type:
+        String: {}
+attribute_defaults:
+  - Attribute:
+      attribute_name: GenSigSendType
+      attribute_value:
+        String: Cyclic
+  - Attribute:
+      attribute_name: GenSigInactiveValue
+      attribute_value:
+        Double: 0
+  - Attribute:
+      attribute_name: GenMsgCycleTime
+      attribute_value:
+        Double: 0
+  - Attribute:
+      attribute_name: GenMsgSendType
+      attribute_value:
+        String: NoMsgSendType
+  - Attribute:
+      attribute_name: NmStationAddress
+      attribute_value:
+        Double: 0
+  - Attribute:
+      attribute_name: DBName
+      attribute_value:
+        String: ""
+  - Attribute:
+      attribute_name: BusType
+      attribute_value:
+        String: CAN
+attribute_values:
+  - Network:
+      attribute_name: DBName
+      attribute_value:
+        String: issue_165_newline
+signal_value_descriptions: []
+env_var_value_descriptions: []

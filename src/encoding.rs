@@ -1,11 +1,22 @@
 // https://github.com/hsivonen/recode_rs
 
+use std::borrow::Cow;
 use std::io::{Read, Write};
 use std::str::from_utf8_mut;
 
-use encoding_rs::{CoderResult, Decoder, Encoder, Encoding, UTF_8};
+use encoding_rs::{CoderResult, Decoder, Encoder, Encoding, UTF_8, WINDOWS_1252};
 
 use crate::error::DbcError;
+
+/// A helper function to decode cp1252 bytes, as DBC files are often encoded in cp1252.
+pub fn decode_cp1252(bytes: &[u8]) -> Option<Cow<'_, str>> {
+    let (cow, _, had_errors) = WINDOWS_1252.decode(bytes);
+    if had_errors {
+        None
+    } else {
+        Some(cow)
+    }
+}
 
 pub fn utf8_to_gbk(src_data: &[u8]) -> Result<Vec<u8>, DbcError> {
     recode(src_data, "UTF-8", "GBK")

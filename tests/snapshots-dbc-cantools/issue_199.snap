@@ -1,0 +1,598 @@
+---
+source: tests/snapshots.rs
+---
+version: ""
+new_symbols:
+  - NS_DESC_
+  - CM_
+  - BA_DEF_
+  - BA_
+  - VAL_
+  - CAT_DEF_
+  - CAT_
+  - FILTER
+  - BA_DEF_DEF_
+  - EV_DATA_
+  - ENVVAR_DATA_
+  - SGTYPE_
+  - SGTYPE_VAL_
+  - BA_DEF_SGTYPE_
+  - BA_SGTYPE_
+  - SIG_TYPE_REF_
+  - VAL_TABLE_
+  - SIG_GROUP_
+  - SIG_VALTYPE_
+  - SIGTYPE_VALTYPE_
+  - BO_TX_BU_
+  - BA_DEF_REL_
+  - BA_REL_
+  - BA_DEF_DEF_REL_
+  - BU_SG_REL_
+  - BU_EV_REL_
+  - BU_BO_REL_
+  - SG_MUL_VAL_
+bit_timing:
+  value: ~
+nodes:
+  - GMLAN
+  - NEO
+value_tables:
+  - name: GearShifter
+    value_descriptions:
+      values:
+        - num: 3
+          str: Park
+        - num: 0
+          str: Drive/Low
+  - name: DriverDoorStatus
+    value_descriptions:
+      values:
+        - num: 1
+          str: Opened
+        - num: 0
+          str: Closed
+  - name: LKAGapButton
+    value_descriptions:
+      values:
+        - num: 2
+          str: "???"
+        - num: 1
+          str: "??"
+        - num: 0
+          str: None
+  - name: CruiseButtons
+    value_descriptions:
+      values:
+        - num: 6
+          str: Cancel
+        - num: 5
+          str: Main
+        - num: 3
+          str: Set
+        - num: 2
+          str: Resume
+        - num: 1
+          str: None
+  - name: CruiseControlActive
+    value_descriptions:
+      values:
+        - num: 1
+          str: Active
+        - num: 0
+          str: Inactive
+  - name: BlinkerStatus
+    value_descriptions:
+      values:
+        - num: 1
+          str: Active
+        - num: 0
+          str: Inactive
+messages:
+  - header:
+      id: 274923520
+      name: DriverDoorStatus
+      size: 1
+      transmitter: GMLAN
+    signals:
+      - name: DriverDoorOpened
+        multiplexer: ~
+        start_bit: 0
+        size: 1
+        byte_order: BigEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - NEO
+  - header:
+      id: 272629760
+      name: Chime
+      size: 5
+      transmitter: NEO
+    signals:
+      - name: ChimeType
+        multiplexer: ~
+        start_bit: 7
+        size: 8
+        byte_order: BigEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - GMLAN
+      - name: ChimeRepeat
+        multiplexer: ~
+        start_bit: 23
+        size: 8
+        byte_order: BigEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - GMLAN
+      - name: ChimeDuration
+        multiplexer: ~
+        start_bit: 15
+        size: 8
+        byte_order: BigEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - GMLAN
+      - name: ChimeByte5
+        multiplexer: ~
+        start_bit: 39
+        size: 8
+        byte_order: BigEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - GMLAN
+      - name: ChimeByte4
+        multiplexer: ~
+        start_bit: 31
+        size: 8
+        byte_order: BigEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - GMLAN
+  - header:
+      id: 270581760
+      name: BlinkerStatus
+      size: 5
+      transmitter: GMLAN
+    signals:
+      - name: RightBlinker
+        multiplexer: ~
+        start_bit: 6
+        size: 1
+        byte_order: BigEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - NEO
+      - name: LeftBlinker
+        multiplexer: ~
+        start_bit: 7
+        size: 1
+        byte_order: BigEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - NEO
+      - name: BlinkerLight
+        multiplexer: ~
+        start_bit: 25
+        size: 1
+        byte_order: BigEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - NEO
+  - header:
+      id: 270794752
+      name: SteeringWheelAngle
+      size: 8
+      transmitter: GMLAN
+    signals:
+      - name: SteeringWheelAngle
+        multiplexer: ~
+        start_bit: 39
+        size: 16
+        byte_order: BigEndian
+        value_type: Signed
+        factor: 0.0625
+        offset: 0
+        min: -540
+        max: 540
+        unit: deg
+        receivers:
+          - NEO
+  - header:
+      id: 271368192
+      name: GearShifter
+      size: 8
+      transmitter: GMLAN
+    signals:
+      - name: GearShifter
+        multiplexer: ~
+        start_bit: 17
+        size: 2
+        byte_order: BigEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 3
+        unit: ""
+        receivers:
+          - NEO
+  - header:
+      id: 271360000
+      name: GasPedalRegenCruise
+      size: 8
+      transmitter: GMLAN
+    signals:
+      - name: CruiseControlActive
+        multiplexer: ~
+        start_bit: 56
+        size: 1
+        byte_order: BigEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - GMLAN
+      - name: MaxRegen
+        multiplexer: ~
+        start_bit: 12
+        size: 1
+        byte_order: BigEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 1
+        unit: ""
+        receivers:
+          - GMLAN
+          - NEO
+      - name: GasPedal
+        multiplexer: ~
+        start_bit: 47
+        size: 8
+        byte_order: BigEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 254
+        unit: ""
+        receivers:
+          - GMLAN
+          - NEO
+      - name: GearShifter2NotUsed
+        multiplexer: ~
+        start_bit: 55
+        size: 8
+        byte_order: BigEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 255
+        unit: ""
+        receivers:
+          - GMLAN
+          - NEO
+  - header:
+      id: 270860288
+      name: BrakePedal
+      size: 2
+      transmitter: GMLAN
+    signals:
+      - name: BrakeLevel
+        multiplexer: ~
+        start_bit: 2
+        size: 2
+        byte_order: BigEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 3
+        unit: ""
+        receivers:
+          - NEO
+      - name: BrakeSensor
+        multiplexer: ~
+        start_bit: 15
+        size: 8
+        byte_order: BigEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 255
+        unit: ""
+        receivers:
+          - NEO
+  - header:
+      id: 275480576
+      name: WheelSpeed
+      size: 8
+      transmitter: GMLAN
+    signals:
+      - name: WheelSpeedFL
+        multiplexer: ~
+        start_bit: 7
+        size: 16
+        byte_order: BigEndian
+        value_type: Unsigned
+        factor: 0.01
+        offset: 0
+        min: 0
+        max: 70
+        unit: yd/s
+        receivers:
+          - NEO
+      - name: WheelSpeedFR
+        multiplexer: ~
+        start_bit: 39
+        size: 16
+        byte_order: BigEndian
+        value_type: Unsigned
+        factor: 0.01
+        offset: 0
+        min: 0
+        max: 70
+        unit: yd/s
+        receivers:
+          - NEO
+      - name: WheelSpeedRL
+        multiplexer: ~
+        start_bit: 23
+        size: 16
+        byte_order: BigEndian
+        value_type: Unsigned
+        factor: 0.01
+        offset: 0
+        min: 0
+        max: 70
+        unit: yd/s
+        receivers:
+          - NEO
+      - name: WheelSpeedRR
+        multiplexer: ~
+        start_bit: 55
+        size: 16
+        byte_order: BigEndian
+        value_type: Unsigned
+        factor: 0.01
+        offset: 0
+        min: 0
+        max: 70
+        unit: yd/s
+        receivers:
+          - NEO
+  - header:
+      id: 270598144
+      name: VehicleSpeed
+      size: 8
+      transmitter: GMLAN
+    signals:
+      - name: VehicleSpeed1
+        multiplexer: ~
+        start_bit: 7
+        size: 16
+        byte_order: BigEndian
+        value_type: Unsigned
+        factor: 0.01
+        offset: 0
+        min: 0
+        max: 100
+        unit: mph
+        receivers:
+          - NEO
+      - name: VehicleSpeed2
+        multiplexer: ~
+        start_bit: 39
+        size: 16
+        byte_order: BigEndian
+        value_type: Unsigned
+        factor: 0.01
+        offset: 0
+        min: 0
+        max: 100
+        unit: mph
+        receivers:
+          - NEO
+  - header:
+      id: 276135936
+      name: CruiseButtons
+      size: 3
+      transmitter: GMLAN
+    signals:
+      - name: CruiseButtons
+        multiplexer: ~
+        start_bit: 3
+        size: 3
+        byte_order: BigEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 12
+        unit: ""
+        receivers:
+          - NEO
+  - header:
+      id: 276127744
+      name: CruiseButtons2
+      size: 1
+      transmitter: GMLAN
+    signals:
+      - name: LKAGapButton
+        multiplexer: ~
+        start_bit: 1
+        size: 2
+        byte_order: BigEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 2
+        unit: ""
+        receivers:
+          - NEO
+env_vars: []
+env_vars_data: []
+comments: []
+attribute_definitions:
+  - Network:
+      attribute_name: UseGMParameterIDs
+      attribute_value_type:
+        Integer:
+          minimum: 0
+          maximum: 0
+  - Network:
+      attribute_name: ProtocolType
+      attribute_value_type:
+        String: {}
+  - Network:
+      attribute_name: BusType
+      attribute_value_type:
+        String: {}
+attribute_defaults:
+  - Attribute:
+      attribute_name: UseGMParameterIDs
+      attribute_value:
+        Double: 1
+  - Attribute:
+      attribute_name: ProtocolType
+      attribute_value:
+        String: GMLAN
+  - Attribute:
+      attribute_name: BusType
+      attribute_value:
+        String: ""
+attribute_values:
+  - Network:
+      attribute_name: BusType
+      attribute_value:
+        String: CAN
+  - Network:
+      attribute_name: ProtocolType
+      attribute_value:
+        String: GMLAN
+signal_value_descriptions:
+  - message_id: 274923520
+    signal_name: DriverDoorOpened
+    value_descriptions:
+      values:
+        - num: 1
+          str: Opened
+        - num: 0
+          str: Closed
+  - message_id: 270581760
+    signal_name: RightBlinker
+    value_descriptions:
+      values:
+        - num: 1
+          str: Active
+        - num: 0
+          str: Inactive
+  - message_id: 270581760
+    signal_name: LeftBlinker
+    value_descriptions:
+      values:
+        - num: 1
+          str: Active
+        - num: 0
+          str: Inactive
+  - message_id: 270581760
+    signal_name: BlinkerLight
+    value_descriptions:
+      values:
+        - num: 1
+          str: Active
+        - num: 0
+          str: Inactive
+  - message_id: 271368192
+    signal_name: GearShifter
+    value_descriptions:
+      values:
+        - num: 3
+          str: Park
+        - num: 0
+          str: Drive/Low
+  - message_id: 271360000
+    signal_name: CruiseControlActive
+    value_descriptions:
+      values:
+        - num: 1
+          str: Active
+        - num: 0
+          str: Inactive
+  - message_id: 276135936
+    signal_name: CruiseButtons
+    value_descriptions:
+      values:
+        - num: 6
+          str: Cancel
+        - num: 5
+          str: Main
+        - num: 3
+          str: Set
+        - num: 2
+          str: Resume
+        - num: 1
+          str: None
+  - message_id: 276127744
+    signal_name: LKAGapButton
+    value_descriptions:
+      values:
+        - num: 2
+          str: "???"
+        - num: 1
+          str: "??"
+        - num: 0
+          str: None
+env_var_value_descriptions: []

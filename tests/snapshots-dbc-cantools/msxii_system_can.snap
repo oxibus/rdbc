@@ -1,0 +1,1140 @@
+---
+source: tests/snapshots.rs
+---
+version: ""
+new_symbols:
+  - NS_DESC_
+  - CM_
+  - BA_DEF_
+  - BA_
+  - VAL_
+  - CAT_DEF_
+  - CAT_
+  - FILTER
+  - BA_DEF_DEF_
+  - EV_DATA_
+  - ENVVAR_DATA_
+  - SGTYPE_
+  - SGTYPE_VAL_
+  - BA_DEF_SGTYPE_
+  - BA_SGTYPE_
+  - SIG_TYPE_REF_
+  - VAL_TABLE_
+  - SIG_GROUP_
+  - SIG_VALTYPE_
+  - SIGTYPE_VALTYPE_
+bit_timing:
+  value: ~
+nodes:
+  - BMS
+value_tables: ~
+messages:
+  - header:
+      id: 1025
+      name: BATTERY_VT
+      size: 6
+      transmitter: BMS
+    signals:
+      - name: MODULE_TEMP_35
+        multiplexer:
+          multiplexer_signal: 35
+          multiplexer_switch: ~
+        start_bit: 32
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_TEMP_34
+        multiplexer:
+          multiplexer_signal: 34
+          multiplexer_switch: ~
+        start_bit: 32
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_TEMP_33
+        multiplexer:
+          multiplexer_signal: 33
+          multiplexer_switch: ~
+        start_bit: 32
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_TEMP_32
+        multiplexer:
+          multiplexer_signal: 32
+          multiplexer_switch: ~
+        start_bit: 32
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_TEMP_31
+        multiplexer:
+          multiplexer_signal: 31
+          multiplexer_switch: ~
+        start_bit: 32
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_TEMP_30
+        multiplexer:
+          multiplexer_signal: 30
+          multiplexer_switch: ~
+        start_bit: 32
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_TEMP_29
+        multiplexer:
+          multiplexer_signal: 29
+          multiplexer_switch: ~
+        start_bit: 32
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_TEMP_28
+        multiplexer:
+          multiplexer_signal: 28
+          multiplexer_switch: ~
+        start_bit: 32
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_TEMP_27
+        multiplexer:
+          multiplexer_signal: 27
+          multiplexer_switch: ~
+        start_bit: 32
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_TEMP_26
+        multiplexer:
+          multiplexer_signal: 26
+          multiplexer_switch: ~
+        start_bit: 32
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_TEMP_25
+        multiplexer:
+          multiplexer_signal: 25
+          multiplexer_switch: ~
+        start_bit: 32
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_TEMP_24
+        multiplexer:
+          multiplexer_signal: 24
+          multiplexer_switch: ~
+        start_bit: 32
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_TEMP_23
+        multiplexer:
+          multiplexer_signal: 23
+          multiplexer_switch: ~
+        start_bit: 32
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_TEMP_22
+        multiplexer:
+          multiplexer_signal: 22
+          multiplexer_switch: ~
+        start_bit: 32
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_TEMP_21
+        multiplexer:
+          multiplexer_signal: 21
+          multiplexer_switch: ~
+        start_bit: 32
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_TEMP_20
+        multiplexer:
+          multiplexer_signal: 20
+          multiplexer_switch: ~
+        start_bit: 32
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_TEMP_19
+        multiplexer:
+          multiplexer_signal: 19
+          multiplexer_switch: ~
+        start_bit: 32
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_TEMP_18
+        multiplexer:
+          multiplexer_signal: 18
+          multiplexer_switch: ~
+        start_bit: 32
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_TEMP_17
+        multiplexer:
+          multiplexer_signal: 17
+          multiplexer_switch: ~
+        start_bit: 32
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_TEMP_16
+        multiplexer:
+          multiplexer_signal: 16
+          multiplexer_switch: ~
+        start_bit: 32
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_TEMP_15
+        multiplexer:
+          multiplexer_signal: 15
+          multiplexer_switch: ~
+        start_bit: 32
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_TEMP_14
+        multiplexer:
+          multiplexer_signal: 14
+          multiplexer_switch: ~
+        start_bit: 32
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_TEMP_13
+        multiplexer:
+          multiplexer_signal: 13
+          multiplexer_switch: ~
+        start_bit: 32
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_TEMP_12
+        multiplexer:
+          multiplexer_signal: 12
+          multiplexer_switch: ~
+        start_bit: 32
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_TEMP_11
+        multiplexer:
+          multiplexer_signal: 11
+          multiplexer_switch: ~
+        start_bit: 32
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_TEMP_10
+        multiplexer:
+          multiplexer_signal: 10
+          multiplexer_switch: ~
+        start_bit: 32
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_TEMP_09
+        multiplexer:
+          multiplexer_signal: 9
+          multiplexer_switch: ~
+        start_bit: 32
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_TEMP_08
+        multiplexer:
+          multiplexer_signal: 8
+          multiplexer_switch: ~
+        start_bit: 32
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_TEMP_07
+        multiplexer:
+          multiplexer_signal: 7
+          multiplexer_switch: ~
+        start_bit: 32
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_TEMP_06
+        multiplexer:
+          multiplexer_signal: 6
+          multiplexer_switch: ~
+        start_bit: 32
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_TEMP_05
+        multiplexer:
+          multiplexer_signal: 5
+          multiplexer_switch: ~
+        start_bit: 32
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_TEMP_04
+        multiplexer:
+          multiplexer_signal: 4
+          multiplexer_switch: ~
+        start_bit: 32
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_TEMP_03
+        multiplexer:
+          multiplexer_signal: 3
+          multiplexer_switch: ~
+        start_bit: 32
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_TEMP_02
+        multiplexer:
+          multiplexer_signal: 2
+          multiplexer_switch: ~
+        start_bit: 32
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_TEMP_01
+        multiplexer:
+          multiplexer_signal: 1
+          multiplexer_switch: ~
+        start_bit: 32
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_TEMP_00
+        multiplexer:
+          multiplexer_signal: 0
+          multiplexer_switch: ~
+        start_bit: 32
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_VOLTAGE_35
+        multiplexer:
+          multiplexer_signal: 35
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_VOLTAGE_34
+        multiplexer:
+          multiplexer_signal: 34
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_VOLTAGE_33
+        multiplexer:
+          multiplexer_signal: 33
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_VOLTAGE_32
+        multiplexer:
+          multiplexer_signal: 32
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_VOLTAGE_31
+        multiplexer:
+          multiplexer_signal: 31
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_VOLTAGE_30
+        multiplexer:
+          multiplexer_signal: 30
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_VOLTAGE_29
+        multiplexer:
+          multiplexer_signal: 29
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_VOLTAGE_28
+        multiplexer:
+          multiplexer_signal: 28
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_VOLTAGE_27
+        multiplexer:
+          multiplexer_signal: 27
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_VOLTAGE_26
+        multiplexer:
+          multiplexer_signal: 26
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_VOLTAGE_25
+        multiplexer:
+          multiplexer_signal: 25
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_VOLTAGE_24
+        multiplexer:
+          multiplexer_signal: 24
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_VOLTAGE_23
+        multiplexer:
+          multiplexer_signal: 23
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_VOLTAGE_22
+        multiplexer:
+          multiplexer_signal: 22
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_VOLTAGE_21
+        multiplexer:
+          multiplexer_signal: 21
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_VOLTAGE_20
+        multiplexer:
+          multiplexer_signal: 20
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_VOLTAGE_19
+        multiplexer:
+          multiplexer_signal: 19
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_VOLTAGE_18
+        multiplexer:
+          multiplexer_signal: 18
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_VOLTAGE_17
+        multiplexer:
+          multiplexer_signal: 17
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_VOLTAGE_16
+        multiplexer:
+          multiplexer_signal: 16
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_VOLTAGE_15
+        multiplexer:
+          multiplexer_signal: 15
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_VOLTAGE_14
+        multiplexer:
+          multiplexer_signal: 14
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_VOLTAGE_13
+        multiplexer:
+          multiplexer_signal: 13
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_VOLTAGE_12
+        multiplexer:
+          multiplexer_signal: 12
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_VOLTAGE_11
+        multiplexer:
+          multiplexer_signal: 11
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_VOLTAGE_10
+        multiplexer:
+          multiplexer_signal: 10
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_VOLTAGE_09
+        multiplexer:
+          multiplexer_signal: 9
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_VOLTAGE_08
+        multiplexer:
+          multiplexer_signal: 8
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_VOLTAGE_07
+        multiplexer:
+          multiplexer_signal: 7
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_VOLTAGE_06
+        multiplexer:
+          multiplexer_signal: 6
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_VOLTAGE_05
+        multiplexer:
+          multiplexer_signal: 5
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_VOLTAGE_04
+        multiplexer:
+          multiplexer_signal: 4
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_VOLTAGE_03
+        multiplexer:
+          multiplexer_signal: 3
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_VOLTAGE_02
+        multiplexer:
+          multiplexer_signal: 2
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_VOLTAGE_01
+        multiplexer:
+          multiplexer_signal: 1
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: MODULE_VOLTAGE_00
+        multiplexer:
+          multiplexer_signal: 0
+          multiplexer_switch: ~
+        start_bit: 16
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+      - name: BATTERY_VT_INDEX
+        multiplexer:
+          multiplexer_signal: ~
+          multiplexer_switch: ~
+        start_bit: 0
+        size: 16
+        byte_order: LittleEndian
+        value_type: Unsigned
+        factor: 1
+        offset: 0
+        min: 0
+        max: 0
+        unit: ""
+        receivers:
+          - Vector__XXX
+env_vars: []
+env_vars_data: []
+comments: []
+attribute_definitions: []
+attribute_defaults: []
+attribute_values: []
+signal_value_descriptions: []
+env_var_value_descriptions: []
