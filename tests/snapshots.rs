@@ -11,7 +11,7 @@ use rrdbc::encoding::decode_cp1252;
 #[test]
 fn test_cantools_dbc_files() {
     let test_dirs = [
-        ("dbc/dbc_from_cantools", "dbc-cantools"),
+        ("tests/shared-test-files/dbc-cantools", "dbc-cantools"),
         ("dbc/mytest", "mytest"),
     ];
     for (path, file_name) in &test_dirs {

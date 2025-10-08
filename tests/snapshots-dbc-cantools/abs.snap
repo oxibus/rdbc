@@ -1477,19 +1477,19 @@ comments:
   - Signal:
       message_id: 834
       signal_name: WheelQuality_FL
-      comment: "Bit matrix\r\nBit0 ( 1) Signal Reduced Monitored\r\nBit1 ( 2) Reduced Accuracy\r\nBit2 ( 4) Interfered\r\nBit3 ( 8) Suspicious Plausibility\r\nBit4 (16) Suspicious Lost\r\nBit5 (32) Not Initialized\r\nBit6 (64) Invalid Generic\r\nBit7 (128) Invalid Individual"
+      comment: "Bit matrix\nBit0 ( 1) Signal Reduced Monitored\nBit1 ( 2) Reduced Accuracy\nBit2 ( 4) Interfered\nBit3 ( 8) Suspicious Plausibility\nBit4 (16) Suspicious Lost\nBit5 (32) Not Initialized\nBit6 (64) Invalid Generic\nBit7 (128) Invalid Individual"
   - Signal:
       message_id: 834
       signal_name: WheelQuality_FR
-      comment: "Bit matrix\r\nBit0 ( 1) Signal Reduced Monitored\r\nBit1 ( 2) Reduced Accuracy\r\nBit2 ( 4) Interfered\r\nBit3 ( 8) Suspicious Plausibility\r\nBit4 (16) Suspicious Lost\r\nBit5 (32) Not Initialized\r\nBit6 (64) Invalid Generic\r\nBit7 (128) Invalid Individual"
+      comment: "Bit matrix\nBit0 ( 1) Signal Reduced Monitored\nBit1 ( 2) Reduced Accuracy\nBit2 ( 4) Interfered\nBit3 ( 8) Suspicious Plausibility\nBit4 (16) Suspicious Lost\nBit5 (32) Not Initialized\nBit6 (64) Invalid Generic\nBit7 (128) Invalid Individual"
   - Signal:
       message_id: 834
       signal_name: WheelQuality_RL
-      comment: "Bit matrix\r\nBit0 ( 1) Signal Reduced Monitored\r\nBit1 ( 2) Reduced Accuracy\r\nBit2 ( 4) Interfered\r\nBit3 ( 8) Suspicious Plausibility\r\nBit4 (16) Suspicious Lost\r\nBit5 (32) Not Initialized\r\nBit6 (64) Invalid Generic\r\nBit7 (128) Invalid Individual"
+      comment: "Bit matrix\nBit0 ( 1) Signal Reduced Monitored\nBit1 ( 2) Reduced Accuracy\nBit2 ( 4) Interfered\nBit3 ( 8) Suspicious Plausibility\nBit4 (16) Suspicious Lost\nBit5 (32) Not Initialized\nBit6 (64) Invalid Generic\nBit7 (128) Invalid Individual"
   - Signal:
       message_id: 834
       signal_name: WheelQuality_RR
-      comment: "Bit matrix\r\nBit0 ( 1) Signal Reduced Monitored\r\nBit1 ( 2) Reduced Accuracy\r\nBit2 ( 4) Interfered\r\nBit3 ( 8) Suspicious Plausibility\r\nBit4 (16) Suspicious Lost\r\nBit5 (32) Not Initialized\r\nBit6 (64) Invalid Generic\r\nBit7 (128) Invalid Individual"
+      comment: "Bit matrix\nBit0 ( 1) Signal Reduced Monitored\nBit1 ( 2) Reduced Accuracy\nBit2 ( 4) Interfered\nBit3 ( 8) Suspicious Plausibility\nBit4 (16) Suspicious Lost\nBit5 (32) Not Initialized\nBit6 (64) Invalid Generic\nBit7 (128) Invalid Individual"
   - Signal:
       message_id: 1345
       signal_name: AX1_ABS_int
@@ -1609,19 +1609,19 @@ comments:
   - Signal:
       message_id: 1472
       signal_name: Diag_FL
-      comment: "Value to show faults related to the wheel speed sensor. \r\n0 - Signal ok, 1 - Wiring related fault, 2 - Signal related fault"
+      comment: "Value to show faults related to the wheel speed sensor. \n0 - Signal ok, 1 - Wiring related fault, 2 - Signal related fault"
   - Signal:
       message_id: 1472
       signal_name: Diag_FR
-      comment: "Value to show faults related to the wheel speed sensor. \r\n0 - Signal ok, 1 - Wiring related fault, 2 - Signal related fault"
+      comment: "Value to show faults related to the wheel speed sensor. \n0 - Signal ok, 1 - Wiring related fault, 2 - Signal related fault"
   - Signal:
       message_id: 1472
       signal_name: Diag_RL
-      comment: "Value to show faults related to the wheel speed sensor. \r\n0 - Signal ok, 1 - Wiring related fault, 2 - Signal related fault"
+      comment: "Value to show faults related to the wheel speed sensor. \n0 - Signal ok, 1 - Wiring related fault, 2 - Signal related fault"
   - Signal:
       message_id: 1472
       signal_name: Diag_RR
-      comment: "Value to show faults related to the wheel speed sensor. \r\n0 - Signal ok, 1 - Wiring related fault, 2 - Signal related fault"
+      comment: "Value to show faults related to the wheel speed sensor. \n0 - Signal ok, 1 - Wiring related fault, 2 - Signal related fault"
   - Signal:
       message_id: 1472
       signal_name: Diag_ABSUnit
