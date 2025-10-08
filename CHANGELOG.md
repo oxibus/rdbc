@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1](https://github.com/oxibus/rrdbc/compare/v0.2.0...v0.2.1) - 2025-10-08
+
+### Added
+
+- use shared test files and update snapshots ([#17](https://github.com/oxibus/rrdbc/pull/17))
+- add `decode_cp1252` and snapshot tests ([#16](https://github.com/oxibus/rrdbc/pull/16))
+
 ## [0.2.0](https://github.com/oxibus/rrdbc/compare/v0.1.0...v0.2.0) - 2025-10-03
 
 ### Added
